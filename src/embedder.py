@@ -3,6 +3,7 @@ Embedder - creates vector embeddings and manages ChromaDB storage.
 Uses sentence-transformers for free local embeddings.
 """
 
+import logging
 from typing import List, Dict, Any
 import chromadb
 from chromadb.config import Settings
@@ -15,6 +16,8 @@ from src.config import (
     EMBEDDING_DIMENSION
 )
 
+logger = logging.getLogger(__name__)
+
 # Global embedding model instance (loaded once)
 _embedding_model = None
 
@@ -23,8 +26,9 @@ def get_embedding_model() -> SentenceTransformer:
     """Get or initialize the embedding model (singleton pattern)."""
     global _embedding_model
     if _embedding_model is None:
-        print(f"Loading embedding model: {EMBEDDING_MODEL}")
+        logger.info("[EMBEDDER] Loading embedding model: %s", EMBEDDING_MODEL)
         _embedding_model = SentenceTransformer(EMBEDDING_MODEL)
+        logger.info("[EMBEDDER] Model loaded")
     return _embedding_model
 
 
@@ -41,10 +45,13 @@ def get_or_create_collection():
         )
     )
     
-    # Get or create collection
+    # Get or create collection — cosine distance so score = 1.0 - distance is cosine similarity
     collection = client.get_or_create_collection(
         name=CHROMA_COLLECTION_NAME,
-        metadata={"description": "IRDAI Public Disclosure Reports - Insurance Companies"}
+        metadata={
+            "hnsw:space": "cosine",
+            "description": "IRDAI Public Disclosure Reports - Insurance Companies",
+        }
     )
     
     return collection
@@ -100,6 +107,7 @@ def delete_file_chunks(source_file: str) -> int:
 def embed_chunks(chunks: List[Dict[str, Any]], force_reindex: bool = False) -> Dict[str, Any]:
     """
     Create embeddings for chunks and store in ChromaDB.
+    OPTIMIZATION 3: Batch processing for embeddings (all chunks encoded at once).
     
     Args:
         chunks: List of chunk dictionaries from chunker
@@ -131,7 +139,7 @@ def embed_chunks(chunks: List[Dict[str, Any]], force_reindex: bool = False) -> D
     # Delete existing chunks if force reindex
     if already_indexed and force_reindex:
         deleted_count = delete_file_chunks(source_file)
-        print(f"Deleted {deleted_count} existing chunks for {source_file}")
+        logger.info("[EMBEDDER] Deleted %d existing chunks for %s", deleted_count, source_file)
     
     # Get collection and embedding model
     collection = get_or_create_collection()
@@ -139,25 +147,31 @@ def embed_chunks(chunks: List[Dict[str, Any]], force_reindex: bool = False) -> D
     
     # Extract texts and metadata
     texts = [chunk["text"] for chunk in chunks]
-    chunk_ids = [chunk["chunk_id"] for chunk in chunks]
+    chunk_ids = [chunk["metadata"]["chunk_id"] for chunk in chunks]
     metadatas = [chunk["metadata"] for chunk in chunks]
     
-    # Create embeddings
-    print(f"Creating embeddings for {len(texts)} chunks...")
-    embeddings = model.encode(texts, show_progress_bar=True)
-    
+    # OPTIMIZATION 3: Batch encode all chunks at once (much faster than one-by-one)
+    import time as _time
+    t_emb = _time.time()
+    logger.info("[EMBEDDER] Batch encoding %d chunks (%s)", len(texts), source_file)
+    # Use smaller batch size for better CPU performance
+    embeddings = model.encode(texts, show_progress_bar=False, batch_size=16)
+    logger.info("[EMBEDDER] Batch encoding done in %.1fs", _time.time() - t_emb)
+
     # Convert numpy arrays to lists for ChromaDB
     embeddings_list = [emb.tolist() for emb in embeddings]
-    
-    # Add to ChromaDB
-    print(f"Storing chunks in ChromaDB...")
+
+    # Add to ChromaDB in batches (ChromaDB handles this efficiently)
+    t_store = _time.time()
+    logger.info("[EMBEDDER] Storing %d chunks in ChromaDB collection '%s'", len(chunks), CHROMA_COLLECTION_NAME)
     collection.add(
         ids=chunk_ids,
         embeddings=embeddings_list,
         documents=texts,
         metadatas=metadatas
     )
-    
+    logger.info("[EMBEDDER] Stored in %.1fs | total in DB: %d", _time.time() - t_store, collection.count())
+
     return {
         "status": "success",
         "message": f"Successfully indexed {len(chunks)} chunks from {source_file}",
@@ -167,15 +181,56 @@ def embed_chunks(chunks: List[Dict[str, Any]], force_reindex: bool = False) -> D
     }
 
 
+def get_indexed_companies() -> list:
+    """
+    Return all unique company_codes currently stored in ChromaDB.
+    Called by rag_pipeline to know which companies need top-up retrieval.
+    """
+    collection = get_or_create_collection()
+    total = collection.count()
+    if total == 0:
+        return []
+    results = collection.get(include=["metadatas"])
+    return sorted(set(m["company_code"] for m in results["metadatas"]))
+
+
+def get_available_quarters() -> List[str]:
+    """
+    Return all unique quarters currently stored in ChromaDB.
+    Returns sorted list like ["Q1", "Q2", "Q3", "Q4"].
+    """
+    collection = get_or_create_collection()
+    total = collection.count()
+    if total == 0:
+        return []
+    results = collection.get(include=["metadatas"])
+    quarters = sorted(set(m["quarter"] for m in results["metadatas"]))
+    return quarters
+
+
+def get_available_fys() -> List[str]:
+    """
+    Return all unique fiscal years currently stored in ChromaDB.
+    Returns sorted list like ["FY25", "FY26", "FY27"].
+    """
+    collection = get_or_create_collection()
+    total = collection.count()
+    if total == 0:
+        return []
+    results = collection.get(include=["metadatas"])
+    fys = sorted(set(m["fy"] for m in results["metadatas"]))
+    return fys
+
+
 def get_collection_stats() -> Dict[str, Any]:
     """Get statistics about the ChromaDB collection."""
     collection = get_or_create_collection()
     
     total_chunks = collection.count()
     
-    # Get all metadata to compute stats
+    # Get all metadata to compute stats (skip documents/embeddings)
     if total_chunks > 0:
-        results = collection.get()
+        results = collection.get(include=["metadatas"])
         metadatas = results["metadatas"]
         
         # Count unique files

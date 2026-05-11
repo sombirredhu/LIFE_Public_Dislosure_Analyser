@@ -28,7 +28,7 @@ def check_dependencies():
     
     required = [
         'pdfplumber',
-        'anthropic',
+        'openai',
         'sentence_transformers',
         'chromadb',
         'dotenv',
@@ -66,23 +66,25 @@ def check_config():
     
     try:
         from src.config import (
-            ANTHROPIC_API_KEY,
-            CLAUDE_MODEL,
+            OPENROUTER_API_KEY,
+            LLM_MODEL_FREE,
+            LLM_MODEL_PAID,
             CHROMA_DB_PATH,
             PDF_INPUT_DIR,
             PROCESSED_OUTPUT_DIR
         )
-        
+
         # Check API key
-        if ANTHROPIC_API_KEY:
-            print(f"  ✓ ANTHROPIC_API_KEY is set")
+        if OPENROUTER_API_KEY:
+            print(f"  ✓ OPENROUTER_API_KEY is set")
         else:
-            print(f"  ✗ ANTHROPIC_API_KEY is not set")
+            print(f"  ✗ OPENROUTER_API_KEY is not set")
             print(f"    Please add your API key to .env file")
             return False
-        
-        # Check model
-        print(f"  ✓ Claude Model: {CLAUDE_MODEL}")
+
+        # Check models
+        print(f"  ✓ Free Model:  {LLM_MODEL_FREE}")
+        print(f"  ✓ Paid Model:  {LLM_MODEL_PAID}")
         
         # Check directories
         if Path(PDF_INPUT_DIR).exists():
@@ -228,7 +230,7 @@ def main():
         print("\nCommon fixes:")
         print("  - Install dependencies: pip install -r requirements.txt")
         print("  - Create .env file: copy .env.example .env")
-        print("  - Add ANTHROPIC_API_KEY to .env file")
+        print("  - Add OPENROUTER_API_KEY to .env file")
     
     print()
 

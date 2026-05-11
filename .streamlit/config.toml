@@ -1,0 +1,9 @@
+[server]
+port = 8501
+maxUploadSize = 50
+# "watchdog" watches only your project files, not site-packages submodules.
+# This prevents the transformers/zoedepth torchvision warning on startup.
+fileWatcherType = "watchdog"
+
+[theme]
+base = "light"

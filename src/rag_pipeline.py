@@ -1,14 +1,25 @@
 """
 RAG Pipeline - orchestrates retrieval and LLM to answer questions.
-Combines retriever + Claude API with proper prompt engineering.
+Implements two-tier model routing based on query complexity.
 """
 
-from typing import Dict, Any, Optional, List
-from src.retriever import retrieve, get_confidence_level
-from src.llm_client import ask_claude, ask_claude_streaming
+import logging
+import re
+from typing import Any, Dict, List, Optional
 
+from src.config import (
+    LLM_MAX_INPUT_CHARS,
+    LLM_MODEL_FREE,
+    LLM_MODEL_PAID,
+    TOP_K_COMPLEX,
+    TOP_K_SIMPLE,
+)
+from src.embedder import get_indexed_companies
+from src.llm_client import ask_llm
+from src.retriever import get_confidence_level, retrieve, top_up_missing_companies
 
-# System prompt for Claude
+logger = logging.getLogger(__name__)
+
 SYSTEM_PROMPT = """You are a financial analyst specializing in Indian life insurance industry data.
 You have access to IRDAI Public Disclosure reports from multiple life insurance companies across multiple quarters.
 
@@ -30,193 +41,185 @@ Response format:
 - For trend questions: show quarter-wise data in a table
 """
 
+# Keywords that force COMPLEX regardless of company name
+_ALWAYS_COMPLEX = re.compile(
+    r'\b(compare|vs\.?|versus|all companies|all quarters|industry total|'
+    r'channel[\s-]wise|rank(?:ing)?|which company)\b',
+    re.IGNORECASE,
+)
 
-def build_context(chunks: List[Dict[str, Any]]) -> str:
+# Keywords that make a query COMPLEX only when no single company is named
+_COMPLEX_IF_NO_COMPANY = re.compile(
+    r'\b(highest|lowest|top|bottom|best|worst|most|least|trend)\b',
+    re.IGNORECASE,
+)
+
+
+def classify_complexity(question: str) -> str:
     """
-    Build context string from retrieved chunks.
-    
-    Args:
-        chunks: List of retrieved chunks with metadata
-    
-    Returns:
-        Formatted context string for Claude
+    Classify query complexity as "simple" or "complex".
+    Pure keyword/heuristic — no LLM call, runs before retrieval.
+
+    Rules:
+      ALWAYS COMPLEX: compare / vs / rank / which company / industry total / channel-wise
+      COMPLEX if no single company named: highest / lowest / top / trend / etc.
+      SIMPLE: exactly one company named AND none of the always-complex keywords present
+      Default when in doubt: COMPLEX (wrong answer costs more than extra retrieval)
     """
-    context_parts = []
-    
+    if _ALWAYS_COMPLEX.search(question):
+        return "complex"
+
+    # Count company-like tokens: must start with 2+ UPPERCASE letters (e.g. HDFC, LIC, SBI)
+    # optionally followed by title-case words (e.g. "HDFC Life", "ICICI Pru").
+    # This deliberately excludes ordinary English words like "What", "How", "Which"
+    # and quarter/FY labels like "Q1", "FY25" (they lack a word boundary after 2+ caps).
+    company_like = re.findall(r'\b[A-Z]{2,}(?:\s[A-Z][a-z]+)*\b', question)
+    single_company_named = len(company_like) == 1
+
+    if _COMPLEX_IF_NO_COMPANY.search(question) and not single_company_named:
+        return "complex"
+
+    if single_company_named:
+        return "simple"
+
+    return "complex"
+
+
+def _build_context(chunks: List[Dict[str, Any]]) -> str:
+    parts = []
     for chunk in chunks:
-        metadata = chunk["metadata"]
-        
-        context_part = f"""Source: {metadata['source_file']} | Company: {metadata['company']} | Period: {metadata['period_label']} | Page: {metadata['page_number']}
-
-{chunk['text']}"""
-        
-        context_parts.append(context_part)
-    
-    return "\n\n---\n\n".join(context_parts)
+        m = chunk["metadata"]
+        parts.append(
+            f"Source: {m['source_file']} | Company: {m['company']} | "
+            f"Period: {m['period_label']} | Page: {m['page_number']} | "
+            f"Section: {m['section']}\n\n{chunk['text']}"
+        )
+    return "\n\n---\n\n".join(parts)
 
 
-def build_user_message(question: str, chunks: List[Dict[str, Any]]) -> str:
-    """
-    Build the user message with question and context.
-    
-    Args:
-        question: User's question
-        chunks: Retrieved chunks
-    
-    Returns:
-        Formatted user message for Claude
-    """
-    context = build_context(chunks)
-    
-    user_message = f"""Answer this question using the report excerpts below:
-
-Question: {question}
-
-Report Excerpts:
-{context}"""
-    
-    return user_message
+def _build_user_message(question: str, chunks: List[Dict[str, Any]]) -> str:
+    context = _build_context(chunks)
+    return (
+        f"Answer this question using the report excerpts below:\n\n"
+        f"Question: {question}\n\n"
+        f"Report Excerpts:\n{context}"
+    )
 
 
 def answer_question(
     question: str,
     filters: Optional[Dict[str, Any]] = None,
     top_k: int = None,
-    stream: bool = False
+    free_model: Optional[str] = None,
+    paid_model: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
-    Answer a question using RAG pipeline.
-    
-    Args:
-        question: User's question
-        filters: Optional metadata filters for retrieval
-        top_k: Number of chunks to retrieve
-        stream: If True, return generator for streaming response
-    
-    Returns:
-        Dictionary with answer, sources, and metadata
-        If stream=True, returns dict with 'stream' generator
+    Answer a question using the full RAG pipeline.
+
+    Returns dict with keys:
+        answer, sources, chunks_used, confidence, model_used
     """
-    # Step 1: Retrieve relevant chunks
-    chunks = retrieve(question, filters=filters, top_k=top_k)
-    
+    complexity = classify_complexity(question)
+    use_paid = complexity == "complex"
+    model_name = (paid_model or LLM_MODEL_PAID) if use_paid else (free_model or LLM_MODEL_FREE)
+
+    logger.info(
+        "[RAG] Question: %r | Complexity: %s | Model: %s | Filters: %s",
+        question[:100], complexity, model_name, filters,
+    )
+
+    # Step 1: Retrieve
+    effective_top_k = top_k if top_k is not None else (TOP_K_COMPLEX if use_paid else TOP_K_SIMPLE)
+    chunks = retrieve(question, filters=filters, top_k=effective_top_k)
+    logger.info("[RAG] Step 1 — Retrieved %d chunks (top_k=%d)", len(chunks), effective_top_k)
+
+    # Step 2: Top-up for complex queries
+    if use_paid and not filters:
+        indexed = get_indexed_companies()
+        if indexed:
+            before = len(chunks)
+            chunks = top_up_missing_companies(question, chunks, indexed, filters)
+            logger.info(
+                "[RAG] Step 2 — Top-up: %d → %d chunks (indexed companies: %s)",
+                before, len(chunks), indexed,
+            )
+        else:
+            logger.info("[RAG] Step 2 — Top-up skipped (no indexed companies)")
+    else:
+        logger.info("[RAG] Step 2 — Top-up skipped (simple query or filter active)")
+
     if not chunks:
+        logger.warning("[RAG] No chunks found — returning empty answer | question=%r", question[:100])
         return {
-            "answer": "I couldn't find any relevant information in the indexed reports to answer this question. Please ensure the relevant PDF files have been uploaded and indexed.",
-            "sources": [],
+            "answer":      "I couldn't find any relevant information in the indexed reports. "
+                           "Please ensure the relevant PDF files have been uploaded and indexed.",
+            "sources":     [],
             "chunks_used": 0,
-            "confidence": "none",
-            "question": question
+            "confidence":  "none",
+            "model_used":  LLM_MODEL_FREE,
         }
-    
-    # Step 2: Build prompt
-    user_message = build_user_message(question, chunks)
-    
-    # Step 3: Get confidence level
+
+    # Step 3: Input token budget guard
+    total_chars = sum(len(c["text"]) for c in chunks)
+    if total_chars > LLM_MAX_INPUT_CHARS:
+        avg_chunk_size = total_chars // len(chunks)
+        max_chunks = LLM_MAX_INPUT_CHARS // avg_chunk_size
+        logger.warning(
+            "[RAG] Step 3 — Input truncated: %d chars > %d limit. Keeping %d/%d chunks.",
+            total_chars, LLM_MAX_INPUT_CHARS, max_chunks, len(chunks),
+        )
+        chunks = chunks[:max_chunks]
+    else:
+        logger.info("[RAG] Step 3 — Input chars: %d (within %d limit)", total_chars, LLM_MAX_INPUT_CHARS)
+
+    # Step 4: Build prompt and call LLM
+    user_message = _build_user_message(question, chunks)
     confidence = get_confidence_level(chunks)
-    
-    # Step 4: Call Claude
-    if stream:
-        # Return streaming generator
-        return {
-            "stream": ask_claude_streaming(SYSTEM_PROMPT, user_message),
-            "sources": list(set(c["metadata"]["source_file"] for c in chunks)),
-            "chunks_used": len(chunks),
-            "confidence": confidence,
-            "question": question
-        }
-    else:
-        # Get complete response
-        answer = ask_claude(SYSTEM_PROMPT, user_message)
-        
-        # Extract unique source files
-        sources = list(set(c["metadata"]["source_file"] for c in chunks))
-        
-        return {
-            "answer": answer,
-            "sources": sources,
-            "chunks_used": len(chunks),
-            "confidence": confidence,
-            "question": question,
-            "retrieved_chunks": chunks  # Include for debugging
-        }
+    logger.info("[RAG] Step 4 — Calling LLM | chunks=%d | confidence=%s", len(chunks), confidence)
+    answer = ask_llm(SYSTEM_PROMPT, user_message, use_paid=use_paid,
+                     free_model=free_model, paid_model=paid_model)
+    sources = sorted(set(c["metadata"]["source_file"] for c in chunks))
+    logger.info("[RAG] Done | sources=%s", sources)
 
-
-def answer_with_company_filter(question: str, company_codes: List[str]) -> Dict[str, Any]:
-    """
-    Answer question filtered to specific companies.
-    
-    Args:
-        question: User's question
-        company_codes: List of company codes to filter
-    
-    Returns:
-        Answer dictionary
-    """
-    if len(company_codes) == 1:
-        filters = {"company_code": company_codes[0]}
-    else:
-        filters = {"company_code": {"$in": company_codes}}
-    
-    return answer_question(question, filters=filters)
-
-
-def answer_with_period_filter(question: str, quarter: str = None, fy: str = None) -> Dict[str, Any]:
-    """
-    Answer question filtered to specific time period.
-    
-    Args:
-        question: User's question
-        quarter: Quarter filter (e.g., "Q1")
-        fy: Financial year filter (e.g., "FY25")
-    
-    Returns:
-        Answer dictionary
-    """
-    filters = {}
-    if quarter:
-        filters["quarter"] = quarter
-    if fy:
-        filters["fy"] = fy
-    
-    return answer_question(question, filters=filters if filters else None)
+    return {
+        "answer":      answer,
+        "sources":     sources,
+        "chunks_used": len(chunks),
+        "confidence":  confidence,
+        "model_used":  model_name,
+    }
 
 
 if __name__ == "__main__":
-    # Test RAG pipeline
     import sys
-    
-    if len(sys.argv) > 1:
-        question = " ".join(sys.argv[1:])
-    else:
-        question = "Which company had the highest gross written premium?"
-    
-    print(f"Question: {question}\n")
-    print("Retrieving relevant information and generating answer...\n")
-    
+    logging.basicConfig(level=logging.INFO)
+
+    question = " ".join(sys.argv[1:]) if len(sys.argv) > 1 else "Which company had the highest gross written premium?"
+    print(f"Question: {question}")
+    print(f"Complexity: {classify_complexity(question)}\n")
+    print("Retrieving and generating answer...\n")
+
     try:
         result = answer_question(question)
-        
+
         print("=" * 80)
         print("ANSWER")
         print("=" * 80)
         print(result["answer"])
         print()
-        
         print("=" * 80)
         print("METADATA")
         print("=" * 80)
-        print(f"Confidence: {result['confidence']}")
+        print(f"Confidence:  {result['confidence']}")
         print(f"Chunks Used: {result['chunks_used']}")
-        print(f"Sources: {', '.join(result['sources'])}")
-        print()
-        
+        print(f"Model Used:  {result['model_used']}")
+        print(f"Sources:     {', '.join(result['sources'])}")
+
     except ValueError as e:
         print(f"✗ Configuration error: {e}")
         print("\nPlease ensure:")
-        print("1. .env file exists with ANTHROPIC_API_KEY")
+        print("1. .env file exists with OPENROUTER_API_KEY")
         print("2. PDF files have been ingested into ChromaDB")
-    
     except Exception as e:
         print(f"✗ Error: {e}")
         import traceback

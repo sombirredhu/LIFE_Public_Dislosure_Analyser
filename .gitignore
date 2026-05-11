@@ -48,10 +48,11 @@ Thumbs.db
 *.ipynb
 
 # Logs
+logs/
 *.log
 
-# Streamlit
-.streamlit/
+# Streamlit — config.toml is tracked; secrets.toml is not
+.streamlit/secrets.toml
 
 # Temporary files
 tmp/

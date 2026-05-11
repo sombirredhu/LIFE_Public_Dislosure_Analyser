@@ -103,32 +103,15 @@ def main():
         print("=" * 80)
         print("METADATA")
         print("=" * 80)
-        print(f"Confidence: {result['confidence']}")
+        print(f"Confidence:  {result['confidence']}")
         print(f"Chunks Used: {result['chunks_used']}")
-        print(f"Sources: {', '.join(result['sources']) if result['sources'] else 'None'}")
-        print()
-        
-        # Debug mode: show retrieved chunks
-        if args.debug and result.get('retrieved_chunks'):
-            print("=" * 80)
-            print("RETRIEVED CHUNKS (DEBUG)")
-            print("=" * 80)
-            for i, chunk in enumerate(result['retrieved_chunks'], 1):
-                print(f"\nChunk {i}:")
-                print(f"  Score: {chunk['score']}")
-                print(f"  Source: {chunk['metadata']['source_file']}")
-                print(f"  Company: {chunk['metadata']['company']}")
-                print(f"  Period: {chunk['metadata']['period_label']}")
-                print(f"  Page: {chunk['metadata']['page_number']}")
-                print(f"  Section: {chunk['metadata']['section']}")
-                print(f"  Type: {chunk['metadata']['content_type']}")
-                print(f"  Text: {chunk['text'][:200]}...")
-            print()
+        print(f"Model Used:  {result.get('model_used', 'N/A')}")
+        print(f"Sources:     {', '.join(result['sources']) if result['sources'] else 'None'}")
     
     except ValueError as e:
         print(f"✗ Configuration error: {e}")
         print("\nPlease ensure:")
-        print("1. .env file exists with ANTHROPIC_API_KEY")
+        print("1. .env file exists with OPENROUTER_API_KEY")
         print("2. PDF files have been ingested: python scripts/ingest_all.py")
         sys.exit(1)
     
