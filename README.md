@@ -171,6 +171,10 @@ All data stored locally in ChromaDB. No external database required.
 
 ### 📥 Pipeline 1: PDF Ingestion (How It Consumes PDFs)
 
+![PDF Ingestion Pipeline](docs/images/pdf_ingestion_workflow.png)
+
+<details>
+<summary>View as interactive diagram (click to expand)</summary>
 ```mermaid
 flowchart TD
     A["📄 User Uploads PDF"] --> B["🏷️ Filename Parser"]
@@ -190,8 +194,14 @@ flowchart TD
     style J fill:#FF9800,color:#fff
     style K fill:#4CAF50,color:#fff
 ```
+</details>
 
 ### 💬 Pipeline 2: Query Answering (How It Answers Users)
+
+![Query Answering Pipeline](docs/images/query_answering_workflow.png)
+
+<details>
+<summary>View as interactive diagram (click to expand)</summary>
 
 ```mermaid
 flowchart TD
@@ -220,6 +230,7 @@ flowchart TD
     style L fill:#2196F3,color:#fff
     style P fill:#4CAF50,color:#fff
 ```
+</details>
 
 ## Usage Examples
 
