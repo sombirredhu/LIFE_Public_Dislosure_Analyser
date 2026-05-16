@@ -6,10 +6,7 @@ import tempfile
 from pathlib import Path
 from typing import List
 
-from src.config import (
-    PDF_INPUT_DIR,
-    MAX_UPLOAD_SIZE_MB,
-)
+from src.config import MAX_UPLOAD_SIZE_MB
 from src.ingestor import ingest_pdf
 from src.embedder import (
     get_collection_stats, get_or_create_collection,
@@ -75,16 +72,23 @@ def render_tab_upload():
         
         # Upload button
         if st.button("🚀 Start Ingestion", type="primary"):
-            # Save uploaded files to temp dir for processing.
-            # Also try to persist to data/pdfs/ for local dev.
-            # On Streamlit Cloud the path may be read-only — degrade gracefully.
+            # Resolve PDF storage dir — cloud-safe with multiple fallbacks.
+            # Never reference the module-level PDF_INPUT_DIR directly inside
+            # the function to avoid UnboundLocalError on Streamlit Cloud.
+            import os as _os
+            _pdf_dir_str = (
+                _os.getenv("PDF_INPUT_DIR")          # set in Cloud secrets
+                or _os.getenv("TMPDIR")              # macOS/Linux temp
+                or "/tmp/pdfs"                       # universal fallback
+            )
             temp_paths = []
             try:
-                persistent_dir = Path(PDF_INPUT_DIR)
-                persistent_dir.mkdir(parents=True, exist_ok=True)
+                _persistent = Path(_pdf_dir_str)
+                _persistent.mkdir(parents=True, exist_ok=True)
             except (PermissionError, OSError) as _e:
-                persistent_dir = None
-                logger.warning("[UPLOAD] PDF_INPUT_DIR not writable (%s): %s — temp-only mode", PDF_INPUT_DIR, _e)
+                _persistent = Path(tempfile.gettempdir()) / "pdfs"
+                _persistent.mkdir(parents=True, exist_ok=True)
+                logger.warning("[UPLOAD] Fallback to %s: %s", _persistent, _e)
 
             for uploaded_file in uploaded_files:
                 temp_path = Path(tempfile.gettempdir()) / uploaded_file.name
@@ -93,14 +97,13 @@ def render_tab_upload():
                     f.write(file_bytes)
                 temp_paths.append(str(temp_path))
 
-                # Persist to data/pdfs/ only when writable (local dev)
-                if persistent_dir is not None:
-                    try:
-                        with open(persistent_dir / uploaded_file.name, "wb") as f:
-                            f.write(file_bytes)
-                        logger.info("[UPLOAD] Persisted %s → %s", uploaded_file.name, persistent_dir)
-                    except OSError as exc:
-                        logger.warning("[UPLOAD] Could not persist %s: %s", uploaded_file.name, exc)
+                # Best-effort persist (silent fail on read-only FS)
+                try:
+                    with open(_persistent / uploaded_file.name, "wb") as f:
+                        f.write(file_bytes)
+                    logger.info("[UPLOAD] Persisted %s → %s", uploaded_file.name, _persistent)
+                except OSError as exc:
+                    logger.warning("[UPLOAD] Could not persist %s: %s", uploaded_file.name, exc)
 
             results = []
             
