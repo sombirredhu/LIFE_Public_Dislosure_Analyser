@@ -9,7 +9,8 @@ from src.config import *
 from src.rag_pipeline import answer_question
 from src.embedder import (
     get_collection_stats, get_indexed_companies,
-    get_available_quarters, get_available_fys
+    get_available_quarters, get_available_fys,
+    invalidate_metadata_cache
 )
 from src.definitions_manager import add_page_definition, add_calculation, search_definitions
 
@@ -17,6 +18,7 @@ logger = logging.getLogger(__name__)
 
 def render_tab_ask_question():
     st.header("💬 Ask a Question")
+    invalidate_metadata_cache()
     stats = get_collection_stats()
     if stats['total_chunks'] == 0:
         st.warning("⚠️ No data indexed yet. Please upload PDF files in the 'Upload Reports' tab first.")

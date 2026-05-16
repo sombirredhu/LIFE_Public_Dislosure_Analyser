@@ -1,12 +1,12 @@
 import streamlit as st
 import pandas as pd
 
-from src.embedder import get_collection_stats, get_or_create_collection
+from src.embedder import get_collection_stats, get_or_create_collection, invalidate_metadata_cache
 
 def render_tab_index_status():
     """Tab 3: Index Status."""
     st.header("📊 Index Status")
-    
+    invalidate_metadata_cache()
     stats = get_collection_stats()
     
     # Summary stats
