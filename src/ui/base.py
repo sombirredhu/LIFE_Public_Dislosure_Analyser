@@ -16,44 +16,36 @@ from src.logging_config import setup_logging
 
 logger = logging.getLogger(__name__)
 
-def _get_cookie_manager():
-    if "cookie_manager" not in st.session_state:
-        try:
-            import extra_streamlit_components as stx
-            st.session_state["cookie_manager"] = stx.CookieManager(key="pd_cookie_mgr")
-        except Exception:
-            st.session_state["cookie_manager"] = None
-    return st.session_state["cookie_manager"]
-
 def _check_password() -> bool:
-    try: expected = st.secrets["APP_PASSWORD"]
-    except (KeyError, FileNotFoundError): return True
-    if st.session_state.get("authenticated"): return True
-    cm = _get_cookie_manager()
-    if cm:
-        token = cm.get("pd_auth_token")
-        if token == "authenticated":
-            st.session_state["authenticated"] = True
-            st.rerun()
-        if token is None:
-            # First run or loading; give it a moment without stopping the whole app yet
-            time.sleep(0.2)
-            token = cm.get("pd_auth_token")
-            if token == "authenticated":
-                st.session_state["authenticated"] = True
-                st.rerun()
-    # If we are here, we definitely need a password
+    """Check password authentication using session state only."""
+    try: 
+        expected = st.secrets["APP_PASSWORD"]
+    except (KeyError, FileNotFoundError): 
+        # No password configured, allow access
+        return True
+    
+    # Check if already authenticated in this session
+    if st.session_state.get("authenticated", False): 
+        return True
+    
+    # Show login form
     st.markdown(f"### 🔒 Enter password to access **{APP_TITLE}**")
-    pwd = st.text_input("Password", type="password", key="auth_password_input")
-    if st.button("Login", type="primary"):
-        if pwd == expected:
-            st.session_state["authenticated"] = True
-            if cm:
-                from datetime import timedelta
-                try: cm.set("pd_auth_token", "authenticated", expires_at=datetime.now() + timedelta(days=30))
-                except Exception: pass
-            st.rerun()
-        else: st.error("❌ Incorrect password.")
+    
+    # Use a form to handle enter key properly
+    with st.form("login_form"):
+        pwd = st.text_input("Password", type="password", key="auth_password_input")
+        submitted = st.form_submit_button("Login", type="primary", use_container_width=True)
+        
+        if submitted:
+            if pwd == expected:
+                st.session_state["authenticated"] = True
+                st.success("✅ Login successful!")
+                time.sleep(0.3)
+                st.rerun()
+            else: 
+                st.error("❌ Incorrect password.")
+    
+    st.info("ℹ️ **Note:** You'll need to login again after refreshing the browser.")
     st.stop()
     return False
 

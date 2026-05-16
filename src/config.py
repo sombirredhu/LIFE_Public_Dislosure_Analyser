@@ -45,6 +45,9 @@ APP_TITLE = os.getenv("APP_TITLE", "Insurance PD Report Analyzer")
 APP_PORT = int(os.getenv("APP_PORT", "8501"))
 MAX_UPLOAD_SIZE_MB = int(os.getenv("MAX_UPLOAD_SIZE_MB", "50"))
 
+# RAG Optimization
+ENABLE_MULTI_QUERY = os.getenv("ENABLE_MULTI_QUERY", "True").lower() == "true"
+
 def validate_config():
     if not OPENROUTER_API_KEY: raise ValueError("OPENROUTER_API_KEY is not set")
     os.makedirs(PDF_INPUT_DIR, exist_ok=True)

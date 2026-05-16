@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional
 import json
 from src.config import (
     LLM_MAX_INPUT_CHARS, LLM_MODEL_FREE, LLM_MODEL_PAID,
-    TOP_K_COMPLEX, TOP_K_SIMPLE,
+    TOP_K_COMPLEX, TOP_K_SIMPLE, ENABLE_MULTI_QUERY,
 )
 from src.embedder import get_indexed_companies, get_available_quarters, get_available_fys
 from src.llm_client import ask_llm
@@ -57,16 +57,25 @@ def _extract_auto_filters(q: str) -> Dict[str, Any]:
     return f
 
 def _generate_queries(q: str, fm: Optional[str] = None) -> List[str]:
+    """Generate alternative queries for better retrieval. Skip if it takes too long."""
     prompt = f"Generate 3 diverse search queries for finding data in IRDAI financial reports for: '{q}'. Return ONLY a JSON array of strings, nothing else."
     try:
+        logger.debug("[RAG] Generating multi-query variations...")
+        start_time = time.time()
+        
+        # Use a shorter timeout for query generation (not critical)
         res = ask_llm("Return only a JSON array.", prompt, use_paid=False, free_model=fm)
+        
+        duration = time.time() - start_time
+        logger.debug(f"[RAG] Multi-query generation took {duration:.2f}s")
+        
         match = re.search(r'\[.*\]', res, re.DOTALL)
         if not match: return [q]
         qs = json.loads(match.group())
         if not isinstance(qs, list) or not all(isinstance(x, str) for x in qs): return [q]
         return list(set([q] + [x.strip() for x in qs if x.strip()]))[:4]
-    except Exception:
-        logger.warning("[RAG] Multi-query generation failed, using original query")
+    except Exception as e:
+        logger.warning(f"[RAG] Multi-query generation failed ({e}), using original query")
         return [q]
 
 _COMPLEX_KEYWORDS = re.compile(r'\b(compare|vs\.?|versus|all\s+companies|rank|ranking|which\s+company|across|between)\b', re.I)
@@ -81,10 +90,17 @@ def classify_complexity(q: str) -> str:
     return "simple"
 
 def answer_question(question: str, filters: Optional[Dict[str, Any]] = None, top_k: int = None, free_model: Optional[str] = None, paid_model: Optional[str] = None) -> Dict[str, Any]:
+    import time
+    overall_start = time.time()
+    
     question = re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]', '', question.strip())[:2000]
     cache_key = _get_cache_key(question, filters, top_k, free_model, paid_model)
-    if cache_key in _response_cache: return _response_cache[cache_key]
+    if cache_key in _response_cache: 
+        logger.info("[RAG] Cache hit, returning cached response")
+        return _response_cache[cache_key]
 
+    logger.info(f"[RAG] Processing question: '{question[:100]}...'")
+    
     refined = _refine_user_request(question, free_model=free_model)
     search_q, format_inst = refined["search_query"], refined["format_instruction"]
 
@@ -93,26 +109,60 @@ def answer_question(question: str, filters: Optional[Dict[str, Any]] = None, top
     use_paid = complexity == "complex"
     model_name = (paid_model or LLM_MODEL_PAID) if use_paid else (free_model or LLM_MODEL_FREE)
     effective_top_k = top_k or (TOP_K_COMPLEX if use_paid else TOP_K_SIMPLE)
+    
+    logger.info(f"[RAG] Complexity: {complexity}, Model: {model_name}, Top-K: {effective_top_k}")
 
-    queries = _generate_queries(search_q, fm=free_model) if use_paid else [search_q]
+    # Multi-query generation (only for complex queries, and only if enabled)
+    query_gen_start = time.time()
+    if use_paid and ENABLE_MULTI_QUERY:
+        queries = _generate_queries(search_q, fm=free_model)
+    else:
+        queries = [search_q]
+        if use_paid and not ENABLE_MULTI_QUERY:
+            logger.info("[RAG] Multi-query generation disabled (ENABLE_MULTI_QUERY=False)")
+    query_gen_time = time.time() - query_gen_start
+    logger.info(f"[RAG] Query generation took {query_gen_time:.2f}s, generated {len(queries)} queries")
+    
+    # Retrieval
+    retrieval_start = time.time()
     from src.retriever import retrieve_multi
     chunks = retrieve_multi(queries, filters=merged_filters, top_k=effective_top_k)
+    retrieval_time = time.time() - retrieval_start
+    logger.info(f"[RAG] Retrieval took {retrieval_time:.2f}s, found {len(chunks)} chunks")
 
+    # Company top-up (only for complex queries)
     if use_paid and (indexed := get_indexed_companies()):
+        topup_start = time.time()
         chunks = top_up_missing_companies(search_q, chunks, indexed, merged_filters)
+        topup_time = time.time() - topup_start
+        logger.info(f"[RAG] Company top-up took {topup_time:.2f}s, total chunks: {len(chunks)}")
 
-    if not chunks: return {"answer": "No relevant info found.", "sources": [], "chunks_used": 0, "confidence": "none", "model_used": LLM_MODEL_FREE}
+    if not chunks: 
+        logger.warning("[RAG] No chunks found")
+        return {"answer": "No relevant info found.", "sources": [], "chunks_used": 0, "confidence": "none", "model_used": LLM_MODEL_FREE}
 
+    # Context assembly
     total_chars = sum(len(c["text"]) for c in chunks)
     if total_chars > LLM_MAX_INPUT_CHARS:
         avg = max(total_chars // len(chunks), 1)
         chunks = chunks[:LLM_MAX_INPUT_CHARS // avg]
+        logger.info(f"[RAG] Truncated chunks from {len(chunks)} to fit {LLM_MAX_INPUT_CHARS} char limit")
 
     ctx = "\n\n---\n\n".join([f"Source: {c['metadata']['source_file']} | Company: {c['metadata']['company']} | Period: {c['metadata']['period_label']} | Section: {c['metadata']['section']}\n\n{c['text']}" for c in chunks])
     fmt = f"\nFormat Instruction: {format_inst}" if format_inst else ""
+    
+    # LLM call
+    llm_start = time.time()
+    logger.info(f"[RAG] Calling LLM with {len(ctx)} chars of context...")
     answer = ask_llm(SYSTEM_PROMPT, f"Question: {question}{fmt}\n\nExcerpts:\n{ctx}", use_paid=use_paid, free_model=free_model, paid_model=paid_model)
+    llm_time = time.time() - llm_start
+    logger.info(f"[RAG] LLM response took {llm_time:.2f}s")
 
     res = {"answer": answer, "sources": sorted(set(c["metadata"]["source_file"] for c in chunks)), "chunks_used": len(chunks), "confidence": get_confidence_level(chunks), "model_used": model_name}
     _response_cache[cache_key] = res
     if len(_response_cache) > _MAX_CACHE_SIZE: _response_cache.pop(next(iter(_response_cache)))
+    
+    overall_time = time.time() - overall_start
+    logger.info(f"[RAG] Total time: {overall_time:.2f}s (query_gen: {query_gen_time:.2f}s, retrieval: {retrieval_time:.2f}s, llm: {llm_time:.2f}s)")
+    
     return res

@@ -8,7 +8,11 @@ from src.config import PROCESSED_OUTPUT_DIR
 
 logger = logging.getLogger(__name__)
 
-_LPAGE_LABEL_RE = re.compile(r'\s*(L-\d+[A-Z]?(?:-[A-Z]+(?:-[A-Z]+)?)?)\s*[:\-]?\s*(.*)', re.IGNORECASE)
+# Match L-page patterns:
+# Valid: L-4, L-14, L-14A, L-1-A-RA, L-2-A-PL, L-3-A-BS
+# Also handles: L-4-PREMIUM -> extracts L-4, description="PREMIUM Schedule"
+# Pattern: L-{number}[optional single letter][optional -X-XX suffix]
+_LPAGE_LABEL_RE = re.compile(r'\b(L-\d+[A-Z]?(?:-[A-Z]-[A-Z]{2})?)\s*(?:-\s*)?(.*)', re.IGNORECASE)
 _PAGE_LPAGE_RE = re.compile(r'(?:FORM|Form)?\s*(L-\d+[A-Z]?(?:-[A-Z]+(?:-[A-Z]+)?)?)', re.IGNORECASE)
 _COMPANY_NAME_RE = re.compile(r'\b([A-Z][A-Za-z\s&]{10,}(?:Limited|Ltd\.?|Insurance Company Limited|Insurance Company|Company Limited))', re.MULTILINE)
 
@@ -104,32 +108,70 @@ def parse_pdf(pdf_path: str) -> Dict[str, Any]:
         for i, p in enumerate(pdf.pages, 1):
             if i <= 5:
                 txt = p.extract_text() or ""
-                # A true index page will list multiple distinct L-pages. 
-                # Data pages will only reference their own L-page (e.g., L-4).
-                unique_lpages = {m[0].upper() for m in _LPAGE_LABEL_RE.findall(txt)}
-                is_index = len(unique_lpages) >= 3
+                
+                # Detect index page by looking for keywords and structure
+                index_keywords = ['list of', 'index', 'contents', 'form no', 'sl. no', 'description']
+                has_index_keyword = any(kw in txt.lower()[:500] for kw in index_keywords)
+                
+                # Count unique L-pages found
+                unique_lpages = set()
+                for m in _LPAGE_LABEL_RE.findall(txt):
+                    unique_lpages.add(m[0].upper())
+                
+                # True index page has:
+                # 1. Index-related keywords in first 500 chars
+                # 2. Multiple L-pages (at least 5)
+                # 3. NOT a data page (data pages have "Particulars", "Schedule", "Amount")
+                data_keywords = ['particulars', 'schedule ref', 'amounts in lacs']
+                has_data_keyword = any(kw in txt.lower()[:500] for kw in data_keywords)
+                
+                is_index = has_index_keyword and len(unique_lpages) >= 5 and not has_data_keyword
+                
+                logger.debug(f"Page {i}: index_kw={has_index_keyword}, lpages={len(unique_lpages)}, data_kw={has_data_keyword}, is_index={is_index}")
                 
                 if is_index:
-                    for li, line in enumerate(txt.splitlines()):
-                        m = _LPAGE_LABEL_RE.search(line.strip())
+                    logger.info(f"Detected index page at page {i}")
+                    
+                    # Extract from text lines
+                    lines = txt.splitlines()
+                    for li, line in enumerate(lines):
+                        line_stripped = line.strip()
+                        m = _LPAGE_LABEL_RE.search(line_stripped)
                         if m:
                             lbl, sec = m.group(1).upper(), m.group(2).strip()
-                            if not sec and li+1 < len(txt.splitlines()):
-                                nxt = txt.splitlines()[li+1].strip()
-                                if nxt and not _LPAGE_LABEL_RE.search(nxt): sec = nxt
-                            if sec: imap[lbl] = sec
+                            
+                            # If no description on same line, check next line
+                            if not sec and li+1 < len(lines):
+                                nxt = lines[li+1].strip()
+                                if nxt and not _LPAGE_LABEL_RE.search(nxt):
+                                    sec = nxt
+                            
+                            if sec and len(sec) > 3:  # Valid description
+                                imap[lbl] = sec
+                                logger.debug(f"  Extracted from text: {lbl} -> {sec}")
+                    
+                    # Extract from tables
                     for t in (p.extract_tables() or [])[:3]:
                         for r in t:
                             for ci, cell in enumerate(r):
                                 if not cell: continue
-                                tm = _LPAGE_LABEL_RE.search(str(cell).strip())
+                                cell_str = str(cell).strip()
+                                tm = _LPAGE_LABEL_RE.search(cell_str)
                                 if tm:
                                     lbl, sec = tm.group(1).upper(), tm.group(2).strip()
+                                    
+                                    # If no description in same cell, check next cells
                                     if not sec:
                                         for nc in r[ci+1:]:
-                                            if nc and str(nc).strip(): sec = str(nc).strip(); break
-                                    if sec: imap[lbl] = sec
+                                            if nc and str(nc).strip():
+                                                sec = str(nc).strip()
+                                                break
+                                    
+                                    if sec and len(sec) > 3:  # Valid description
+                                        imap[lbl] = sec
+                                        logger.debug(f"  Extracted from table: {lbl} -> {sec}")
                                     break
+            
             p_data.append(_process_page(i, p, {}, imap))
     if imap:
         op = Path(PROCESSED_OUTPUT_DIR) / f"{meta['company_code']}_page_definitions.json"

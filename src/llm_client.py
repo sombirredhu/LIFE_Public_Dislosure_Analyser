@@ -32,14 +32,36 @@ def ask_llm(system_prompt: str, user_message: str, use_paid: bool = False, max_r
     max_tokens = LLM_MAX_TOKENS_COMPLEX if use_paid else LLM_MAX_TOKENS_SIMPLE
     client = OpenAI(base_url=OPENROUTER_BASE_URL, api_key=OPENROUTER_API_KEY)
     last_err = None
+    
     for attempt in range(max_retries):
         try:
-            res = client.chat.completions.create(model=model, max_tokens=max_tokens, temperature=LLM_TEMPERATURE, messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_message}], timeout=30)
+            logger.debug(f"[LLM] Calling {model} (attempt {attempt+1}/{max_retries}, max_tokens={max_tokens})")
+            start_time = time.time()
+            
+            res = client.chat.completions.create(
+                model=model, 
+                max_tokens=max_tokens, 
+                temperature=LLM_TEMPERATURE, 
+                messages=[
+                    {"role": "system", "content": system_prompt}, 
+                    {"role": "user", "content": user_message}
+                ], 
+                timeout=60  # Increased from 30 to 60 seconds
+            )
+            
+            duration = time.time() - start_time
+            logger.info(f"[LLM] Success: {model} responded in {duration:.2f}s")
             return res.choices[0].message.content
+            
         except (RateLimitError, APITimeoutError) as e:
             last_err = e
-            time.sleep(2 ** attempt)
+            wait_time = 2 ** attempt
+            logger.warning(f"[LLM] {type(e).__name__} on attempt {attempt+1}, waiting {wait_time}s before retry")
+            time.sleep(wait_time)
+            
         except APIError as e:
             logger.exception("LLM API error | model=%s", model)
             raise
+    
+    logger.error(f"[LLM] Failed after {max_retries} attempts")
     raise last_err
