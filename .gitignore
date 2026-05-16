@@ -38,6 +38,7 @@ vectordb/
 *.swp
 *.swo
 *~
+.kiro/
 
 # OS
 .DS_Store
@@ -58,3 +59,24 @@ logs/
 tmp/
 temp/
 *.tmp
+
+# ============================================
+# UNNECESSARY FILES FOR STREAMLIT APP
+# ============================================
+
+# Documentation (not needed for app to run)
+docs/
+Project_Files/
+
+# Testing files (not needed for app to run)
+tests/
+.pytest_cache/
+
+# Utility scripts (optional)
+scripts/deploy_page_wise_chunking.ps1
+scripts/test_*.py
+scripts/validate_metadata.py
+scripts/verify_setup.py
+
+# Analysis files
+UNNECESSARY_FILES_ANALYSIS.txt

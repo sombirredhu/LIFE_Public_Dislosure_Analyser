@@ -48,33 +48,118 @@ def render_sidebar():
 
         if models:
             free_ids  = ["openrouter/free"] + [m["id"] for m in models if m["is_free"] and m["id"] != "openrouter/free"]
-            paid_ids  = [m["id"] for m in models if not m["is_free"]]
+            
+            # ── Filter paid models: ONLY show models with output cost < $3/MTok ──
+            # This filters out expensive models like:
+            # - Claude Opus ($25/MTok output)
+            # - GPT-5.x ($15-75/MTok output)
+            # - Claude Sonnet 4.6 ($15/MTok output)
+            # Keeps affordable models like:
+            # - DeepSeek ($0.28-2.19/MTok output)
+            # - Gemini Flash ($0.40-1.50/MTok output)
+            # - Claude Haiku ($5/MTok output - but excluded by $3 limit)
+            
+            def is_affordable_model(model):
+                """Only show models with output cost under $3 per million tokens."""
+                # Check output/completion price
+                try:
+                    completion_price = model.get("completion_price", "999")
+                    # Handle both string and numeric prices
+                    if isinstance(completion_price, str):
+                        # Remove any currency symbols or extra text
+                        completion_price = completion_price.replace("$", "").strip()
+                        if completion_price == "?" or not completion_price:
+                            return False
+                    completion_price = float(completion_price)
+                    
+                    # Only show if output cost is under $3/MTok
+                    if completion_price >= 3.0:
+                        return False
+                    
+                    return True
+                except (ValueError, TypeError):
+                    # If we can't parse the price, exclude it to be safe
+                    return False
+            
+            def get_reasoning_score(model):
+                """
+                Assign reasoning score to models for auto-selection.
+                Higher score = better reasoning capability.
+                """
+                model_id_lower = model["id"].lower()
+                
+                # Tier 1: Dedicated reasoning models (score 90-100)
+                if "reasoner" in model_id_lower or "reasoning" in model_id_lower:
+                    return 95
+                if "r1" in model_id_lower or "o1" in model_id_lower or "o3" in model_id_lower:
+                    return 90
+                
+                # Tier 2: Advanced models with good reasoning (score 70-89)
+                if "deepseek" in model_id_lower and "v3" in model_id_lower:
+                    return 85
+                if "gemini" in model_id_lower and ("pro" in model_id_lower or "ultra" in model_id_lower):
+                    return 80
+                if "qwen" in model_id_lower and ("turbo" in model_id_lower or "plus" in model_id_lower):
+                    return 75
+                
+                # Tier 3: Standard models (score 50-69)
+                if "deepseek" in model_id_lower:
+                    return 65
+                if "gemini" in model_id_lower and "flash" in model_id_lower:
+                    return 60
+                if "llama" in model_id_lower and "3" in model_id_lower:
+                    return 55
+                
+                # Tier 4: Basic models (score <50)
+                return 40
+            
+            # Filter affordable models and sort by reasoning score (best first)
+            affordable_models = [m for m in models if not m["is_free"] and is_affordable_model(m)]
+            affordable_models_sorted = sorted(affordable_models, key=get_reasoning_score, reverse=True)
+            paid_ids = [m["id"] for m in affordable_models_sorted]
 
             # ── Free model ────────────────────────────────────────────────
             st.subheader("🆓 Free Model")
-            free_default = st.session_state.get("free_model", LLM_MODEL_FREE)
+            # Always default to openrouter/free (best free model auto-selection)
+            free_default = "openrouter/free"
             free_idx = free_ids.index(free_default) if free_default in free_ids else 0
             selected_free = st.selectbox(
                 "Select free model",
                 options=free_ids,
                 index=free_idx,
-                help="Used for simple / single-company queries",
+                help="openrouter/free automatically selects the best available free model",
                 key="free_model_select",
             )
             st.session_state["free_model"] = selected_free
 
-            # ── Paid model ────────────────────────────────────────────────
-            st.subheader("💰 Paid Model")
-            paid_default = st.session_state.get("paid_model", LLM_MODEL_PAID)
-            paid_idx = paid_ids.index(paid_default) if paid_default in paid_ids else 0
+            # ── Paid model (AFFORDABLE ONLY) ──────────────────────────────
+            st.subheader("💰 Paid Model (Affordable)")
+            st.caption("🔒 Only models with output cost <$3/MTok shown • Sorted by reasoning quality")
+            
+            # Auto-select best reasoning model (first in sorted list) if no preference set
+            if paid_ids:
+                # If user hasn't selected or default not in list, use best reasoning model (first)
+                paid_default = st.session_state.get("paid_model", LLM_MODEL_PAID)
+                if paid_default not in paid_ids:
+                    paid_default = paid_ids[0]  # Best reasoning model
+                paid_idx = paid_ids.index(paid_default)
+            else:
+                paid_idx = 0
+                
             selected_paid = st.selectbox(
                 "Select paid model",
                 options=paid_ids,
                 index=paid_idx,
-                help="Used for complex / multi-company queries",
+                help="Models sorted by reasoning quality (best first) • All under $3/MTok output",
                 key="paid_model_select",
             )
             st.session_state["paid_model"] = selected_paid
+            
+            # Show info about selected model
+            if paid_ids:
+                selected_model = next((m for m in affordable_models_sorted if m["id"] == selected_paid), None)
+                if selected_model:
+                    st.caption(f"💡 {selected_model['name']} • Output: ${selected_model['completion_price']}/MTok")
 
             if st.button("🔄 Refresh Model List", use_container_width=True):
                 st.cache_data.clear()
