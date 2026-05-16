@@ -25,10 +25,16 @@ logger = logging.getLogger(__name__)
 _response_cache: Dict[str, Dict[str, Any]] = {}
 _MAX_CACHE_SIZE = 100
 
-def _get_cache_key(question: str, filters: Optional[Dict[str, Any]], top_k: Optional[int]) -> str:
-    """Generate a deterministic cache key."""
+def _get_cache_key(
+    question: str,
+    filters: Optional[Dict[str, Any]],
+    top_k: Optional[int],
+    free_model: Optional[str] = None,
+    paid_model: Optional[str] = None,
+) -> str:
+    """Generate a deterministic cache key that includes model selection."""
     filters_str = json.dumps(filters, sort_keys=True) if filters else "None"
-    return f"{question}::{filters_str}::{top_k}"
+    return f"{question}::{filters_str}::{top_k}::{free_model}::{paid_model}"
 
 SYSTEM_PROMPT = """You are a financial analyst specializing in Indian life insurance industry data.
 You have access to IRDAI Public Disclosure reports from multiple life insurance companies across multiple quarters.
@@ -141,9 +147,9 @@ def answer_question(
     import re as _re
     question = _re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]', '', question)
 
-    cache_key = _get_cache_key(question, filters, top_k)
+    cache_key = _get_cache_key(question, filters, top_k, free_model, paid_model)
     if cache_key in _response_cache:
-        logger.info("[RAG] Returning cached response for query")
+        logger.info("[RAG] Returning cached response for query (model=%s/%s)", free_model, paid_model)
         return _response_cache[cache_key]
 
     complexity = classify_complexity(question)

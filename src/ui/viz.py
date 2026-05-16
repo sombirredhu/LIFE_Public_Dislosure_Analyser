@@ -82,8 +82,9 @@ def render_tab_vector_visualization():
     if st.button(f"🎨 Generate {dim_label} Visualization", type="primary", use_container_width=True):
         with st.spinner(f"Creating {dim_label} visualization using {method}... This may take a moment."):
             try:
+                method_key = method.lower().replace("-", "")  # 't-SNE' -> 'tsne', 'PCA' -> 'pca'
                 fig = visualize_vectors(
-                    method=method.lower(),
+                    method=method_key,
                     max_samples=int(max_samples),
                     title=f"Vector Database {dim_label} Visualization ({method})",
                     n_dims=n_dims,
