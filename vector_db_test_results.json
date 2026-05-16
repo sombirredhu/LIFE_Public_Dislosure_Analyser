@@ -1,0 +1,212 @@
+{
+  "premium": {
+    "companies_found": 5,
+    "companies": [
+      "TataAIA",
+      "IciciPrruLife",
+      "Bhartiaxa",
+      "ShriramInsurance",
+      "Edelweiss"
+    ],
+    "missing": [
+      "Aditya Birla"
+    ]
+  },
+  "revenue account": {
+    "companies_found": 4,
+    "companies": [
+      "Aditya Birla",
+      "ShriramInsurance",
+      "IciciPrruLife",
+      "Edelweiss"
+    ],
+    "missing": [
+      "Bhartiaxa",
+      "TataAIA"
+    ]
+  },
+  "balance sheet": {
+    "companies_found": 6,
+    "companies": [
+      "TataAIA",
+      "IciciPrruLife",
+      "Bhartiaxa",
+      "Aditya Birla",
+      "ShriramInsurance",
+      "Edelweiss"
+    ],
+    "missing": []
+  },
+  "receipts and payments": {
+    "companies_found": 3,
+    "companies": [
+      "Bhartiaxa",
+      "ShriramInsurance",
+      "IciciPrruLife"
+    ],
+    "missing": [
+      "Aditya Birla",
+      "TataAIA",
+      "Edelweiss"
+    ]
+  },
+  "commission": {
+    "companies_found": 0,
+    "companies": [],
+    "missing": [
+      "Aditya Birla",
+      "Bhartiaxa",
+      "ShriramInsurance",
+      "TataAIA",
+      "IciciPrruLife",
+      "Edelweiss"
+    ]
+  },
+  "operating expenses": {
+    "companies_found": 0,
+    "companies": [],
+    "missing": [
+      "Aditya Birla",
+      "Bhartiaxa",
+      "ShriramInsurance",
+      "TataAIA",
+      "IciciPrruLife",
+      "Edelweiss"
+    ]
+  },
+  "benefits paid": {
+    "companies_found": 5,
+    "companies": [
+      "TataAIA",
+      "IciciPrruLife",
+      "Aditya Birla",
+      "ShriramInsurance",
+      "Edelweiss"
+    ],
+    "missing": [
+      "Bhartiaxa"
+    ]
+  },
+  "share capital": {
+    "companies_found": 5,
+    "companies": [
+      "TataAIA",
+      "IciciPrruLife",
+      "Bhartiaxa",
+      "ShriramInsurance",
+      "Edelweiss"
+    ],
+    "missing": [
+      "Aditya Birla"
+    ]
+  },
+  "shareholding pattern": {
+    "companies_found": 6,
+    "companies": [
+      "TataAIA",
+      "IciciPrruLife",
+      "Bhartiaxa",
+      "Aditya Birla",
+      "ShriramInsurance",
+      "Edelweiss"
+    ],
+    "missing": []
+  },
+  "reserves and surplus": {
+    "companies_found": 0,
+    "companies": [],
+    "missing": [
+      "Aditya Birla",
+      "Bhartiaxa",
+      "ShriramInsurance",
+      "TataAIA",
+      "IciciPrruLife",
+      "Edelweiss"
+    ]
+  },
+  "borrowings": {
+    "companies_found": 0,
+    "companies": [],
+    "missing": [
+      "Aditya Birla",
+      "Bhartiaxa",
+      "ShriramInsurance",
+      "TataAIA",
+      "IciciPrruLife",
+      "Edelweiss"
+    ]
+  },
+  "investment shareholders": {
+    "companies_found": 6,
+    "companies": [
+      "TataAIA",
+      "IciciPrruLife",
+      "Aditya Birla",
+      "Bhartiaxa",
+      "ShriramInsurance",
+      "Edelweiss"
+    ],
+    "missing": []
+  },
+  "investment policyholders": {
+    "companies_found": 6,
+    "companies": [
+      "TataAIA",
+      "IciciPrruLife",
+      "Aditya Birla",
+      "Bhartiaxa",
+      "ShriramInsurance",
+      "Edelweiss"
+    ],
+    "missing": []
+  },
+  "linked liabilities": {
+    "companies_found": 6,
+    "companies": [
+      "TataAIA",
+      "IciciPrruLife",
+      "Aditya Birla",
+      "Bhartiaxa",
+      "ShriramInsurance",
+      "Edelweiss"
+    ],
+    "missing": []
+  },
+  "loans": {
+    "companies_found": 0,
+    "companies": [],
+    "missing": [
+      "Aditya Birla",
+      "Bhartiaxa",
+      "ShriramInsurance",
+      "TataAIA",
+      "IciciPrruLife",
+      "Edelweiss"
+    ]
+  },
+  "fixed assets": {
+    "companies_found": 1,
+    "companies": [
+      "ShriramInsurance"
+    ],
+    "missing": [
+      "TataAIA",
+      "IciciPrruLife",
+      "Aditya Birla",
+      "Bhartiaxa",
+      "Edelweiss"
+    ]
+  },
+  "cash and bank balance": {
+    "companies_found": 0,
+    "companies": [],
+    "missing": [
+      "Aditya Birla",
+      "Bhartiaxa",
+      "ShriramInsurance",
+      "TataAIA",
+      "IciciPrruLife",
+      "Edelweiss"
+    ]
+  }
+}
