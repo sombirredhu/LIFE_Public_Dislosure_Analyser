@@ -81,7 +81,7 @@ def render_tab_upload():
                 or _os.getenv("TMPDIR")              # macOS/Linux temp
                 or "/tmp/pdfs"                       # universal fallback
             )
-            temp_paths = []
+            temp_paths = []   # populated one-by-one below
             try:
                 _persistent = Path(_pdf_dir_str)
                 _persistent.mkdir(parents=True, exist_ok=True)
@@ -90,20 +90,18 @@ def render_tab_upload():
                 _persistent.mkdir(parents=True, exist_ok=True)
                 logger.warning("[UPLOAD] Fallback to %s: %s", _persistent, _e)
 
+            # Write ALL files to disk FIRST (minimal memory hold time per file)
             for uploaded_file in uploaded_files:
                 temp_path = Path(tempfile.gettempdir()) / uploaded_file.name
-                file_bytes = uploaded_file.getbuffer()
                 with open(temp_path, "wb") as f:
-                    f.write(file_bytes)
+                    f.write(uploaded_file.getbuffer())
                 temp_paths.append(str(temp_path))
-
-                # Best-effort persist (silent fail on read-only FS)
+                # best-effort persist
                 try:
                     with open(_persistent / uploaded_file.name, "wb") as f:
-                        f.write(file_bytes)
-                    logger.info("[UPLOAD] Persisted %s → %s", uploaded_file.name, _persistent)
-                except OSError as exc:
-                    logger.warning("[UPLOAD] Could not persist %s: %s", uploaded_file.name, exc)
+                        f.write(uploaded_file.getbuffer())
+                except OSError:
+                    pass
 
             results = []
             
@@ -209,39 +207,54 @@ def render_tab_upload():
                 # Clear completed jobs from worker
                 worker.clear_completed_jobs()
             
-            # SEQUENTIAL MODE: Process files one by one
+            # SEQUENTIAL MODE: Process files one by one with memory cleanup
             else:
-                st.info(f"📝 Processing {len(temp_paths)} files sequentially...")
-                
+                import gc
+                st.info(f"📝 Processing {len(temp_paths)} files sequentially (cloud-safe mode)…")
+                st.caption(
+                    "⚠️ On Streamlit Community Cloud, processing large PDFs may take 30–60s each. "
+                    "If the app restarts mid-way, re-upload remaining files — already-indexed files will be skipped."
+                )
+
                 progress_bar = st.progress(0)
                 status_placeholder = st.empty()
-                
+
                 for idx, temp_path in enumerate(temp_paths, 1):
                     filename = Path(temp_path).name
-                    
-                    # Update status
-                    status_placeholder.markdown(f"### 📊 Processing Status\n\n**🔄 Processing file {idx}/{len(temp_paths)}:** {filename}")
-                    
-                    # Process file
-                    result = ingest_pdf(temp_path, force_reindex=False)
+                    status_placeholder.markdown(
+                        f"### 📊 Processing\n\n"
+                        f"**🔄 File {idx}/{len(temp_paths)}:** `{filename}`  "
+                        f"— please wait, this may take up to 60s…"
+                    )
+
+                    try:
+                        result = ingest_pdf(temp_path, force_reindex=False)
+                    except Exception as _exc:
+                        result = {"status": "error", "message": str(_exc),
+                                  "chunks_created": 0, "duration_seconds": 0}
+                        logger.exception("[UPLOAD] ingest_pdf failed for %s", filename)
+
                     results.append(result)
-                    
-                    # Update progress
+
+                    # ── Release memory after each file (critical on Cloud) ─
+                    gc.collect()
+
                     progress_bar.progress(idx / len(temp_paths))
-                    
-                    # Show immediate result
+
                     if result['status'] == 'success':
-                        status_placeholder.success(f"✓ {filename}: {result['chunks_created']} chunks in {result['duration_seconds']}s")
+                        status_placeholder.success(
+                            f"✓ {filename}: {result['chunks_created']} chunks · {result['duration_seconds']}s"
+                        )
                     elif result['status'] == 'skipped':
-                        status_placeholder.info(f"⊘ {filename}: Already indexed")
+                        status_placeholder.info(f"⊘ {filename}: Already indexed — skipped")
                     else:
-                        status_placeholder.error(f"✗ {filename}: {result['message']}")
-                    
-                    time.sleep(0.5)  # Brief pause to show result
-                
+                        status_placeholder.error(f"✗ {filename}: {result.get('message', 'Error')}")
+
+                    time.sleep(0.5)   # let UI refresh
+
                 status_placeholder.empty()
                 progress_bar.empty()
-            
+
             # Clean up temp files
             for temp_path in temp_paths:
                 Path(temp_path).unlink(missing_ok=True)
