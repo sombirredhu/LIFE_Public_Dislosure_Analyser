@@ -9,7 +9,6 @@ import numpy as np
 from typing import Dict, List, Any, Optional, Tuple
 import plotly.graph_objects as go
 from sklearn.decomposition import PCA
-from sklearn.manifold import TSNE
 
 from src.embedder import get_or_create_collection
 
@@ -35,13 +34,12 @@ COMPANY_COLORS = [
 ]
 
 
-def reduce_dimensions(embeddings: np.ndarray, method: str = 'pca', n_components: int = 3) -> np.ndarray:
+def reduce_dimensions(embeddings: np.ndarray, n_components: int = 3) -> np.ndarray:
     """
-    Reduce high-dimensional embeddings to 2D or 3D for visualization.
+    Reduce high-dimensional embeddings to 2D or 3D using PCA.
 
     Args:
-        embeddings: Array of shape (n_samples, n_features)
-        method:     'pca' or 'tsne'
+        embeddings:   Array of shape (n_samples, n_features)
         n_components: 2 for 2D plot, 3 for 3D plot
 
     Returns:
@@ -49,47 +47,18 @@ def reduce_dimensions(embeddings: np.ndarray, method: str = 'pca', n_components:
     """
     n_samples = embeddings.shape[0]
     logger.info(
-        "Reducing %d embeddings from %dD to %dD using %s",
-        n_samples, embeddings.shape[1], n_components, method.upper()
+        "Reducing %d embeddings from %dD to %dD using PCA",
+        n_samples, embeddings.shape[1], n_components
     )
-
-    if method.lower() == 'pca':
-        n_comp = min(n_components, n_samples, embeddings.shape[1])
-        reducer = PCA(n_components=n_comp, random_state=42)
-        reduced = reducer.fit_transform(embeddings)
-        variance_explained = sum(reducer.explained_variance_ratio_) * 100
-        logger.info("PCA variance explained: %.2f%%", variance_explained)
-        # Pad with zeros if PCA returned fewer dims than requested
-        if reduced.shape[1] < n_components:
-            pad = np.zeros((reduced.shape[0], n_components - reduced.shape[1]))
-            reduced = np.hstack([reduced, pad])
-
-    elif method.lower() == 'tsne':
-        # t-SNE in 3D is extremely slow and often crashes; cap at 2D
-        safe_components = min(n_components, 2)
-        if n_components == 3:
-            logger.warning(
-                "t-SNE 3D is unreliable — falling back to 2D. Use PCA for 3D."
-            )
-        perplexity = min(30, max(5, n_samples // 5))
-        reducer = TSNE(
-            n_components=safe_components,
-            random_state=42,
-            perplexity=perplexity,
-            max_iter=1000,          # sklearn ≥1.5 (renamed from n_iter)
-            learning_rate='auto',
-            init='pca',
-        )
-        reduced = reducer.fit_transform(embeddings)
-        # Pad with zeros so caller always gets n_components dims
-        if reduced.shape[1] < n_components:
-            pad = np.zeros((reduced.shape[0], n_components - reduced.shape[1]))
-            reduced = np.hstack([reduced, pad])
-        logger.info("t-SNE reduction completed (actual dims: %d)", reduced.shape[1])
-
-    else:
-        raise ValueError(f"Unknown method: {method}. Use 'pca' or 'tsne'")
-
+    n_comp = min(n_components, n_samples, embeddings.shape[1])
+    reducer = PCA(n_components=n_comp, random_state=42)
+    reduced = reducer.fit_transform(embeddings)
+    variance_explained = sum(reducer.explained_variance_ratio_) * 100
+    logger.info("PCA variance explained: %.2f%%", variance_explained)
+    # Pad with zeros if fewer dims available than requested
+    if reduced.shape[1] < n_components:
+        pad = np.zeros((reduced.shape[0], n_components - reduced.shape[1]))
+        reduced = np.hstack([reduced, pad])
     return reduced
 
 
@@ -230,43 +199,35 @@ def create_3d_plot(
 
 
 def visualize_vectors(
-    method: str = 'pca',
     max_samples: Optional[int] = 2000,
     title: Optional[str] = None,
     n_dims: int = 3,
 ) -> go.Figure:
     """
-    Main function to create 2D or 3D visualization of vector database.
+    Create 2D or 3D PCA visualization of the vector database.
 
     Args:
-        method:      'pca' or 'tsne'
         max_samples: Maximum number of samples to visualize
         title:       Custom plot title
         n_dims:      2 for 2D scatter, 3 for 3D scatter
-                     Note: t-SNE always reduces to 2D for reliability.
     """
     try:
         embeddings, metadatas = get_vector_data(max_samples=max_samples)
-
-        # t-SNE is always 2D for reliability
-        actual_dims = 2 if method.lower() == 'tsne' else n_dims
-        reduced = reduce_dimensions(embeddings, method=method, n_components=actual_dims)
+        reduced = reduce_dimensions(embeddings, n_components=n_dims)
 
         if title is None:
-            dim_label = f"{actual_dims}D"
-            title = f"Vector Database {dim_label} Visualization ({method.upper()})"
+            title = f"Vector Database {n_dims}D Visualization (PCA)"
 
-        if actual_dims == 2:
-            fig = create_2d_plot(reduced, metadatas, title=title)
-        else:
-            fig = create_3d_plot(reduced, metadatas, title=title)
+        fig = create_2d_plot(reduced, metadatas, title=title) if n_dims == 2 \
+            else create_3d_plot(reduced, metadatas, title=title)
 
-        logger.info("Visualization created successfully (%dD, method=%s)", actual_dims, method)
+        logger.info("PCA %dD visualization created successfully", n_dims)
         return fig
 
     except Exception as e:
         logger.error("Failed to create visualization: %s", e)
         raise
+
 
 
 def get_visualization_stats() -> Dict[str, Any]:
