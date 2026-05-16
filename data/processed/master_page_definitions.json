@@ -1,11 +1,6 @@
 {
   "L-1-A-RA": [
-    "Aditya Birla Sun Life Insurance Company Limited",
-    "Bharti Life Insurance Company Limited",
-    "Name of the Insurer: EDELWEISS LIFE INSURANCE COMPANY LIMITED",
-    "Name of the Insurer: ICICI Prudential Life Insurance Company Limited",
-    "SHRIRAM LIFE INSURANCE COMPANY LIMITED",
-    "TATA AIA LIFE INSURANCE COMPANY LIMITED"
+    "Revenue Account"
   ],
   "L-2-A-PL": [
     "Profit & Loss Account"
@@ -14,37 +9,18 @@
     "Balance Sheet"
   ],
   "L-4": [
-    "1 7,396\n( 31)\n-",
-    "2,76,067",
-    "4,855\n(4)\n-\n371\n1,386\n(242)\n(5,417)\n50\n(5)\n-\n-\n-\n-",
-    "7 15,557\n( 819)\n-\n6 7,353\n4 90,816\n( 34,266)\n( 1,520,968)\n1 3,750\n1 ,145\n9\n7\n-\n4 9",
-    "L-5"
+    "Premium Schedule"
   ],
   "L-5": [
-    "18,694 47 31 21 3 8 9,583 31,970 7 247 3,497 - - (0) 23 2 6,015 1 70,138",
-    "2 ,233",
-    "41,844",
-    "First year Premiums 9,930 4,315 - 4,948 94 - -0 - 5 51 22 -",
-    "L-6"
+    "Commission Schedule"
   ],
   "L-6": [
-    "3 4,167 538 1 11 - 34,816 1 7,825 - 1 83 - - 18,008 41,962 5,118 3 8 4 67 4 4 7,589 1 00,413",
-    "3,399",
-    "4 4,030 1 6,685 17 1 6,425 8 99 1 5 1,080 1 8,648 2 08 51",
-    "43,345",
-    "5 1,965 1,449 57 130 20 9 4,899 7,422 249 445 783 - 72 390 89 2 6,034 1 84,004",
-    "504 22 9,658 14,469 8 0 51 24,713"
+    "Operating Expenses Schedule"
   ],
   "L-7": [
-    "1 7,400\n8 85\n-\n8 ,017\n-\n-",
-    "2 72,128 1 04,888 10,913 2 2,607 402 1 54,276 8 9,367 1 5,567 115 10,573 33 1 58,249 42,213 380 3 3,675 9 15,386",
-    "2,456\n-\n63\n-\n-\n(2,587)\n437",
-    "5 4,458 7,978 1,270 1 2,128 3 86 - 4 1,044 - 3 0,634 5 06 5 16",
-    "9 73,501\n-\n-\n1 6,427\n-\n-\n( 1,304,244)\n( 29,938)",
-    "97,585"
+    "Benefits Paid Schedule"
   ],
   "L-8": [
-    "& L-9-Share Capital & Pattern of Shareholding",
     "Share Capital Schedule"
   ],
   "L-9": [
@@ -53,7 +29,6 @@
     "Pattern of Shareholding"
   ],
   "L-10": [
-    "& L11-Reserves and Surplus & Borrowings",
     "Reserves and Surplus Schedule"
   ],
   "L-11": [
@@ -68,7 +43,6 @@
     "Investments - Policyholders' Schedule"
   ],
   "L-14": [
-    "Investment - Assets Held to cover Linked Liabilities",
     "Investments - Assets Held to Cover Linked Liabilities Schedule"
   ],
   "L-14A": [
@@ -87,7 +61,6 @@
     "Advances & Other Assets Schedule"
   ],
   "L-19": [
-    ", L-20 & L-21- Current Liabilities, Provisions & Misc Expenditures",
     "Current Liabilities Schedule"
   ],
   "L-20": [
@@ -103,13 +76,13 @@
     "Receipts & Payment Schedule"
   ],
   "L-24": [
+    "Valuation of Net Liabilities",
     "Valuation of Net Liablities"
   ],
   "L-25": [
     "(i) & (ii)",
     "(i) & (ii)-Geographical Distribution of Business",
-    "(ii)",
-    "Geographical Distribution of Business - Group & Individual"
+    "(ii)"
   ],
   "L-26": [
     "Investment Assets (Life Insurers)",
@@ -126,6 +99,7 @@
     "Details regarding Debt securities"
   ],
   "L-30": [
+    "Related Party Transactions",
     "Related Party Transanctions"
   ],
   "L-31": [
@@ -141,7 +115,6 @@
     "Statement of Investment and Income on Investment"
   ],
   "L-35": [
-    "Downgrading of Investment",
     "Statement of Down Graded Investments"
   ],
   "L-36": [
@@ -171,186 +144,16 @@
   "L-45": [
     "Office Information"
   ],
-  "L-4-PREMIUM": [
-    "7",
-    "Schedule"
+  "L-1": [
+    "Revenue Account"
   ],
-  "L-5-COMMISSION": [
-    "8",
-    "Schedule"
+  "L-2": [
+    "Profit & Loss Account"
   ],
-  "L-7-BENEFITS": [
-    "Paid",
-    "Paid Schedule"
+  "L-3": [
+    "Balance Sheet"
   ],
   "L-9A": [
-    "Detailed Pattern of Shareholding",
-    "Shareholding Pattern Schedule"
-  ],
-  "L-12-INVESTMENT": [
-    "Shareholders"
-  ],
-  "L-13-INVESTMENT": [
-    "Policyholders"
-  ],
-  "L-14A-AGGREGATE": [
-    "value of Investments other than Equity Shares and Mutual Fund"
-  ],
-  "L-15-LOANS": [
-    "20",
-    "Schedule"
-  ],
-  "L-16-FIXED": [
-    "Assets",
-    "Assets Schedule"
-  ],
-  "L-17-CASH": [
-    "and Bank Balance",
-    "and Bank Balance Schedule"
-  ],
-  "L-18-ADVANCES": [
-    "& Other Assets Schedule",
-    "and Other Assets"
-  ],
-  "L-22-ANALYTICAL": [
-    "Ratios"
-  ],
-  "L-23-RECEIPT": [
-    "and Payment Schedule"
-  ],
-  "L-24-VALUATION": [
-    "of Net Liabilities",
-    "on Net Liabilities"
-  ],
-  "L-26-INVESTMENT": [
-    "Assets",
-    "Assets (Life Insurers)"
-  ],
-  "L-27-ULIP": [
-    "Linked Business"
-  ],
-  "L-28-ULIP": [
-    "NAV"
-  ],
-  "L-29-DEBT": [
-    "Securities"
-  ],
-  "L-30-RELATED": [
-    "Party Transactions"
-  ],
-  "L-31-BOARD": [
-    "of Directors & Key Management Persons",
-    "of Directors & Key Persons"
-  ],
-  "L-32-SOLVENCY": [
-    "Margin"
-  ],
-  "L-33-NPAS": [
-    "45"
-  ],
-  "L-34-YIELD": [
-    "on Investment"
-  ],
-  "L-36-BUSINESS": [
-    "Numbers"
-  ],
-  "L-37-BUSINESS": [
-    "Acquisition through Different Channels - Group",
-    "Acquisition-Group"
-  ],
-  "L-38-BUSINESS": [
-    "Acquisition through Different Channels - Individuals",
-    "Acquisition-Individual"
-  ],
-  "L-39-AGEING": [
-    "of Claims"
-  ],
-  "L-40-CLAIMS": [
-    "Data"
-  ],
-  "L-41-GRIEVANCES": [
-    "(Life)"
-  ],
-  "L-42-VALUATION": [
-    "Basis",
-    "Basis (Life)"
-  ],
-  "L-43-VOTING": [
-    "Activity disclosure under Stewardship Code"
-  ],
-  "L-45-OFFICE": [
-    "Information"
-  ],
-  "L-1-REVENUE": [
-    "Account"
-  ],
-  "L-2-PROFIT": [
-    "& Loss Account"
-  ],
-  "L-3-BALANCE": [
-    "Sheet"
-  ],
-  "L-6-OPERATING": [
-    "Expenses Schedule"
-  ],
-  "L-8-SHARE": [
-    "Capital Schedule"
-  ],
-  "L-10-RESERVES": [
-    "and Surplus Schedule"
-  ],
-  "L-11-BORROWINGS": [
-    "Schedule"
-  ],
-  "L-12-INVESTMENTS": [
-    "(Shareholders) Schedule"
-  ],
-  "L-13-INVESTMENTS": [
-    "(Policyholders) Schedule"
-  ],
-  "L-14-INVESTMENTS": [
-    "Assets Held to Cover Linked Liabilities Schedule"
-  ],
-  "L-19-CURRENT": [
-    "Liabilities Schedule"
-  ],
-  "L-20-PROVISIONS": [
-    "Schedule"
-  ],
-  "L-21-MISC": [
-    "Expenditure Schedule"
-  ],
-  "L-23-RECEIPTS": [
-    "& Payment Schedule"
-  ],
-  "L-27-INVESTMENTS": [
-    "Unit Linked Business"
-  ],
-  "L-28-STATEMENT": [
-    "of NAV of Segregated Funds"
-  ],
-  "L-29-DETAILS": [
-    "regarding Debt securities"
-  ],
-  "L-32-AVAILABLE": [
-    "Solvency Margin and Solvency Ratio"
-  ],
-  "L-34-STATEMENT": [
-    "of Investment and Income on Investment"
-  ],
-  "L-35-STATEMENT": [
-    "of Down Graded Investments"
-  ],
-  "L-36-PREMIUM": [
-    "and number of lives covered by policy type"
-  ],
-  "L-39-DATA": [
-    "on Settlement of Claims"
-  ],
-  "L-40-QUARTERLY": [
-    "Claims Data"
-  ],
-  "L-41-GRIEVANCE": [
-    "Disposal"
+    "Detailed Pattern of Shareholding"
   ]
 }
