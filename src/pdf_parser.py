@@ -8,8 +8,8 @@ from src.config import PROCESSED_OUTPUT_DIR
 
 logger = logging.getLogger(__name__)
 
-_LPAGE_LABEL_RE = re.compile(r'\s*(L-\d+(?:-[A-Z]+(?:-[A-Z]+)?)?)\s*[:\-]?\s*(.*)', re.IGNORECASE)
-_PAGE_LPAGE_RE = re.compile(r'(?:FORM|Form)?\s*(L-\d+[A-Z]?(?:-[A-Z]+)?)', re.IGNORECASE)
+_LPAGE_LABEL_RE = re.compile(r'\s*(L-\d+[A-Z]?(?:-[A-Z]+(?:-[A-Z]+)?)?)\s*[:\-]?\s*(.*)', re.IGNORECASE)
+_PAGE_LPAGE_RE = re.compile(r'(?:FORM|Form)?\s*(L-\d+[A-Z]?(?:-[A-Z]+(?:-[A-Z]+)?)?)', re.IGNORECASE)
 _COMPANY_NAME_RE = re.compile(r'\b([A-Z][A-Za-z\s&]{10,}(?:Limited|Ltd\.?|Insurance Company Limited|Insurance Company|Company Limited))', re.MULTILINE)
 
 def extract_metadata_from_filename(pdf_path: str) -> Dict[str, str]:
