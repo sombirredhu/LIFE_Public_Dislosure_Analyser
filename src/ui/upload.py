@@ -6,10 +6,13 @@ import tempfile
 from pathlib import Path
 from typing import List
 
-from src.config import *
+from src.config import (
+    PDF_INPUT_DIR,
+    MAX_UPLOAD_SIZE_MB,
+)
 from src.ingestor import ingest_pdf
 from src.embedder import (
-    get_collection_stats, get_or_create_collection, 
+    get_collection_stats, get_or_create_collection,
     delete_file_chunks
 )
 from src.background_worker import get_worker, JobStatus
@@ -72,10 +75,16 @@ def render_tab_upload():
         
         # Upload button
         if st.button("🚀 Start Ingestion", type="primary"):
-            # Save uploaded files to BOTH temp (for processing) and data/pdfs/ (for persistence)
+            # Save uploaded files to temp dir for processing.
+            # Also try to persist to data/pdfs/ for local dev.
+            # On Streamlit Cloud the path may be read-only — degrade gracefully.
             temp_paths = []
-            persistent_dir = Path(PDF_INPUT_DIR)
-            persistent_dir.mkdir(parents=True, exist_ok=True)
+            try:
+                persistent_dir = Path(PDF_INPUT_DIR)
+                persistent_dir.mkdir(parents=True, exist_ok=True)
+            except (PermissionError, OSError) as _e:
+                persistent_dir = None
+                logger.warning("[UPLOAD] PDF_INPUT_DIR not writable (%s): %s — temp-only mode", PDF_INPUT_DIR, _e)
 
             for uploaded_file in uploaded_files:
                 temp_path = Path(tempfile.gettempdir()) / uploaded_file.name
@@ -84,12 +93,15 @@ def render_tab_upload():
                     f.write(file_bytes)
                 temp_paths.append(str(temp_path))
 
-                # Also save to data/pdfs/ for persistence across restarts
-                persistent_path = persistent_dir / uploaded_file.name
-                with open(persistent_path, "wb") as f:
-                    f.write(file_bytes)
-                logger.info("[UPLOAD] Saved %s to %s for persistence", uploaded_file.name, persistent_path)
-            
+                # Persist to data/pdfs/ only when writable (local dev)
+                if persistent_dir is not None:
+                    try:
+                        with open(persistent_dir / uploaded_file.name, "wb") as f:
+                            f.write(file_bytes)
+                        logger.info("[UPLOAD] Persisted %s → %s", uploaded_file.name, persistent_dir)
+                    except OSError as exc:
+                        logger.warning("[UPLOAD] Could not persist %s: %s", uploaded_file.name, exc)
+
             results = []
             
             # PARALLEL MODE: Use background worker for parallel processing
