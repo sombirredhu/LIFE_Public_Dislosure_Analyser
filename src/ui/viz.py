@@ -21,7 +21,9 @@ def render_tab_vector_visualization():
         dims_choice = st.radio("Plot Dimensions", options=["3D (interactive, rotatable)", "2D (flat scatter)"], index=0, key="viz_dims", help="3D lets you rotate; 2D is faster to render.")
         n_dims = 3 if dims_choice.startswith("3D") else 2
     with col_samples:
-        max_samples = st.number_input("Max Samples", min_value=100, max_value=stats['total_vectors'], value=min(2000, stats['total_vectors']), step=100, help="Fewer samples = faster rendering.", key="viz_max_samples")
+        default_samples = min(2000, stats['total_vectors'])
+        min_samples = min(100, stats['total_vectors'])
+        max_samples = st.number_input("Max Samples", min_value=min_samples, max_value=stats['total_vectors'], value=default_samples, step=100, help="Fewer samples = faster rendering.", key="viz_max_samples")
     with st.expander("📊 Vectors by Company"):
         for company, count in sorted(stats['vectors_by_company'].items()):
             pct = (count / stats['total_vectors']) * 100
