@@ -167,6 +167,60 @@ All data stored locally in ChromaDB. No external database required.
 
 ---
 
+## System Workflow
+
+### 📥 Pipeline 1: PDF Ingestion (How It Consumes PDFs)
+
+```mermaid
+flowchart TD
+    A["📄 User Uploads PDF"] --> B["🏷️ Filename Parser"]
+    B --> |"HDFC_Life_Q1_FY25.pdf"| C["Extract Metadata\nCompany: HDFC Life\nQuarter: Q1 | FY: FY25"]
+    C --> D["📖 pdfplumber\nExtract Text + Tables"]
+    D --> E{"Page Size\n> 8000 tokens?"}
+    E --> |No| F["📦 Keep as\nPage-Level Chunk"]
+    E --> |Yes| G["✂️ Split into\nSub-Chunks\n(1200 chars, 150 overlap)"]
+    F --> H["🏗️ Attach Metadata\nchunk_id, page_number,\nsection, content_type"]
+    G --> H
+    H --> I["🌐 OpenRouter API\ntext-embedding-3-small\n→ 1536-dim vectors"]
+    I --> J["💾 Store in ChromaDB\nvectors + metadata + text"]
+    J --> K["✅ Ready for Queries"]
+
+    style A fill:#4CAF50,color:#fff
+    style I fill:#2196F3,color:#fff
+    style J fill:#FF9800,color:#fff
+    style K fill:#4CAF50,color:#fff
+```
+
+### 💬 Pipeline 2: Query Answering (How It Answers Users)
+
+```mermaid
+flowchart TD
+    A["❓ User Asks Question\n'What was TATA AIA segment\nwise premium? in table format'"] --> B["🔄 Query Translator\nSeparates search intent\nfrom formatting request"]
+    B --> C["🔍 Search Query:\n'TATA AIA segment wise premium'"]
+    B --> D["🎨 Format Instruction:\n'Present in table format'"]
+    C --> E["🏷️ Auto-Filter Extraction\nDetects: company=TATA_AIA"]
+    E --> F{"Simple or\nComplex?"}
+    F --> |"Simple\n(1 company)"| G["Single Query\nRetrieve top-12 chunks"]
+    F --> |"Complex\n(multi-company/compare)"| H["Multi-Query Expansion\nGenerate 3 query variations\nRetrieve top-40 chunks"]
+    G --> I["🌐 Embed Query\nvia OpenRouter API"]
+    H --> I
+    I --> J["💾 ChromaDB Search\nCosine similarity\n+ metadata hard-filters"]
+    J --> K["📊 Deduplicate & Rank\nKeep highest-scoring\nchunks per document"]
+    K --> L["🤖 LLM Generation\nSystem Prompt + Excerpts\n+ Format Instruction"]
+    D --> L
+    L --> M{"Free or\nPaid Model?"}
+    M --> |"Simple query"| N["🟢 Free Model\n(fast, no cost)"]
+    M --> |"Complex query"| O["🔵 Paid Model\n(Claude Sonnet, accurate)"]
+    N --> P["📝 Final Answer\nwith sources, confidence,\nand requested formatting"]
+    O --> P
+
+    style A fill:#9C27B0,color:#fff
+    style B fill:#FF9800,color:#fff
+    style J fill:#FF9800,color:#fff
+    style L fill:#2196F3,color:#fff
+    style P fill:#4CAF50,color:#fff
+```
+
 ## Usage Examples
 
 ### CLI Queries
