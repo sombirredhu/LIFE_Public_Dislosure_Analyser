@@ -184,7 +184,7 @@ def render_sidebar():
                     ctx = (sel.get("context_length") or 0) // 1000
                     st.success(f"💰 **Paid model selected**  \n`{sel.get('name', chosen_id)}`  \nOutput: **${price:.2f}/MTok** · Context: **{ctx}K tokens**")
 
-            if st.button("🔄 Refresh Model List", use_container_width=True):
+            if st.button("🔄 Refresh Model List", width="stretch"):
                 st.cache_data.clear()
                 st.rerun()
         else:

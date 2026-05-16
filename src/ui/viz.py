@@ -27,11 +27,11 @@ def render_tab_vector_visualization():
             pct = (count / stats['total_vectors']) * 100
             st.write(f"**{company}**: {count} vectors ({pct:.1f}%)")
     dim_label = f"{n_dims}D"
-    if st.button(f"🎨 Generate {dim_label} Visualization", type="primary", use_container_width=True):
+    if st.button(f"🎨 Generate {dim_label} Visualization", type="primary", width="stretch"):
         with st.spinner(f"Running PCA → creating {dim_label} plot…"):
             try:
                 fig = visualize_vectors(max_samples=int(max_samples), title=f"Vector DB {dim_label} — PCA", n_dims=n_dims)
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, width="stretch")
                 st.success(f"✓ {dim_label} visualization ready! Hover over points for details.")
                 if n_dims == 3: st.caption("💡 Rotate: click & drag · Zoom: scroll · Pan: right-click drag · Legend: click to hide/show")
                 st.markdown("---")

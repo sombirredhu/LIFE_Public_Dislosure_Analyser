@@ -43,7 +43,7 @@ def render_tab_ask_question():
         available_fys = get_available_fys()
         fy_options = ["All"] + available_fys if available_fys else ["All"]
         fy_filter = st.selectbox("Filter by FY (optional)", options=fy_options, index=0)
-    if st.button("🔍 Get Answer", type="primary", use_container_width=True):
+    if st.button("🔍 Get Answer", type="primary", width="stretch"):
         if not question.strip():
             st.error("Please enter a question.")
             return
@@ -98,7 +98,7 @@ def _render_last_answer():
     st.markdown(result['answer'])
     answer_json = json.dumps(result['answer'])
     copy_html = f"""<div style="margin:10px 0;"><button onclick="copyAns()" style="background:var(--secondary-background-color,#f0f2f6);border:1px solid var(--border-color,#d0d0d0);border-radius:4px; padding:8px 16px; cursor:pointer;font-size:14px; font-weight:500; color:var(--text-color,#262730);display:inline-flex; align-items:center; gap:6px;">📋 Copy Answer</button><span id="ans-fb" style="margin-left:10px;color:#28a745;font-weight:500;display:none;">✓ Copied!</span></div><script>function copyAns(){{navigator.clipboard.writeText({answer_json}).then(function(){{var f=document.getElementById('ans-fb');f.style.display='inline';setTimeout(function(){{f.style.display='none';}},3000);}});}}</script>"""
-    st.components.v1.html(copy_html, height=50)
+    st.html(copy_html, height=50)
     with st.expander("📄 View as Plain Text"): st.code(result['answer'], language=None)
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
     sources_md = "\n".join([f"- {s}" for s in result.get('sources', [])])

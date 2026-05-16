@@ -69,7 +69,7 @@ def render_tab_definitions():
                 key="lpage_input"
             )
             
-            if st.button("➕ Add Page Definition", type="primary", use_container_width=True):
+            if st.button("➕ Add Page Definition", type="primary", width="stretch"):
                 if term_input and lpage_input:
                     success, message = add_page_definition(term_input, lpage_input)
                     if success:
@@ -96,7 +96,7 @@ def render_tab_definitions():
                 key="calc_formula_input"
             )
             
-            if st.button("➕ Add Calculation", type="primary", use_container_width=True):
+            if st.button("➕ Add Calculation", type="primary", width="stretch"):
                 if calc_name and calc_formula:
                     success, message = add_calculation(calc_name, calc_formula)
                     if success:

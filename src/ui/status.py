@@ -63,7 +63,7 @@ def render_tab_index_status():
             matrix_data.append(row)
         
         matrix_df = pd.DataFrame(matrix_data)
-        st.dataframe(matrix_df, use_container_width=True)
+        st.dataframe(matrix_df, width="stretch")
     
     # Clear all button
     st.markdown("---")

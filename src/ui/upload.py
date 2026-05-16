@@ -186,7 +186,7 @@ def render_tab_upload():
             df.index.name = 'File'
             df = df.reset_index()
             df['Ingested At'] = pd.to_datetime(df['Ingested At']).dt.strftime('%Y-%m-%d %H:%M')
-            st.dataframe(df, use_container_width=True)
+            st.dataframe(df, width="stretch")
             st.markdown("---")
             st.subheader("🗑️ Delete File from Index")
             file_to_delete = st.selectbox("Select file to delete", options=list(files_data.keys()))
