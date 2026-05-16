@@ -58,9 +58,12 @@ def get_visualization_stats() -> Dict[str, Any]:
         total = collection.count()
         if total == 0: return {"total_vectors": 0, "companies": [], "vectors_by_company": {}, "embedding_dimension": 0}
         res = collection.get(include=["metadatas", "embeddings"], limit=1)
-        dim = len(res["embeddings"][0]) if res["embeddings"] else 0
+        emb = res.get("embeddings")
+        dim = len(emb[0]) if emb is not None and len(emb) > 0 else 0
         metas = collection.get(include=["metadatas"])["metadatas"]
         vc = {}
         for m in metas: vc[m["company"]] = vc.get(m["company"], 0) + 1
         return {"total_vectors": total, "companies": sorted(vc.keys()), "vectors_by_company": vc, "embedding_dimension": dim}
-    except Exception: return {"total_vectors": 0, "companies": [], "vectors_by_company": {}, "embedding_dimension": 0}
+    except Exception as e:
+        logger.error(f"Error getting visualization stats: {e}")
+        return {"total_vectors": 0, "companies": [], "vectors_by_company": {}, "embedding_dimension": 0}
