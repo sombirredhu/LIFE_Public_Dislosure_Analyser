@@ -36,6 +36,16 @@ def retrieve(query: str, filters: Optional[Dict[str, Any]] = None, top_k: int = 
     if not chunks: chunks = _raw_retrieve(emb, coll, top_k, norm, _FALLBACK_THRESHOLD)
     return chunks
 
+def retrieve_multi(queries: List[str], filters: Optional[Dict[str, Any]] = None, top_k: int = None) -> List[Dict[str, Any]]:
+    all_chunks = {}
+    with ThreadPoolExecutor(max_workers=len(queries)) as pool:
+        futs = {pool.submit(retrieve, q, filters, top_k): q for q in queries}
+        for f in as_completed(futs):
+            for c in f.result():
+                cid = c["metadata"].get("chunk_id", c["text"][:50])
+                if cid not in all_chunks or c["score"] > all_chunks[cid]["score"]: all_chunks[cid] = c
+    return sorted(all_chunks.values(), key=lambda x: x["score"], reverse=True)[:top_k]
+
 def top_up_missing_companies(query: str, chunks: List[Dict[str, Any]], expected_companies: List[str], filters: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
     present = {c["metadata"]["company_code"] for c in chunks}
     missing = [co for co in expected_companies if co not in present]
@@ -53,5 +63,4 @@ def top_up_missing_companies(query: str, chunks: List[Dict[str, Any]], expected_
 def get_confidence_level(chunks: List[Dict[str, Any]]) -> str:
     if not chunks: return "none"
     s = chunks[0]["score"]
-    if s >= 0.7: return "high"
-    return "medium" if s >= 0.4 else "none"
+    return "high" if s >= 0.7 else ("medium" if s >= 0.4 else "none")
