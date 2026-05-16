@@ -15,22 +15,47 @@ from src.llm_client import fetch_available_models
 from src.logging_config import setup_logging
 
 logger = logging.getLogger(__name__)
+def _get_cookie_manager():
+    """Return a CookieManager instance (lazy import to avoid hard dep at module load)."""
+    try:
+        import extra_streamlit_components as stx
+        return stx.CookieManager(key="pd_cookie_mgr")
+    except Exception:
+        return None
+
+
 def _check_password() -> bool:
     """
-    Authentication gate — blocks the app until the correct password is entered.
-    Password is stored in .streamlit/secrets.toml (local) or Streamlit Cloud Secrets.
-    If no APP_PASSWORD secret is configured, authentication is skipped (dev mode).
+    Authentication gate with persistent 30-day browser cookie.
+
+    Flow:
+      1. No APP_PASSWORD configured → skip auth (local dev mode)
+      2. Valid auth cookie in browser → pass through immediately
+      3. session_state["authenticated"] = True → pass through
+      4. Otherwise → show login form; on success set cookie + session state
     """
-    # If no password configured, skip auth (allows easy local dev)
+    # ── Step 1: No password configured → dev mode ──────────────────────
     try:
         expected = st.secrets["APP_PASSWORD"]
     except (KeyError, FileNotFoundError):
-        return True  # No auth configured — allow access
+        return True
 
-    # Already authenticated this session
+    # ── Step 2: Check persistent browser cookie ─────────────────────────
+    cookie_mgr = _get_cookie_manager()
+    if cookie_mgr is not None:
+        try:
+            token = cookie_mgr.get("pd_auth_token")
+            if token == "authenticated":
+                st.session_state["authenticated"] = True
+                return True
+        except Exception:
+            pass  # cookie read failed — fall through to session check
+
+    # ── Step 3: Already authenticated this session ──────────────────────
     if st.session_state.get("authenticated"):
         return True
 
+    # ── Step 4: Show login form ──────────────────────────────────────────
     st.markdown("### 🔒 Authentication Required")
     st.markdown(f"Enter the password to access **{APP_TITLE}**")
 
@@ -39,12 +64,23 @@ def _check_password() -> bool:
     if st.button("Login", type="primary"):
         if password == expected:
             st.session_state["authenticated"] = True
+            # Set 30-day browser cookie so user doesn't need to log in again
+            if cookie_mgr is not None:
+                try:
+                    from datetime import timedelta
+                    cookie_mgr.set(
+                        "pd_auth_token",
+                        "authenticated",
+                        expires_at=datetime.now() + timedelta(days=30),
+                    )
+                except Exception:
+                    pass  # cookie write failed — session-only auth still works
             st.rerun()
         else:
             st.error("❌ Incorrect password. Please try again.")
 
-    st.stop()  # Block everything below until authenticated
-    return False  # unreachable, but keeps type checker happy
+    st.stop()
+    return False
 
 
 
