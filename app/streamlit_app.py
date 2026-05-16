@@ -8,6 +8,7 @@ import sys
 import tempfile
 import json
 from pathlib import Path
+from typing import Any, Dict, Optional
 import streamlit as st
 import pandas as pd
 from datetime import datetime
@@ -21,7 +22,7 @@ setup_logging()  # initialise file + console handlers before any other import lo
 
 from src.rag_pipeline import answer_question
 from src.ingestor import ingest_pdf
-from src.embedder import get_collection_stats, delete_file_chunks, get_or_create_collection, get_indexed_companies, get_available_quarters, get_available_fys
+from src.embedder import get_collection_stats, delete_file_chunks, get_or_create_collection, get_indexed_companies, get_available_quarters, get_available_fys, invalidate_metadata_cache
 from src.llm_client import fetch_available_models
 from src.config import APP_TITLE, MAX_UPLOAD_SIZE_MB, LLM_MODEL_FREE, LLM_MODEL_PAID, PDF_INPUT_DIR
 from src.definitions_manager import (
@@ -289,6 +290,38 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
+def _check_password() -> bool:
+    """
+    Authentication gate — blocks the app until the correct password is entered.
+    Password is stored in .streamlit/secrets.toml (local) or Streamlit Cloud Secrets.
+    If no APP_PASSWORD secret is configured, authentication is skipped (dev mode).
+    """
+    # If no password configured, skip auth (allows easy local dev)
+    try:
+        expected = st.secrets["APP_PASSWORD"]
+    except (KeyError, FileNotFoundError):
+        return True  # No auth configured — allow access
+
+    # Already authenticated this session
+    if st.session_state.get("authenticated"):
+        return True
+
+    st.markdown("### 🔒 Authentication Required")
+    st.markdown(f"Enter the password to access **{APP_TITLE}**")
+
+    password = st.text_input("Password", type="password", key="auth_password_input")
+
+    if st.button("Login", type="primary"):
+        if password == expected:
+            st.session_state["authenticated"] = True
+            st.rerun()
+        else:
+            st.error("❌ Incorrect password. Please try again.")
+
+    st.stop()  # Block everything below until authenticated
+    return False  # unreachable, but keeps type checker happy
+
+
 def render_header():
     """Render app header."""
     st.markdown(f'<div class="main-header">📊 {APP_TITLE}</div>', unsafe_allow_html=True)
@@ -450,7 +483,6 @@ def render_tab_ask_question():
                 st.markdown("")  # Add spacing
                 
                 # Escape answer text for JavaScript
-                import json
                 answer_json = json.dumps(result['answer'])
                 
                 # Create copy button with inline JavaScript
@@ -1284,6 +1316,9 @@ def render_tab_definitions():
 
 def main():
     """Main app."""
+    # Authentication gate — blocks app until correct password entered
+    _check_password()
+
     # Auto-reindex if ChromaDB is empty but PDFs exist (handles cloud restarts)
     _auto_reindex_if_needed()
 

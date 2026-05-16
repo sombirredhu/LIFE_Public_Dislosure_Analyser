@@ -4,6 +4,7 @@ Uses sentence-transformers for free local embeddings.
 """
 
 import logging
+import time
 from typing import List, Dict, Any
 import chromadb
 from chromadb.config import Settings
@@ -180,18 +181,47 @@ def embed_chunks(chunks: List[Dict[str, Any]], force_reindex: bool = False) -> D
         "source_file": source_file
     }
 
+# ── Lightweight metadata cache ────────────────────────────────────────
+# Avoids fetching ALL metadata from ChromaDB on every Streamlit page render.
+# Cache auto-invalidates after _CACHE_TTL_SECONDS.
+_CACHE_TTL_SECONDS = 30
+_metadata_cache: Dict[str, Any] = {"ts": 0.0, "data": None}
 
-def get_indexed_companies() -> list:
-    """
-    Return all unique company_codes currently stored in ChromaDB.
-    Called by rag_pipeline to know which companies need top-up retrieval.
-    """
+
+def _get_cached_metadatas() -> List[Dict[str, Any]]:
+    """Return all metadatas from ChromaDB, with a TTL cache."""
+    now = time.time()
+    if _metadata_cache["data"] is not None and (now - _metadata_cache["ts"]) < _CACHE_TTL_SECONDS:
+        return _metadata_cache["data"]
+
     collection = get_or_create_collection()
     total = collection.count()
     if total == 0:
+        _metadata_cache["data"] = []
+        _metadata_cache["ts"] = now
         return []
+
     results = collection.get(include=["metadatas"])
-    return sorted(set(m["company_code"] for m in results["metadatas"]))
+    _metadata_cache["data"] = results["metadatas"]
+    _metadata_cache["ts"] = now
+    return _metadata_cache["data"]
+
+
+def invalidate_metadata_cache():
+    """Force-invalidate the metadata cache (call after ingestion/deletion)."""
+    _metadata_cache["data"] = None
+    _metadata_cache["ts"] = 0.0
+
+
+def get_indexed_companies() -> List[str]:
+    """
+    Return all unique company codes currently stored in ChromaDB.
+    Returns sorted list like ["HDFC_Life", "ICICI_Pru", "LIC", "SBI_Life"].
+    """
+    metas = _get_cached_metadatas()
+    if not metas:
+        return []
+    return sorted(set(m["company_code"] for m in metas))
 
 
 def get_available_quarters() -> List[str]:
@@ -199,13 +229,10 @@ def get_available_quarters() -> List[str]:
     Return all unique quarters currently stored in ChromaDB.
     Returns sorted list like ["Q1", "Q2", "Q3", "Q4"].
     """
-    collection = get_or_create_collection()
-    total = collection.count()
-    if total == 0:
+    metas = _get_cached_metadatas()
+    if not metas:
         return []
-    results = collection.get(include=["metadatas"])
-    quarters = sorted(set(m["quarter"] for m in results["metadatas"]))
-    return quarters
+    return sorted(set(m["quarter"] for m in metas))
 
 
 def get_available_fys() -> List[str]:
@@ -213,35 +240,24 @@ def get_available_fys() -> List[str]:
     Return all unique fiscal years currently stored in ChromaDB.
     Returns sorted list like ["FY25", "FY26", "FY27"].
     """
-    collection = get_or_create_collection()
-    total = collection.count()
-    if total == 0:
+    metas = _get_cached_metadatas()
+    if not metas:
         return []
-    results = collection.get(include=["metadatas"])
-    fys = sorted(set(m["fy"] for m in results["metadatas"]))
-    return fys
+    return sorted(set(m["fy"] for m in metas))
 
 
 def get_collection_stats() -> Dict[str, Any]:
     """Get statistics about the ChromaDB collection."""
-    collection = get_or_create_collection()
-    
-    total_chunks = collection.count()
-    
-    # Get all metadata to compute stats (skip documents/embeddings)
+    metas = _get_cached_metadatas()
+    total_chunks = len(metas)
+
     if total_chunks > 0:
-        results = collection.get(include=["metadatas"])
-        metadatas = results["metadatas"]
-        
-        # Count unique files
-        unique_files = set(m["source_file"] for m in metadatas)
-        
-        # Count by company
+        unique_files = set(m["source_file"] for m in metas)
         companies = {}
-        for m in metadatas:
+        for m in metas:
             company = m["company"]
             companies[company] = companies.get(company, 0) + 1
-        
+
         return {
             "total_chunks": total_chunks,
             "unique_files": len(unique_files),

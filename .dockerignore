@@ -1,0 +1,12 @@
+# Docker
+*.pyc
+__pycache__/
+.git
+.gitignore
+.env
+.streamlit/secrets.toml
+vectordb/
+logs/
+*.egg-info/
+.venv/
+venv/

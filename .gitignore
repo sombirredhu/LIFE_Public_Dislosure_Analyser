@@ -1,5 +1,6 @@
 # Environment
 .env
+.streamlit/secrets.toml
 .venv
 venv/
 ENV/
@@ -69,8 +70,11 @@ temp/
 docs/
 Project_Files/
 
-# Testing files (not needed for app to run)
-tests/
+# Testing artifacts (keep .py test files for CI)
+tests/__pycache__/
+tests/*.txt
+tests/*.json
+tests/*.html
 .pytest_cache/
 
 # Utility scripts (optional)

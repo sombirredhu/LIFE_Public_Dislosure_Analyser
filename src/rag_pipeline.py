@@ -119,6 +119,18 @@ def answer_question(
     Returns dict with keys:
         answer, sources, chunks_used, confidence, model_used
     """
+    # ── Input sanitization ─────────────────────────────────────────────
+    # Truncate excessively long queries (prevent abuse / token waste)
+    _MAX_QUERY_LEN = 2000
+    question = question.strip()
+    if len(question) > _MAX_QUERY_LEN:
+        question = question[:_MAX_QUERY_LEN]
+        logger.warning("[RAG] Query truncated to %d chars", _MAX_QUERY_LEN)
+
+    # Strip control characters that could confuse the LLM
+    import re as _re
+    question = _re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]', '', question)
+
     complexity = classify_complexity(question)
     use_paid = complexity == "complex"
     model_name = (paid_model or LLM_MODEL_PAID) if use_paid else (free_model or LLM_MODEL_FREE)

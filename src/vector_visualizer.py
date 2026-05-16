@@ -47,13 +47,13 @@ def reduce_dimensions(embeddings: np.ndarray, method: str = 'pca', n_components:
     Returns:
         Reduced embeddings of shape (n_samples, n_components)
     """
-    logger.info(f"Reducing {embeddings.shape[0]} embeddings from {embeddings.shape[1]}D to {n_components}D using {method.upper()}")
+    logger.info("Reducing %d embeddings from %dD to %dD using %s", embeddings.shape[0], embeddings.shape[1], n_components, method.upper())
     
     if method.lower() == 'pca':
         reducer = PCA(n_components=n_components, random_state=42)
         reduced = reducer.fit_transform(embeddings)
         variance_explained = sum(reducer.explained_variance_ratio_) * 100
-        logger.info(f"PCA variance explained: {variance_explained:.2f}%")
+        logger.info("PCA variance explained: %.2f%%", variance_explained)
     
     elif method.lower() == 'tsne':
         # t-SNE is slower but often better for visualization
@@ -98,7 +98,7 @@ def get_vector_data(max_samples: Optional[int] = None) -> Tuple[np.ndarray, List
     # Limit samples if specified
     n_samples = min(max_samples, total) if max_samples else total
     
-    logger.info(f"Fetching {n_samples} vectors from ChromaDB")
+    logger.info("Fetching %d vectors from ChromaDB", n_samples)
     
     # Get data from collection
     results = collection.get(
@@ -109,7 +109,7 @@ def get_vector_data(max_samples: Optional[int] = None) -> Tuple[np.ndarray, List
     embeddings = np.array(results["embeddings"])
     metadatas = results["metadatas"]
     
-    logger.info(f"Fetched {embeddings.shape[0]} embeddings of dimension {embeddings.shape[1]}")
+    logger.info("Fetched %d embeddings of dimension %d", embeddings.shape[0], embeddings.shape[1])
     
     return embeddings, metadatas
 
@@ -137,7 +137,7 @@ def create_3d_plot(
     for i, company in enumerate(companies):
         company_to_color[company] = COMPANY_COLORS[i % len(COMPANY_COLORS)]
     
-    logger.info(f"Creating 3D plot for {len(companies)} companies")
+    logger.info("Creating 3D plot for %d companies", len(companies))
     
     # Create figure
     fig = go.Figure()
@@ -243,7 +243,7 @@ def visualize_vectors(
         return fig
     
     except Exception as e:
-        logger.error(f"Failed to create visualization: {e}")
+        logger.error("Failed to create visualization: %s", e)
         raise
 
 
@@ -288,7 +288,7 @@ def get_visualization_stats() -> Dict[str, Any]:
         }
     
     except Exception as e:
-        logger.error(f"Failed to get visualization stats: {e}")
+        logger.error("Failed to get visualization stats: %s", e)
         return {
             "total_vectors": 0,
             "companies": [],

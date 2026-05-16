@@ -3,7 +3,7 @@
 **RAG-Based Multi-Company Financial Report Analyzer**
 
 > Author: Sombir  
-> Stack: Python · Claude API · ChromaDB · Streamlit · pdfplumber
+> Stack: Python · OpenRouter API · ChromaDB · Streamlit · pdfplumber
 
 ---
 
@@ -40,12 +40,12 @@ pip install -r requirements.txt
 # Copy example env file
 copy .env.example .env
 
-# Edit .env and add your ANTHROPIC_API_KEY
-# Get your API key from: https://console.anthropic.com/
+# Edit .env and add your OPENROUTER_API_KEY
+# Get your API key from: https://openrouter.ai/keys
 ```
 
 **Required settings in `.env`:**
-- `ANTHROPIC_API_KEY` - Your Claude API key (required)
+- `OPENROUTER_API_KEY` - Your OpenRouter API key (required)
 - Other settings have sensible defaults
 
 ### 3. Add PDF Files
@@ -158,7 +158,7 @@ All data stored locally in ChromaDB. No external database required.
 
 | Component | Technology | Why |
 |-----------|-----------|-----|
-| LLM | Claude Sonnet 4 | Best reasoning for financial analysis |
+| LLM | OpenRouter (Claude/Gemini/DeepSeek) | Two-tier: free for simple, paid for complex |
 | Vector DB | ChromaDB | Simple, local, no server setup |
 | Embeddings | sentence-transformers | Free, local, no API key needed |
 | PDF Parser | pdfplumber | Best for table extraction |
@@ -227,13 +227,14 @@ All settings in `.env` file. Key settings:
 
 ```env
 # Required
-ANTHROPIC_API_KEY=sk-ant-xxxxx
+OPENROUTER_API_KEY=sk-or-xxxxx
 
 # Optional (have defaults)
-CLAUDE_MODEL=claude-sonnet-4-20250514
-CHUNK_SIZE=800
-TOP_K_RESULTS=8
-SIMILARITY_THRESHOLD=0.3
+LLM_MODEL_FREE=anthropic/claude-3-haiku:free
+LLM_MODEL_PAID=anthropic/claude-sonnet-4-5
+CHUNK_SIZE=1200
+TOP_K_SIMPLE=12
+SIMILARITY_THRESHOLD=0.20
 ```
 
 See `.env.example` for complete list.
@@ -254,7 +255,7 @@ python -c "from src.embedder import get_collection_stats; print(get_collection_s
 ### API Key Error
 ```bash
 # Verify API key is set
-python -c "from src.config import ANTHROPIC_API_KEY; print('OK' if ANTHROPIC_API_KEY else 'NOT SET')"
+python -c "from src.config import OPENROUTER_API_KEY; print('OK' if OPENROUTER_API_KEY else 'NOT SET')"
 ```
 
 ### PDF Parsing Error
