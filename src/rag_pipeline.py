@@ -133,8 +133,8 @@ def answer_question(
     chunks = retrieve(question, filters=filters, top_k=effective_top_k)
     logger.info("[RAG] Step 1 — Retrieved %d chunks (top_k=%d)", len(chunks), effective_top_k)
 
-    # Step 2: Top-up for complex queries
-    if use_paid and not filters:
+    # Step 2: Top-up for complex queries (even with filters)
+    if use_paid:
         indexed = get_indexed_companies()
         if indexed:
             before = len(chunks)
@@ -146,7 +146,7 @@ def answer_question(
         else:
             logger.info("[RAG] Step 2 — Top-up skipped (no indexed companies)")
     else:
-        logger.info("[RAG] Step 2 — Top-up skipped (simple query or filter active)")
+        logger.info("[RAG] Step 2 — Top-up skipped (simple query)")
 
     if not chunks:
         logger.warning("[RAG] No chunks found — returning empty answer | question=%r", question[:100])

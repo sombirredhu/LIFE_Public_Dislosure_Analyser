@@ -67,9 +67,9 @@ MIN_CHUNK_SIZE = int(os.getenv("MIN_CHUNK_SIZE", "100"))
 # ─────────────────────────────────────────
 # RETRIEVAL SETTINGS
 # ─────────────────────────────────────────
-TOP_K_SIMPLE = int(os.getenv("TOP_K_SIMPLE", "8"))
-TOP_K_COMPLEX = int(os.getenv("TOP_K_COMPLEX", "30"))
-SIMILARITY_THRESHOLD = float(os.getenv("SIMILARITY_THRESHOLD", "0.4"))
+TOP_K_SIMPLE = int(os.getenv("TOP_K_SIMPLE", "12"))
+TOP_K_COMPLEX = int(os.getenv("TOP_K_COMPLEX", "40"))
+SIMILARITY_THRESHOLD = float(os.getenv("SIMILARITY_THRESHOLD", "0.20"))
 
 # ─────────────────────────────────────────
 # PDF PROCESSING

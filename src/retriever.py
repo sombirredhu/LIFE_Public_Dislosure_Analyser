@@ -13,6 +13,16 @@ from src.embedder import get_or_create_collection, get_embedding_model
 
 logger = logging.getLogger(__name__)
 
+# Domain-context prefix to improve embedding similarity for financial queries.
+# Prepending this to the query nudges the embedding model toward financial
+# terminology, bridging the gap between casual user language ("total premium")
+# and formal PDF wording ("Gross Written Premium").
+_DOMAIN_PREFIX = "IRDAI life insurance financial report: "
+
+# When the primary threshold filters out ALL chunks, retry with this lower
+# threshold so the user never sees "no results" when data is actually indexed.
+_FALLBACK_THRESHOLD = 0.10
+
 
 def _normalize_filters(filters: Dict[str, Any]) -> Dict[str, Any]:
     """
@@ -30,6 +40,45 @@ def _normalize_filters(filters: Dict[str, Any]) -> Dict[str, Any]:
     return {"$and": [{k: v} for k, v in filters.items()]}
 
 
+def _raw_retrieve(
+    query_embedding: List[float],
+    collection,
+    top_k: int,
+    normalized_filters: Optional[Dict[str, Any]],
+    threshold: float,
+) -> List[Dict[str, Any]]:
+    """
+    Low-level retrieval helper: query ChromaDB and apply a similarity threshold.
+    Returns list of chunk dicts sorted by descending score.
+    """
+    query_params: Dict[str, Any] = {
+        "query_embeddings": [query_embedding],
+        "n_results": top_k,
+    }
+    if normalized_filters:
+        query_params["where"] = normalized_filters
+
+    results = collection.query(**query_params)
+
+    chunks: List[Dict[str, Any]] = []
+
+    if results["ids"] and results["ids"][0]:
+        for i in range(len(results["ids"][0])):
+            distance = results["distances"][0][i]
+            score = 1.0 - distance  # cosine distance → cosine similarity
+
+            if score < threshold:
+                continue
+
+            chunks.append({
+                "text":     results["documents"][0][i],
+                "metadata": results["metadatas"][0][i],
+                "score":    round(score, 4),
+            })
+
+    return chunks
+
+
 def retrieve(
     query: str,
     filters: Optional[Dict[str, Any]] = None,
@@ -37,6 +86,13 @@ def retrieve(
 ) -> List[Dict[str, Any]]:
     """
     Search ChromaDB for chunks relevant to the query.
+
+    Improvements over the original implementation:
+    1. **Query expansion** — prepends a financial domain prefix to the query
+       before encoding, so the embedding is closer to formal PDF wording.
+    2. **Adaptive fallback** — if the primary threshold filters out all results,
+       retries with a much lower threshold so the user never sees empty results
+       when data is actually indexed.
 
     Args:
         query:   Search query string
@@ -65,32 +121,26 @@ def retrieve(
         query[:80], filters, normalized, top_k,
     )
 
-    query_embedding = model.encode(query).tolist()
+    # ── Query expansion: add financial domain context ──────────────────
+    expanded_query = _DOMAIN_PREFIX + query
+    query_embedding = model.encode(expanded_query).tolist()
 
-    query_params: Dict[str, Any] = {
-        "query_embeddings": [query_embedding],
-        "n_results": top_k,
-    }
-    if normalized:
-        query_params["where"] = normalized
+    # ── Primary retrieval with configured threshold ───────────────────
+    chunks = _raw_retrieve(query_embedding, collection, top_k, normalized, SIMILARITY_THRESHOLD)
 
-    results = collection.query(**query_params)
+    # ── Adaptive fallback: retry with lower threshold if nothing found ─
+    if not chunks and total_in_db > 0:
+        logger.warning(
+            "[RETRIEVE] No chunks above primary threshold %.2f, retrying with fallback %.2f | query=%r",
+            SIMILARITY_THRESHOLD, _FALLBACK_THRESHOLD, query[:60],
+        )
+        chunks = _raw_retrieve(query_embedding, collection, top_k, normalized, _FALLBACK_THRESHOLD)
 
-    chunks: List[Dict[str, Any]] = []
-
-    if results["ids"] and results["ids"][0]:
-        for i in range(len(results["ids"][0])):
-            distance = results["distances"][0][i]
-            score = 1.0 - distance  # cosine distance → cosine similarity
-
-            if score < SIMILARITY_THRESHOLD:
-                continue
-
-            chunks.append({
-                "text":     results["documents"][0][i],
-                "metadata": results["metadatas"][0][i],
-                "score":    round(score, 4),
-            })
+        if chunks:
+            logger.info(
+                "[RETRIEVE] Fallback recovered %d chunks | top_score=%.4f | query=%r",
+                len(chunks), chunks[0]["score"], query[:60],
+            )
 
     if chunks:
         logger.info(
@@ -99,8 +149,8 @@ def retrieve(
         )
     else:
         logger.warning(
-            "[RETRIEVE] No chunks above threshold %.2f | query=%r | filters=%s",
-            SIMILARITY_THRESHOLD, query[:60], filters,
+            "[RETRIEVE] No chunks above fallback threshold %.2f | query=%r | filters=%s",
+            _FALLBACK_THRESHOLD, query[:60], filters,
         )
 
     return chunks

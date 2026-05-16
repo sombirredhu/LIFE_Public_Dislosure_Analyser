@@ -6,6 +6,7 @@ Three tabs: Ask Questions, Upload Reports, Index Status.
 import logging
 import sys
 import tempfile
+import json
 from pathlib import Path
 import streamlit as st
 import pandas as pd
@@ -22,7 +23,7 @@ from src.rag_pipeline import answer_question
 from src.ingestor import ingest_pdf
 from src.embedder import get_collection_stats, delete_file_chunks, get_or_create_collection, get_indexed_companies, get_available_quarters, get_available_fys
 from src.llm_client import fetch_available_models
-from src.config import APP_TITLE, MAX_UPLOAD_SIZE_MB, LLM_MODEL_FREE, LLM_MODEL_PAID
+from src.config import APP_TITLE, MAX_UPLOAD_SIZE_MB, LLM_MODEL_FREE, LLM_MODEL_PAID, PDF_INPUT_DIR
 from src.definitions_manager import (
     add_page_definition, add_calculation, delete_page_definition, 
     delete_calculation, get_all_definitions, search_definitions, merge_with_pdf_definitions
@@ -60,9 +61,20 @@ def render_sidebar():
             # - Claude Haiku ($5/MTok output - but excluded by $3 limit)
             
             def is_affordable_model(model):
-                """Only show models with output cost under $3 per million tokens."""
+                """
+                Only show Google models with output cost under $3 per million tokens.
+                Other models are not working, so we filter them out.
+                """
                 # Check output/completion price
                 try:
+                    # First check if it's a Google model
+                    model_id_lower = model["id"].lower()
+                    model_name_lower = model.get("name", "").lower()
+                    
+                    # Only allow Google models (google/ prefix or "google" in name)
+                    if not ("google/" in model_id_lower or "google" in model_name_lower or "gemini" in model_id_lower):
+                        return False
+                    
                     completion_price = model.get("completion_price", "999")
                     # Handle both string and numeric prices
                     if isinstance(completion_price, str):
@@ -72,8 +84,11 @@ def render_sidebar():
                             return False
                     completion_price = float(completion_price)
                     
+                    # OpenRouter returns price per token, convert to per-MTok for comparison
+                    price_per_mtok = completion_price * 1_000_000
+                    
                     # Only show if output cost is under $3/MTok
-                    if completion_price >= 3.0:
+                    if price_per_mtok >= 3.0:
                         return False
                     
                     return True
@@ -81,41 +96,38 @@ def render_sidebar():
                     # If we can't parse the price, exclude it to be safe
                     return False
             
-            def get_reasoning_score(model):
+            def get_model_sort_key(model):
                 """
-                Assign reasoning score to models for auto-selection.
-                Higher score = better reasoning capability.
+                Sort models by priority:
+                1. Fast models first (highest priority)
+                2. Reasoning models second
+                3. Then by price (cheapest first)
+                
+                Returns tuple: (fast_priority, reasoning_priority, price)
+                Lower values = higher priority in sort
                 """
                 model_id_lower = model["id"].lower()
+                model_name_lower = model.get("name", "").lower()
                 
-                # Tier 1: Dedicated reasoning models (score 90-100)
-                if "reasoner" in model_id_lower or "reasoning" in model_id_lower:
-                    return 95
-                if "r1" in model_id_lower or "o1" in model_id_lower or "o3" in model_id_lower:
-                    return 90
+                # Priority 1: Fast models (0 = fast, 1 = not fast)
+                is_fast = 0 if ("fast" in model_id_lower or "fast" in model_name_lower) else 1
                 
-                # Tier 2: Advanced models with good reasoning (score 70-89)
-                if "deepseek" in model_id_lower and "v3" in model_id_lower:
-                    return 85
-                if "gemini" in model_id_lower and ("pro" in model_id_lower or "ultra" in model_id_lower):
-                    return 80
-                if "qwen" in model_id_lower and ("turbo" in model_id_lower or "plus" in model_id_lower):
-                    return 75
+                # Priority 2: Reasoning models (0 = reasoning, 1 = not reasoning)
+                is_reasoning = 0 if any(keyword in model_id_lower or keyword in model_name_lower 
+                                       for keyword in ["reasoner", "reasoning", "r1", "o1", "o3", "deepseek"]) else 1
                 
-                # Tier 3: Standard models (score 50-69)
-                if "deepseek" in model_id_lower:
-                    return 65
-                if "gemini" in model_id_lower and "flash" in model_id_lower:
-                    return 60
-                if "llama" in model_id_lower and "3" in model_id_lower:
-                    return 55
+                # Priority 3: Price (lower is better)
+                try:
+                    completion_price = float(model.get("completion_price", 999))
+                    price_per_mtok = completion_price * 1_000_000
+                except (ValueError, TypeError):
+                    price_per_mtok = 999.0  # Put unparseable prices at the end
                 
-                # Tier 4: Basic models (score <50)
-                return 40
+                return (is_fast, is_reasoning, price_per_mtok)
             
-            # Filter affordable models and sort by reasoning score (best first)
+            # Filter affordable models and sort by: fast > reasoning > cheap
             affordable_models = [m for m in models if not m["is_free"] and is_affordable_model(m)]
-            affordable_models_sorted = sorted(affordable_models, key=get_reasoning_score, reverse=True)
+            affordable_models_sorted = sorted(affordable_models, key=get_model_sort_key)
             paid_ids = [m["id"] for m in affordable_models_sorted]
 
             # ── Free model ────────────────────────────────────────────────
@@ -132,16 +144,16 @@ def render_sidebar():
             )
             st.session_state["free_model"] = selected_free
 
-            # ── Paid model (AFFORDABLE ONLY) ──────────────────────────────
-            st.subheader("💰 Paid Model (Affordable)")
-            st.caption("🔒 Only models with output cost <$3/MTok shown • Sorted by reasoning quality")
+            # ── Paid model (GOOGLE ONLY) ──────────────────────────────
+            st.subheader("💰 Paid Model (Google Only)")
+            st.caption("🔒 Only Google models <$3/MTok • Sorted: Fast → Reasoning → Cheapest")
             
-            # Auto-select best reasoning model (first in sorted list) if no preference set
+            # Auto-select best model (first in sorted list) if no preference set
             if paid_ids:
-                # If user hasn't selected or default not in list, use best reasoning model (first)
+                # If user hasn't selected or default not in list, use best model (first)
                 paid_default = st.session_state.get("paid_model", LLM_MODEL_PAID)
                 if paid_default not in paid_ids:
-                    paid_default = paid_ids[0]  # Best reasoning model
+                    paid_default = paid_ids[0]  # Best model (fast/reasoning/cheap)
                 paid_idx = paid_ids.index(paid_default)
             else:
                 paid_idx = 0
@@ -150,7 +162,7 @@ def render_sidebar():
                 "Select paid model",
                 options=paid_ids,
                 index=paid_idx,
-                help="Models sorted by reasoning quality (best first) • All under $3/MTok output",
+                help="Google models only (others not working) • Sorted: Fast → Reasoning → Cheapest • All <$3/MTok",
                 key="paid_model_select",
             )
             st.session_state["paid_model"] = selected_paid
@@ -159,7 +171,14 @@ def render_sidebar():
             if paid_ids:
                 selected_model = next((m for m in affordable_models_sorted if m["id"] == selected_paid), None)
                 if selected_model:
-                    st.caption(f"💡 {selected_model['name']} • Output: ${selected_model['completion_price']}/MTok")
+                    # Convert price from per-token to per-million-tokens for display
+                    try:
+                        completion_price = float(selected_model['completion_price'])
+                        # OpenRouter returns price per token, multiply by 1M for per-MTok display
+                        price_per_mtok = completion_price * 1_000_000
+                        st.caption(f"💡 {selected_model['name']} • Output: ${price_per_mtok:.2f}/MTok")
+                    except (ValueError, TypeError):
+                        st.caption(f"💡 {selected_model['name']}")
 
             if st.button("🔄 Refresh Model List", use_container_width=True):
                 st.cache_data.clear()
@@ -172,6 +191,60 @@ def render_sidebar():
 
         st.divider()
         st.caption("Model list cached for 1 hour.")
+
+
+
+def _auto_reindex_if_needed():
+    """
+    Auto-reindex on startup: if ChromaDB is empty but data/pdfs/ has PDF files,
+    automatically re-ingest them. This handles Streamlit Community Cloud restarts
+    where the ephemeral filesystem wipes vectordb/ but PDFs in the repo survive.
+    """
+    # Only run once per session
+    if st.session_state.get("_auto_reindex_done"):
+        return
+    st.session_state["_auto_reindex_done"] = True
+
+    stats = get_collection_stats()
+    if stats["total_chunks"] > 0:
+        return  # DB already has data, nothing to do
+
+    # Check if there are PDFs waiting to be indexed
+    pdf_dir = Path(PDF_INPUT_DIR)
+    pdf_dir.mkdir(parents=True, exist_ok=True)
+    pdf_files = list(pdf_dir.glob("*.pdf"))
+
+    if not pdf_files:
+        return  # No PDFs either, nothing to rebuild
+
+    # --- Auto-reindex ---
+    logger.info("[AUTO-REINDEX] ChromaDB empty but %d PDFs found — rebuilding index", len(pdf_files))
+
+    banner = st.container()
+    with banner:
+        st.warning(
+            f"⚡ **Auto-rebuilding index** — ChromaDB was empty but {len(pdf_files)} PDF(s) found in `data/pdfs/`. "
+            f"This happens after a server restart. Please wait..."
+        )
+        progress = st.progress(0)
+        status = st.empty()
+
+        for idx, pdf_file in enumerate(pdf_files, 1):
+            status.markdown(f"📄 Indexing **{pdf_file.name}** ({idx}/{len(pdf_files)})...")
+            try:
+                result = ingest_pdf(str(pdf_file), force_reindex=True)
+                if result["status"] == "success":
+                    logger.info("[AUTO-REINDEX] ✓ %s — %d chunks", pdf_file.name, result["chunks_created"])
+                else:
+                    logger.warning("[AUTO-REINDEX] ⚠ %s — %s", pdf_file.name, result["message"])
+            except Exception as e:
+                logger.exception("[AUTO-REINDEX] ✗ %s failed", pdf_file.name)
+            progress.progress(idx / len(pdf_files))
+
+        progress.empty()
+        status.empty()
+        st.success(f"✅ Auto-reindex complete — {len(pdf_files)} PDF(s) rebuilt into ChromaDB.")
+        logger.info("[AUTO-REINDEX] Complete — %d files processed", len(pdf_files))
 
 
 # Page config
@@ -356,17 +429,75 @@ def render_tab_ask_question():
 
                 model_used = result.get('model_used', '')
                 model_tier = 'paid' if 'free' not in model_used.lower() else 'free'
-                model_label = f"🆓 Free model" if model_tier == 'free' else f"💰 Paid model"
 
                 col_badge, col_model = st.columns([2, 1])
                 with col_badge:
                     st.markdown(f'<span class="{badge_class}">{badge_text}</span>', unsafe_allow_html=True)
                 with col_model:
-                    st.caption(f"{model_label}: `{model_used}`")
+                    # Visual Model Badge - Enhanced with colored badge
+                    if model_tier == 'free':
+                        st.success("🟢 Free Model")
+                    else:
+                        st.info("🔵 Paid Model")
+                
+                st.caption(f"Model: `{model_used}`")
                 st.markdown("")
                 
                 # Answer text
                 st.markdown(result['answer'])
+                
+                # Enhanced Copy Button with JavaScript clipboard API
+                st.markdown("")  # Add spacing
+                
+                # Escape answer text for JavaScript
+                import json
+                answer_json = json.dumps(result['answer'])
+                
+                # Create copy button with inline JavaScript
+                copy_button_html = f"""
+                <div style="margin: 10px 0;">
+                    <button onclick="copyToClipboard()" style="
+                        background-color: #f0f2f6;
+                        border: 1px solid #d0d0d0;
+                        border-radius: 4px;
+                        padding: 8px 16px;
+                        cursor: pointer;
+                        font-size: 14px;
+                        font-weight: 500;
+                        color: #262730;
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 6px;
+                    " onmouseover="this.style.backgroundColor='#e0e2e6'" onmouseout="this.style.backgroundColor='#f0f2f6'">
+                        📋 Copy Answer
+                    </button>
+                    <span id="copy-feedback" style="
+                        margin-left: 10px;
+                        color: #0e8a16;
+                        font-weight: 500;
+                        display: none;
+                    ">✓ Copied to clipboard!</span>
+                </div>
+                <script>
+                    function copyToClipboard() {{
+                        const text = {answer_json};
+                        navigator.clipboard.writeText(text).then(function() {{
+                            const feedback = document.getElementById('copy-feedback');
+                            feedback.style.display = 'inline';
+                            setTimeout(function() {{
+                                feedback.style.display = 'none';
+                            }}, 3000);
+                        }}, function(err) {{
+                            alert('Failed to copy. Please use the text box below to copy manually.');
+                        }});
+                    }}
+                </script>
+                """
+                st.components.v1.html(copy_button_html, height=50)
+                
+                # Fallback: Provide code block for manual copy
+                with st.expander("📄 View as Plain Text (Manual Copy)"):
+                    st.code(result['answer'], language=None)
                 
                 # Sources
                 if result['sources']:
@@ -374,9 +505,6 @@ def render_tab_ask_question():
                     st.markdown("**📚 Sources:**")
                     for source in result['sources']:
                         st.markdown(f"- {source}")
-                
-                # Copy button
-                st.code(result['answer'], language=None)
 
                 # Metadata
                 with st.expander("ℹ️ Query Details"):
@@ -464,6 +592,21 @@ def render_tab_upload():
     **Examples:** `HDFC_Life_Q1_FY25.pdf`, `SBI_Life_Q2_FY25.pdf`
     """)
     
+    # Processing mode selector
+    st.markdown("### ⚙️ Processing Mode")
+    processing_mode = st.radio(
+        "Choose how to process files:",
+        options=["Parallel", "Sequential"],
+        index=0,
+        horizontal=True,
+        help="Parallel: Process multiple files simultaneously (faster). Sequential: Process one file at a time (more stable)."
+    )
+    
+    if processing_mode == "Parallel":
+        st.info("🚀 **Parallel Mode**: Files will be processed simultaneously using multiple CPU cores for faster ingestion.")
+    else:
+        st.info("📝 **Sequential Mode**: Files will be processed one by one in order. Slower but more stable for large files.")
+    
     # File uploader
     uploaded_files = st.file_uploader(
         "Choose PDF files",
@@ -493,116 +636,164 @@ def render_tab_upload():
         
         # Upload button
         if st.button("🚀 Start Ingestion", type="primary"):
-            # OPTIMIZATION 1 & 2: Use background worker for parallel processing
-            # Auto-detect CPU cores and use them efficiently
-            import os
-            cpu_count = os.cpu_count() or 2
-            max_workers = max(2, cpu_count - 1)  # Leave 1 core free for system
-            
-            st.info(f"🚀 Processing with {max_workers} parallel workers (detected {cpu_count} CPU cores)")
-            
-            worker = get_worker(max_workers=max_workers)
-            
-            # Save uploaded files to temp directory
+            # Save uploaded files to BOTH temp (for processing) and data/pdfs/ (for persistence)
             temp_paths = []
+            persistent_dir = Path(PDF_INPUT_DIR)
+            persistent_dir.mkdir(parents=True, exist_ok=True)
+
             for uploaded_file in uploaded_files:
                 temp_path = Path(tempfile.gettempdir()) / uploaded_file.name
+                file_bytes = uploaded_file.getbuffer()
                 with open(temp_path, "wb") as f:
-                    f.write(uploaded_file.getbuffer())
+                    f.write(file_bytes)
                 temp_paths.append(str(temp_path))
+
+                # Also save to data/pdfs/ for persistence across restarts
+                persistent_path = persistent_dir / uploaded_file.name
+                with open(persistent_path, "wb") as f:
+                    f.write(file_bytes)
+                logger.info("[UPLOAD] Saved %s to %s for persistence", uploaded_file.name, persistent_path)
             
-            # Submit all files to background worker
-            job_ids = worker.submit_batch(temp_paths)
+            results = []
             
-            # Show progress with live updates and detailed status
-            progress_bar = st.progress(0)
-            status_placeholder = st.empty()  # Single placeholder that gets replaced
+            # PARALLEL MODE: Use background worker for parallel processing
+            if processing_mode == "Parallel":
+                # Auto-detect CPU cores and use them efficiently
+                import os
+                cpu_count = os.cpu_count() or 2
+                max_workers = max(2, cpu_count - 1)  # Leave 1 core free for system
+                
+                st.info(f"🚀 Processing with {max_workers} parallel workers (detected {cpu_count} CPU cores)")
+                
+                worker = get_worker(max_workers=max_workers)
+                
+                # Submit all files to background worker
+                job_ids = worker.submit_batch(temp_paths)
+                
+                # Show progress with live updates and detailed status
+                progress_bar = st.progress(0)
+                status_placeholder = st.empty()  # Single placeholder that gets replaced
+                
+                # Poll for completion with detailed updates
+                while True:
+                    jobs = {jid: worker.get_job_status(jid) for jid in job_ids}
+                    
+                    # Count statuses
+                    completed = sum(1 for j in jobs.values() if j.status in [JobStatus.COMPLETED, JobStatus.FAILED])
+                    processing = [j for j in jobs.values() if j.status == JobStatus.PROCESSING]
+                    pending = [j for j in jobs.values() if j.status == JobStatus.PENDING]
+                    total = len(jobs)
+                    
+                    # Update progress bar
+                    progress_bar.progress(completed / total)
+                    
+                    # Build status text (replaces previous content)
+                    status_lines = ["### 📊 Processing Status\n"]
+                    
+                    # Processing files
+                    if processing:
+                        status_lines.append(f"**🔄 Processing ({len(processing)} files):**\n")
+                        for job in processing:
+                            stage = "Starting..."
+                            if job.progress >= 0.9:
+                                stage = "Storing embeddings..."
+                            elif job.progress >= 0.6:
+                                stage = "Generating embeddings..."
+                            elif job.progress >= 0.4:
+                                stage = "Chunking document..."
+                            elif job.progress >= 0.2:
+                                stage = "Parsing PDF..."
+                            
+                            status_lines.append(f"- {job.filename}: {stage} ({int(job.progress * 100)}%)\n")
+                        status_lines.append("\n")
+                    
+                    # Pending files
+                    if pending:
+                        status_lines.append(f"**⏳ Waiting ({len(pending)} files):**\n")
+                        for job in pending[:3]:  # Show first 3
+                            status_lines.append(f"- {job.filename}\n")
+                        if len(pending) > 3:
+                            status_lines.append(f"- ... and {len(pending) - 3} more\n")
+                        status_lines.append("\n")
+                    
+                    # Completed files
+                    completed_jobs = [j for j in jobs.values() if j.status == JobStatus.COMPLETED]
+                    if completed_jobs:
+                        status_lines.append(f"**✅ Completed ({len(completed_jobs)} files)**\n\n")
+                    
+                    # Failed files
+                    failed_jobs = [j for j in jobs.values() if j.status == JobStatus.FAILED]
+                    if failed_jobs:
+                        status_lines.append(f"**❌ Failed ({len(failed_jobs)} files):**\n")
+                        for job in failed_jobs:
+                            status_lines.append(f"- {job.filename}: {job.error}\n")
+                        status_lines.append("\n")
+                    
+                    status_lines.append(f"**Overall Progress: {completed}/{total} files**")
+                    
+                    # Replace entire status (not append!)
+                    status_placeholder.markdown("".join(status_lines))
+                    
+                    # Check if all done
+                    if completed == total:
+                        break
+                    
+                    time.sleep(0.3)  # Update every 300ms for smooth progress
+                
+                status_placeholder.empty()
+                progress_bar.empty()
+                
+                # Collect results
+                for job_id in job_ids:
+                    job = worker.get_job_status(job_id)
+                    if job.status == JobStatus.COMPLETED and job.result:
+                        results.append(job.result)
+                    elif job.status == JobStatus.FAILED:
+                        results.append({
+                            "status": "error",
+                            "source_file": job.filename,
+                            "message": job.error or "Unknown error"
+                        })
+                
+                # Clear completed jobs from worker
+                worker.clear_completed_jobs()
             
-            # Poll for completion with detailed updates
-            while True:
-                jobs = {jid: worker.get_job_status(jid) for jid in job_ids}
+            # SEQUENTIAL MODE: Process files one by one
+            else:
+                st.info(f"📝 Processing {len(temp_paths)} files sequentially...")
                 
-                # Count statuses
-                completed = sum(1 for j in jobs.values() if j.status in [JobStatus.COMPLETED, JobStatus.FAILED])
-                processing = [j for j in jobs.values() if j.status == JobStatus.PROCESSING]
-                pending = [j for j in jobs.values() if j.status == JobStatus.PENDING]
-                total = len(jobs)
+                progress_bar = st.progress(0)
+                status_placeholder = st.empty()
                 
-                # Update progress bar
-                progress_bar.progress(completed / total)
+                for idx, temp_path in enumerate(temp_paths, 1):
+                    filename = Path(temp_path).name
+                    
+                    # Update status
+                    status_placeholder.markdown(f"### 📊 Processing Status\n\n**🔄 Processing file {idx}/{len(temp_paths)}:** {filename}")
+                    
+                    # Process file
+                    result = ingest_pdf(temp_path, force_reindex=False)
+                    results.append(result)
+                    
+                    # Update progress
+                    progress_bar.progress(idx / len(temp_paths))
+                    
+                    # Show immediate result
+                    if result['status'] == 'success':
+                        status_placeholder.success(f"✓ {filename}: {result['chunks_created']} chunks in {result['duration_seconds']}s")
+                    elif result['status'] == 'skipped':
+                        status_placeholder.info(f"⊘ {filename}: Already indexed")
+                    else:
+                        status_placeholder.error(f"✗ {filename}: {result['message']}")
+                    
+                    time.sleep(0.5)  # Brief pause to show result
                 
-                # Build status text (replaces previous content)
-                status_lines = ["### 📊 Processing Status\n"]
-                
-                # Processing files
-                if processing:
-                    status_lines.append(f"**🔄 Processing ({len(processing)} files):**\n")
-                    for job in processing:
-                        stage = "Starting..."
-                        if job.progress >= 0.9:
-                            stage = "Storing embeddings..."
-                        elif job.progress >= 0.6:
-                            stage = "Generating embeddings..."
-                        elif job.progress >= 0.4:
-                            stage = "Chunking document..."
-                        elif job.progress >= 0.2:
-                            stage = "Parsing PDF..."
-                        
-                        status_lines.append(f"- {job.filename}: {stage} ({int(job.progress * 100)}%)\n")
-                    status_lines.append("\n")
-                
-                # Pending files
-                if pending:
-                    status_lines.append(f"**⏳ Waiting ({len(pending)} files):**\n")
-                    for job in pending[:3]:  # Show first 3
-                        status_lines.append(f"- {job.filename}\n")
-                    if len(pending) > 3:
-                        status_lines.append(f"- ... and {len(pending) - 3} more\n")
-                    status_lines.append("\n")
-                
-                # Completed files
-                completed_jobs = [j for j in jobs.values() if j.status == JobStatus.COMPLETED]
-                if completed_jobs:
-                    status_lines.append(f"**✅ Completed ({len(completed_jobs)} files)**\n\n")
-                
-                # Failed files
-                failed_jobs = [j for j in jobs.values() if j.status == JobStatus.FAILED]
-                if failed_jobs:
-                    status_lines.append(f"**❌ Failed ({len(failed_jobs)} files):**\n")
-                    for job in failed_jobs:
-                        status_lines.append(f"- {job.filename}: {job.error}\n")
-                    status_lines.append("\n")
-                
-                status_lines.append(f"**Overall Progress: {completed}/{total} files**")
-                
-                # Replace entire status (not append!)
-                status_placeholder.markdown("".join(status_lines))
-                
-                # Check if all done
-                if completed == total:
-                    break
-                
-                time.sleep(0.3)  # Update every 300ms for smooth progress
-            
-            status_placeholder.empty()
-            progress_bar.empty()
+                status_placeholder.empty()
+                progress_bar.empty()
             
             # Clean up temp files
             for temp_path in temp_paths:
                 Path(temp_path).unlink(missing_ok=True)
-            
-            # Collect results
-            results = []
-            for job_id in job_ids:
-                job = worker.get_job_status(job_id)
-                if job.status == JobStatus.COMPLETED and job.result:
-                    results.append(job.result)
-                elif job.status == JobStatus.FAILED:
-                    results.append({
-                        "status": "error",
-                        "source_file": job.filename,
-                        "message": job.error or "Unknown error"
-                    })
             
             # Show results
             st.markdown("---")
@@ -630,8 +821,9 @@ def render_tab_upload():
                 else:
                     st.error(f"✗ {result['source_file']}: {result['message']}")
             
-            # Clear completed jobs from worker
-            worker.clear_completed_jobs()
+            # Clear completed jobs from worker (only exists in parallel mode)
+            if processing_mode == "Parallel":
+                worker.clear_completed_jobs()
     
     # Show indexed files
     st.markdown("---")
@@ -1092,6 +1284,9 @@ def render_tab_definitions():
 
 def main():
     """Main app."""
+    # Auto-reindex if ChromaDB is empty but PDFs exist (handles cloud restarts)
+    _auto_reindex_if_needed()
+
     render_sidebar()
     render_header()
 

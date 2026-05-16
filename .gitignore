@@ -28,7 +28,8 @@ wheels/
 *.egg
 
 # Data directories
-data/pdfs/*.pdf
+# NOTE: data/pdfs/ is NOT ignored — PDFs are committed to the repo so they
+# survive Streamlit Community Cloud restarts (ephemeral filesystem).
 data/processed/*.json
 vectordb/
 
