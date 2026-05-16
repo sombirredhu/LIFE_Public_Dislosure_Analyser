@@ -72,14 +72,25 @@ def reduce_dimensions(embeddings: np.ndarray, method: str = 'pca', n_components:
                 "t-SNE 3D is unreliable — falling back to 2D. Use PCA for 3D."
             )
         perplexity = min(30, max(5, n_samples // 5))
-        reducer = TSNE(
-            n_components=safe_components,
-            random_state=42,
-            perplexity=perplexity,
-            n_iter=1000,
-            learning_rate='auto',
-            init='pca',
-        )
+        # sklearn ≥1.5 renamed n_iter → max_iter; support both
+        try:
+            reducer = TSNE(
+                n_components=safe_components,
+                random_state=42,
+                perplexity=perplexity,
+                max_iter=1000,
+                learning_rate='auto',
+                init='pca',
+            )
+        except TypeError:
+            reducer = TSNE(
+                n_components=safe_components,
+                random_state=42,
+                perplexity=perplexity,
+                n_iter=1000,
+                learning_rate='auto',
+                init='pca',
+            )
         reduced = reducer.fit_transform(embeddings)
         # Pad with zeros so caller always gets n_components dims
         if reduced.shape[1] < n_components:
