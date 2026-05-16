@@ -31,9 +31,12 @@ wheels/
 # Data directories
 # NOTE: data/pdfs/ is NOT ignored — PDFs are committed to the repo so they
 # survive Streamlit Community Cloud restarts (ephemeral filesystem).
+# data/processed/ - JSON files tracked for definitions
+vectordb/
 
 # IDE
 .vscode/
+.vs/
 .idea/
 *.swp
 *.swo
@@ -65,7 +68,7 @@ temp/
 # ============================================
 
 # Documentation (not needed for app to run)
-docs/
+# docs/ - Now tracked for GitHub documentation
 Project_Files/
 
 # Testing artifacts (keep .py test files for CI)

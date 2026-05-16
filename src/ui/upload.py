@@ -53,7 +53,7 @@ def render_tab_upload():
             st.write(f"- {file.name} ({file.size / 1024:.1f} KB)")
         if st.button("🚀 Start Ingestion", type="primary"):
             import os as _os
-            _pdf_dir_str = (_os.getenv("PDF_INPUT_DIR") or _os.getenv("TMPDIR") or "/tmp/pdfs")
+            _pdf_dir_str = str(PDF_INPUT_DIR) if PDF_INPUT_DIR else (_os.getenv("PDF_INPUT_DIR") or _os.getenv("TMPDIR") or "/tmp/pdfs")
             temp_paths = []
             try:
                 _persistent = Path(_pdf_dir_str)
@@ -74,12 +74,12 @@ def render_tab_upload():
                     pass
             results = []
             if processing_mode == "Parallel":
-                import os
-                cpu_count = os.cpu_count() or 2
+                import os as _os_cpu
+                cpu_count = _os_cpu.cpu_count() or 2
                 max_workers = max(2, cpu_count - 1)
                 st.info(f"🚀 Processing with {max_workers} parallel workers (detected {cpu_count} CPU cores)")
                 worker = get_worker(max_workers=max_workers)
-                job_ids = worker.submit_batch(temp_paths)
+                job_ids = [worker.submit_job(temp_path, force_reindex=False) for temp_path in temp_paths]
                 progress_bar = st.progress(0)
                 status_placeholder = st.empty()
                 while True:
@@ -199,10 +199,10 @@ def render_tab_upload():
                     st.rerun()
             with col_reindex:
                 if st.button("🔄 Re-index Selected File", type="secondary"):
-                    import os
-                    pdf_path = os.path.join(PDF_INPUT_DIR, file_to_delete)
-                    if os.path.exists(pdf_path):
-                        with st.spinner(f"Re-indexing {file_to_delete}..."): result = ingest_pdf(pdf_path, force_reindex=True)
+                    from pathlib import Path as _Path
+                    pdf_path = _Path(PDF_INPUT_DIR) / file_to_delete
+                    if pdf_path.exists():
+                        with st.spinner(f"Re-indexing {file_to_delete}..."): result = ingest_pdf(str(pdf_path), force_reindex=True)
                         if result['status'] == 'success':
                             invalidate_metadata_cache()
                             st.success(f"Re-indexed: {result['chunks_created']} chunks")
