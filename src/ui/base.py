@@ -222,25 +222,27 @@ def _auto_reindex_if_needed():
 
     logger.info("[AUTO-REINDEX] ChromaDB empty but %d PDFs found — rebuilding index", len(pdf_files))
 
-    banner = st.container()
-    with banner:
-        st.warning(f"⚡ **Auto-rebuilding index** — ChromaDB was empty but {len(pdf_files)} PDF(s) found in `data/pdfs/`. This happens after a server restart. Please wait...")
-        progress = st.progress(0)
-        status = st.empty()
-
-        for idx, pdf_file in enumerate(pdf_files, 1):
-            status.markdown(f"📄 Indexing **{pdf_file.name}** ({idx}/{len(pdf_files)})...")
-            try:
-                result = ingest_pdf(str(pdf_file), force_reindex=True)
-                if result["status"] == "success":
-                    logger.info("[AUTO-REINDEX] ✓ %s — %d chunks", pdf_file.name, result["chunks_created"])
-                else:
-                    logger.warning("[AUTO-REINDEX] ⚠ %s — %s", pdf_file.name, result["message"])
-            except Exception as e:
-                logger.exception("[AUTO-REINDEX] ✗ %s failed", pdf_file.name)
-            progress.progress(idx / len(pdf_files))
-
-        progress.empty()
-        status.empty()
-        st.success(f"✅ Auto-reindex complete — {len(pdf_files)} PDF(s) rebuilt into ChromaDB.")
-        logger.info("[AUTO-REINDEX] Complete — %d files processed", len(pdf_files))
+    warning_placeholder = st.empty()
+    progress_placeholder = st.empty()
+    status_placeholder = st.empty()
+    
+    warning_placeholder.warning(f"⚡ **Auto-rebuilding index** — ChromaDB was empty but {len(pdf_files)} PDF(s) found in `data/pdfs/`. This happens after a server restart. Please wait...")
+    
+    for idx, pdf_file in enumerate(pdf_files, 1):
+        progress_placeholder.progress(idx / len(pdf_files))
+        status_placeholder.markdown(f"📄 Indexing **{pdf_file.name}** ({idx}/{len(pdf_files)})...")
+        try:
+            result = ingest_pdf(str(pdf_file), force_reindex=True)
+            if result["status"] == "success":
+                logger.info("[AUTO-REINDEX] ✓ %s — %d chunks", pdf_file.name, result["chunks_created"])
+            else:
+                logger.warning("[AUTO-REINDEX] ⚠ %s — %s", pdf_file.name, result["message"])
+        except Exception as e:
+            logger.exception("[AUTO-REINDEX] ✗ %s failed", pdf_file.name)
+    
+    # Clear all placeholders
+    warning_placeholder.empty()
+    progress_placeholder.empty()
+    status_placeholder.empty()
+    
+    logger.info("[AUTO-REINDEX] Complete — %d files processed", len(pdf_files))
