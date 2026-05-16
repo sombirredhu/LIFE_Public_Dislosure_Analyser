@@ -5,7 +5,7 @@ import time
 import tempfile
 from pathlib import Path
 from typing import List
-from src.config import MAX_UPLOAD_SIZE_MB
+from src.config import MAX_UPLOAD_SIZE_MB, PDF_INPUT_DIR
 from src.ingestor import ingest_pdf
 from src.embedder import (
     get_collection_stats, get_or_create_collection,
@@ -199,7 +199,6 @@ def render_tab_upload():
                     st.rerun()
             with col_reindex:
                 if st.button("🔄 Re-index Selected File", type="secondary"):
-                    from src.config import PDF_INPUT_DIR
                     import os
                     pdf_path = os.path.join(PDF_INPUT_DIR, file_to_delete)
                     if os.path.exists(pdf_path):
