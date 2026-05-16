@@ -25,6 +25,7 @@ class BackgroundWorker:
         return cls._instance
     def __init__(self, max_workers: int = 2):
         if self._initialized: return
+        self.max_workers = max_workers
         self.executor = ThreadPoolExecutor(max_workers=max_workers)
         self.jobs: Dict[str, IngestionJob] = {}; self._initialized = True
     def submit_job(self, pdf_path: str, force_reindex: bool = False) -> str:

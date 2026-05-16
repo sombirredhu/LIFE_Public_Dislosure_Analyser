@@ -14,34 +14,7 @@ _SUMMARY_TEXT_PREFIXES = (
 )
 
 def _estimate_tokens(text: str) -> int:
-    """
-    Estimate token count for text using char_count / 4 approximation.
-    
-    The sentence-transformers/all-MiniLM-L6-v2 model uses WordPiece tokenization.
-    Empirical testing shows approximately 4 characters per token on average for
-    English text with mixed alphanumeric content and punctuation.
-    
-    This estimation is used to determine if a page exceeds the MAX_PAGE_TOKENS
-    limit (default 8000) and needs to be split into sub-chunks.
-    
-    Args:
-        text: Input text string to estimate token count for
-    
-    Returns:
-        Estimated token count as integer (text length divided by 4)
-    
-    Examples:
-        >>> _estimate_tokens("Hello world")
-        2
-        >>> _estimate_tokens("A" * 1000)
-        250
-        >>> _estimate_tokens("")
-        0
-    
-    Note:
-        This is an approximation. Actual token count may vary by ±20% depending
-        on text characteristics (technical terms, numbers, special characters).
-    """
+    """Approximate token count (chars / 4). Used for MAX_PAGE_TOKENS check."""
     return len(text) // 4
 
 

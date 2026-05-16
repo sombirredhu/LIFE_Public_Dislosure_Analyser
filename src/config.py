@@ -3,7 +3,7 @@ import logging
 from pathlib import Path
 from dotenv import load_dotenv
 
-for lib in ['pdfminer', 'pdfplumber', 'PIL', 'matplotlib', 'urllib3', 'chromadb', 'sentence_transformers', 'transformers', 'torch']:
+for lib in ['pdfminer', 'pdfplumber', 'PIL', 'matplotlib', 'urllib3', 'chromadb']:
     logging.getLogger(lib).setLevel(logging.WARNING)
 
 project_root = Path(__file__).parent.parent

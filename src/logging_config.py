@@ -69,11 +69,7 @@ def setup_logging(level: int = logging.DEBUG) -> None:
     for lib in (
         "httpx", "httpcore", "urllib3",
         "chromadb", "chromadb.telemetry",
-        "sentence_transformers", "transformers",
         "openai._base_client", "openai.http_client",
-        # Streamlit's file watcher scans all transformers submodules and hits
-        # ModuleNotFoundError for optional extras (e.g. torchvision for zoedepth).
-        # This is harmless — suppress the noise.
         "streamlit.watcher.local_sources_watcher",
     ):
         logging.getLogger(lib).setLevel(logging.ERROR)
