@@ -104,8 +104,11 @@ def parse_pdf(pdf_path: str) -> Dict[str, Any]:
         for i, p in enumerate(pdf.pages, 1):
             if i <= 5:
                 txt = p.extract_text() or ""
-                txt_lower = txt.lower()
-                is_index = "index" in txt_lower or "contents" in txt_lower or len(_LPAGE_LABEL_RE.findall(txt)) >= 5
+                # A true index page will list multiple distinct L-pages. 
+                # Data pages will only reference their own L-page (e.g., L-4).
+                unique_lpages = {m[0].upper() for m in _LPAGE_LABEL_RE.findall(txt)}
+                is_index = len(unique_lpages) >= 3
+                
                 if is_index:
                     for li, line in enumerate(txt.splitlines()):
                         m = _LPAGE_LABEL_RE.search(line.strip())
