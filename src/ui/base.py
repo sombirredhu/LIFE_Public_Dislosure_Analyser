@@ -15,28 +15,34 @@ from src.llm_client import fetch_available_models
 from src.logging_config import setup_logging
 
 logger = logging.getLogger(__name__)
-def _get_cookie_manager():
-    try:
-        import extra_streamlit_components as stx
-        return stx.CookieManager(key="pd_cookie_mgr")
-    except Exception:
-        return None
 
+def _get_cookie_manager():
+    if "cookie_manager" not in st.session_state:
+        try:
+            import extra_streamlit_components as stx
+            st.session_state["cookie_manager"] = stx.CookieManager(key="pd_cookie_mgr")
+        except Exception:
+            st.session_state["cookie_manager"] = None
+    return st.session_state["cookie_manager"]
 
 def _check_password() -> bool:
-    try:
-        expected = st.secrets["APP_PASSWORD"]
-    except (KeyError, FileNotFoundError):
-        return True
-
+    try: expected = st.secrets["APP_PASSWORD"]
+    except (KeyError, FileNotFoundError): return True
+    if st.session_state.get("authenticated"): return True
     cm = _get_cookie_manager()
-    if cm and cm.get("pd_auth_token") == "authenticated":
-        st.session_state["authenticated"] = True
-        return True
-
-    if st.session_state.get("authenticated"):
-        return True
-
+    if cm:
+        token = cm.get("pd_auth_token")
+        if token == "authenticated":
+            st.session_state["authenticated"] = True
+            st.rerun()
+        if token is None:
+            # First run or loading; give it a moment without stopping the whole app yet
+            time.sleep(0.2)
+            token = cm.get("pd_auth_token")
+            if token == "authenticated":
+                st.session_state["authenticated"] = True
+                st.rerun()
+    # If we are here, we definitely need a password
     st.markdown(f"### 🔒 Enter password to access **{APP_TITLE}**")
     pwd = st.text_input("Password", type="password", key="auth_password_input")
     if st.button("Login", type="primary"):
@@ -44,21 +50,14 @@ def _check_password() -> bool:
             st.session_state["authenticated"] = True
             if cm:
                 from datetime import timedelta
-                try:
-                    cm.set("pd_auth_token", "authenticated",
-                           expires_at=datetime.now() + timedelta(days=30))
-                except Exception:
-                    pass
+                try: cm.set("pd_auth_token", "authenticated", expires_at=datetime.now() + timedelta(days=30))
+                except Exception: pass
             st.rerun()
-        else:
-            st.error("❌ Incorrect password.")
+        else: st.error("❌ Incorrect password.")
     st.stop()
     return False
 
-
-
 def render_css():
-    """Apply custom CSS to the app."""
     st.markdown("""
     <style>
         .main-header {
@@ -91,27 +90,15 @@ def render_css():
     </style>
     """, unsafe_allow_html=True)
 
-
-
 def render_header():
-    """Render app header."""
     st.markdown(f'<div class="main-header">📊 {APP_TITLE}</div>', unsafe_allow_html=True)
     st.markdown("*RAG-powered multi-company financial report analyzer*")
     st.markdown("---")
 
-
-
 def _score_paid_model(model: dict) -> tuple:
-    """
-    Composite sort key for paid models. Lower = better rank.
-    Priority: Cheap → Fast → Best for complex tasks (large context + reasoning).
-
-    Returns (price_bucket, speed_rank, reasoning_rank, -context_length)
-    """
     model_id   = model["id"].lower()
     model_name = model.get("name", "").lower()
 
-    # Price bucket (per MTok output): 0-1, 1-3, 3-10, >10
     try:
         price_per_mtok = float(model.get("completion_price", 999)) * 1_000_000
     except (ValueError, TypeError):
@@ -126,22 +113,17 @@ def _score_paid_model(model: dict) -> tuple:
     else:
         price_bucket = 3
 
-    # Speed bonus — names like "flash", "turbo", "fast", "mini", "haiku"
     fast_keywords = ["flash", "turbo", "fast", "mini", "haiku", "instant", "lite"]
     speed_rank = 0 if any(k in model_id or k in model_name for k in fast_keywords) else 1
 
-    # Reasoning bonus — better for complex financial queries
     reasoning_keywords = ["thinking", "reasoning", "reasoner", "r1", "o1", "o3", "deepseek"]
     reasoning_rank = 0 if any(k in model_id or k in model_name for k in reasoning_keywords) else 1
 
-    # Context length (higher = better for complex tasks)
     context = model.get("context_length", 0) or 0
 
     return (price_bucket, speed_rank, reasoning_rank, -context, price_per_mtok)
 
-
 def _model_label(model: dict) -> str:
-    """Human-readable label for a paid model dropdown option."""
     try:
         price_per_mtok = float(model.get("completion_price", 0)) * 1_000_000
         price_str = f"${price_per_mtok:.2f}/MTok"
@@ -159,75 +141,48 @@ def _model_label(model: dict) -> str:
         parts.append(ctx_str)
     return " · ".join(parts)
 
-
 def render_sidebar():
-    """Sidebar: unified model selector — openrouter/free default + all paid sorted by value."""
     with st.sidebar:
         st.header("⚙️ Model Settings")
-
         models = _get_models()
 
         if models:
-            # ── Build paid model list (ALL providers, not just Google) ──────
             def _parse_price(model) -> float:
                 try:
                     return float(model.get("completion_price", 999)) * 1_000_000
                 except (ValueError, TypeError):
                     return 999.0
 
-            # Include all paid models where price can be parsed and < $15/MTok
-            paid_models = [
-                m for m in models
-                if not m["is_free"] and _parse_price(m) < 15.0
-            ]
+            paid_models = [m for m in models if not m["is_free"] and _parse_price(m) < 15.0]
             paid_models_sorted = sorted(paid_models, key=_score_paid_model)
 
-            # ── Unified dropdown: free first, then all paid ──────────────
             st.subheader("🤖 Model for Complex Queries")
-            st.caption(
-                "**Default:** `openrouter/free` (auto-picks best free model)  \n"
-                "Paid models sorted: Cheapest → Fastest → Best reasoning"
-            )
+            st.caption("**Default:** `openrouter/free` (auto-picks best free model)  \nPaid models sorted: Cheapest → Fastest → Best reasoning")
 
-            # Build display labels and id lists
-            all_options   = ["openrouter/free"] + [m["id"] for m in paid_models_sorted]
-            all_labels    = ["🆓 openrouter/free  (auto best-free)"] + [
-                f"💰 {_model_label(m)}" for m in paid_models_sorted
-            ]
-            label_to_id   = dict(zip(all_labels, all_options))
+            all_options = ["openrouter/free"] + [m["id"] for m in paid_models_sorted]
+            all_labels = ["🆓 openrouter/free  (auto best-free)"] + [f"💰 {_model_label(m)}" for m in paid_models_sorted]
+            label_to_id = dict(zip(all_labels, all_options))
 
-            # Restore previous selection
             prev = st.session_state.get("selected_model_label", all_labels[0])
             if prev not in all_labels:
                 prev = all_labels[0]
 
-            chosen_label = st.selectbox(
-                "Select model",
-                options=all_labels,
-                index=all_labels.index(prev),
-                key="unified_model_select",
-            )
+            chosen_label = st.selectbox("Select model", options=all_labels, index=all_labels.index(prev), key="unified_model_select")
             chosen_id = label_to_id[chosen_label]
             st.session_state["selected_model_label"] = chosen_label
 
-            # Map to free_model / paid_model session keys used by the RAG pipeline
             if chosen_id == "openrouter/free":
                 st.session_state["free_model"]  = "openrouter/free"
-                st.session_state["paid_model"]  = "openrouter/free"   # fallback
+                st.session_state["paid_model"]  = "openrouter/free"
                 st.info("🆓 Using free tier — ideal for simple queries.")
             else:
-                st.session_state["free_model"]  = "openrouter/free"   # simple queries stay free
-                st.session_state["paid_model"]  = chosen_id            # complex queries use chosen
-                # Show price info for selected paid model
+                st.session_state["free_model"]  = "openrouter/free"
+                st.session_state["paid_model"]  = chosen_id
                 sel = next((m for m in paid_models_sorted if m["id"] == chosen_id), None)
                 if sel:
                     price = _parse_price(sel)
-                    ctx   = (sel.get("context_length") or 0) // 1000
-                    st.success(
-                        f"💰 **Paid model selected**  \n"
-                        f"`{sel.get('name', chosen_id)}`  \n"
-                        f"Output: **${price:.2f}/MTok** · Context: **{ctx}K tokens**"
-                    )
+                    ctx = (sel.get("context_length") or 0) // 1000
+                    st.success(f"💰 **Paid model selected**  \n`{sel.get('name', chosen_id)}`  \nOutput: **${price:.2f}/MTok** · Context: **{ctx}K tokens**")
 
             if st.button("🔄 Refresh Model List", use_container_width=True):
                 st.cache_data.clear()
@@ -241,57 +196,36 @@ def render_sidebar():
         st.divider()
         st.caption("Model list cached for 1 hour.")
 
-
-
-
-
 def _warm_up_models():
-    """Pre-load the embedding model and ChromaDB connection on first run.
-    Uses st.cache_resource so it survives Streamlit reruns."""
     model = get_embedding_model()
     collection = get_or_create_collection()
     logger.info("[WARMUP] Embedding model + ChromaDB ready")
     return model, collection
 
-
 def _get_models():
-    """Fetch and cache OpenRouter model list for 1 hour."""
     return fetch_available_models()
 
-
-
 def _auto_reindex_if_needed():
-    """
-    Auto-reindex on startup: if ChromaDB is empty but data/pdfs/ has PDF files,
-    automatically re-ingest them. This handles Streamlit Community Cloud restarts
-    where the ephemeral filesystem wipes vectordb/ but PDFs in the repo survive.
-    """
-    # Only run once per session
     if st.session_state.get("_auto_reindex_done"):
         return
     st.session_state["_auto_reindex_done"] = True
 
     stats = get_collection_stats()
     if stats["total_chunks"] > 0:
-        return  # DB already has data, nothing to do
+        return
 
-    # Check if there are PDFs waiting to be indexed
     pdf_dir = Path(PDF_INPUT_DIR)
     pdf_dir.mkdir(parents=True, exist_ok=True)
     pdf_files = list(pdf_dir.glob("*.pdf"))
 
     if not pdf_files:
-        return  # No PDFs either, nothing to rebuild
+        return
 
-    # --- Auto-reindex ---
     logger.info("[AUTO-REINDEX] ChromaDB empty but %d PDFs found — rebuilding index", len(pdf_files))
 
     banner = st.container()
     with banner:
-        st.warning(
-            f"⚡ **Auto-rebuilding index** — ChromaDB was empty but {len(pdf_files)} PDF(s) found in `data/pdfs/`. "
-            f"This happens after a server restart. Please wait..."
-        )
+        st.warning(f"⚡ **Auto-rebuilding index** — ChromaDB was empty but {len(pdf_files)} PDF(s) found in `data/pdfs/`. This happens after a server restart. Please wait...")
         progress = st.progress(0)
         status = st.empty()
 
@@ -311,6 +245,3 @@ def _auto_reindex_if_needed():
         status.empty()
         st.success(f"✅ Auto-reindex complete — {len(pdf_files)} PDF(s) rebuilt into ChromaDB.")
         logger.info("[AUTO-REINDEX] Complete — %d files processed", len(pdf_files))
-
-
-
