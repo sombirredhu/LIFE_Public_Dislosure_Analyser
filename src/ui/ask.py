@@ -98,7 +98,7 @@ def _render_last_answer():
     st.markdown(result['answer'])
     answer_json = json.dumps(result['answer'])
     copy_html = f"""<div style="margin:10px 0;"><button onclick="copyAns()" style="background:var(--secondary-background-color,#f0f2f6);border:1px solid var(--border-color,#d0d0d0);border-radius:4px; padding:8px 16px; cursor:pointer;font-size:14px; font-weight:500; color:var(--text-color,#262730);display:inline-flex; align-items:center; gap:6px;">📋 Copy Answer</button><span id="ans-fb" style="margin-left:10px;color:#28a745;font-weight:500;display:none;">✓ Copied!</span></div><script>function copyAns(){{navigator.clipboard.writeText({answer_json}).then(function(){{var f=document.getElementById('ans-fb');f.style.display='inline';setTimeout(function(){{f.style.display='none';}},3000);}});}}</script>"""
-    st.html(copy_html, height=50)
+    st.html(copy_html)
     with st.expander("📄 View as Plain Text"): st.code(result['answer'], language=None)
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
     sources_md = "\n".join([f"- {s}" for s in result.get('sources', [])])
