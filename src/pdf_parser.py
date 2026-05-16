@@ -38,44 +38,6 @@ def _update_master_page_definitions():
     with open(pdir / "master_term_to_page.json", "w", encoding="utf-8") as f:
         json.dump(t_to_p, f, indent=2, ensure_ascii=False)
 
-def extract_index_page(pdf_path: str) -> Dict[str, str]:
-    meta = extract_metadata_from_filename(pdf_path)
-    imap: Dict[str, str] = {}
-    with pdfplumber.open(pdf_path) as pdf:
-        for page in pdf.pages[:5]:
-            lines = (page.extract_text() or "").splitlines()
-            for i, line in enumerate(lines):
-                m = _LPAGE_LABEL_RE.search(line.strip())
-                if m:
-                    label, sec = m.group(1).upper(), m.group(2).strip()
-                    if not sec and i+1 < len(lines):
-                        nxt = lines[i+1].strip()
-                        if nxt and not _LPAGE_LABEL_RE.search(nxt): sec = nxt
-                    if sec: imap[label] = sec
-            for table in page.extract_tables() or []:
-                for row in table:
-                    if not row: continue
-                    for ci, cell in enumerate(row):
-                        if not cell: continue
-                        tm = _LPAGE_LABEL_RE.search(str(cell).strip())
-                        if tm:
-                            label, sec = tm.group(1).upper(), tm.group(2).strip()
-                            if not sec:
-                                for nc in row[ci+1:]:
-                                    if nc and str(nc).strip(): sec = str(nc).strip(); break
-                            if sec: imap[label] = sec
-                            break
-    if imap:
-        op = Path(PROCESSED_OUTPUT_DIR) / f"{meta['company_code']}_page_definitions.json"
-        op.parent.mkdir(parents=True, exist_ok=True)
-        with open(op, "w", encoding="utf-8") as f: json.dump(imap, f, indent=2, ensure_ascii=False)
-        _update_master_page_definitions()
-        try:
-            from src.definitions_manager import merge_with_pdf_definitions
-            merge_with_pdf_definitions()
-        except Exception: pass
-    return imap
-
 def _load_page_definitions(company_code: str) -> Dict[str, str]:
     pd = Path(PROCESSED_OUTPUT_DIR)
     for fn in [f"{company_code}_page_definitions.json", "page_definitions.json"]:
@@ -142,7 +104,9 @@ def parse_pdf(pdf_path: str) -> Dict[str, Any]:
         for i, p in enumerate(pdf.pages, 1):
             if i <= 5:
                 txt = p.extract_text() or ""
-                if any(k in txt.lower() for k in ['index', 'schedule', 'contents', 'form', 'revenue']):
+                txt_lower = txt.lower()
+                is_index = "index" in txt_lower or "contents" in txt_lower or len(_LPAGE_LABEL_RE.findall(txt)) >= 5
+                if is_index:
                     for li, line in enumerate(txt.splitlines()):
                         m = _LPAGE_LABEL_RE.search(line.strip())
                         if m:
