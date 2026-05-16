@@ -37,45 +37,59 @@ COMPANY_COLORS = [
 
 def reduce_dimensions(embeddings: np.ndarray, method: str = 'pca', n_components: int = 3) -> np.ndarray:
     """
-    Reduce high-dimensional embeddings to 3D for visualization.
-    
+    Reduce high-dimensional embeddings to 2D or 3D for visualization.
+
     Args:
         embeddings: Array of shape (n_samples, n_features)
-        method: 'pca', 'tsne', or 'umap'
-        n_components: Number of dimensions (default 3 for 3D plot)
-    
+        method:     'pca' or 'tsne'
+        n_components: 2 for 2D plot, 3 for 3D plot
+
     Returns:
         Reduced embeddings of shape (n_samples, n_components)
     """
-    logger.info("Reducing %d embeddings from %dD to %dD using %s", embeddings.shape[0], embeddings.shape[1], n_components, method.upper())
-    
+    n_samples = embeddings.shape[0]
+    logger.info(
+        "Reducing %d embeddings from %dD to %dD using %s",
+        n_samples, embeddings.shape[1], n_components, method.upper()
+    )
+
     if method.lower() == 'pca':
-        reducer = PCA(n_components=n_components, random_state=42)
+        n_comp = min(n_components, n_samples, embeddings.shape[1])
+        reducer = PCA(n_components=n_comp, random_state=42)
         reduced = reducer.fit_transform(embeddings)
         variance_explained = sum(reducer.explained_variance_ratio_) * 100
         logger.info("PCA variance explained: %.2f%%", variance_explained)
-    
+        # Pad with zeros if PCA returned fewer dims than requested
+        if reduced.shape[1] < n_components:
+            pad = np.zeros((reduced.shape[0], n_components - reduced.shape[1]))
+            reduced = np.hstack([reduced, pad])
+
     elif method.lower() == 'tsne':
-        # t-SNE is slower but often better for visualization
-        perplexity = min(30, embeddings.shape[0] - 1)  # Adjust perplexity for small datasets
-        reducer = TSNE(n_components=n_components, random_state=42, perplexity=perplexity)
+        # t-SNE in 3D is extremely slow and often crashes; cap at 2D
+        safe_components = min(n_components, 2)
+        if n_components == 3:
+            logger.warning(
+                "t-SNE 3D is unreliable — falling back to 2D. Use PCA for 3D."
+            )
+        perplexity = min(30, max(5, n_samples // 5))
+        reducer = TSNE(
+            n_components=safe_components,
+            random_state=42,
+            perplexity=perplexity,
+            n_iter=1000,
+            learning_rate='auto',
+            init='pca',
+        )
         reduced = reducer.fit_transform(embeddings)
-        logger.info("t-SNE reduction completed")
-    
-    elif method.lower() == 'umap':
-        try:
-            import umap
-            n_neighbors = min(15, embeddings.shape[0] - 1)
-            reducer = umap.UMAP(n_components=n_components, random_state=42, n_neighbors=n_neighbors)
-            reduced = reducer.fit_transform(embeddings)
-            logger.info("UMAP reduction completed")
-        except ImportError:
-            logger.warning("UMAP not installed, falling back to PCA")
-            return reduce_dimensions(embeddings, method='pca', n_components=n_components)
-    
+        # Pad with zeros so caller always gets n_components dims
+        if reduced.shape[1] < n_components:
+            pad = np.zeros((reduced.shape[0], n_components - reduced.shape[1]))
+            reduced = np.hstack([reduced, pad])
+        logger.info("t-SNE reduction completed (actual dims: %d)", reduced.shape[1])
+
     else:
-        raise ValueError(f"Unknown method: {method}. Use 'pca', 'tsne', or 'umap'")
-    
+        raise ValueError(f"Unknown method: {method}. Use 'pca' or 'tsne'")
+
     return reduced
 
 
@@ -114,134 +128,142 @@ def get_vector_data(max_samples: Optional[int] = None) -> Tuple[np.ndarray, List
     return embeddings, metadatas
 
 
+def create_2d_plot(
+    embeddings_2d: np.ndarray,
+    metadatas: List[Dict[str, Any]],
+    title: str = "Vector Database 2D Visualization"
+) -> go.Figure:
+    """Create interactive 2D scatter plot with Plotly."""
+    company_to_color = {}
+    companies = sorted(set(m["company"] for m in metadatas))
+    for i, company in enumerate(companies):
+        company_to_color[company] = COMPANY_COLORS[i % len(COMPANY_COLORS)]
+
+    fig = go.Figure()
+    for company in companies:
+        indices = [i for i, m in enumerate(metadatas) if m["company"] == company]
+        x = embeddings_2d[indices, 0]
+        y = embeddings_2d[indices, 1]
+        hover_texts = [
+            f"<b>{metadatas[idx]['company']}</b><br>"
+            f"Period: {metadatas[idx]['period_label']}<br>"
+            f"Section: {metadatas[idx]['section']}<br>"
+            f"Page: {metadatas[idx]['page_number']}<br>"
+            f"Type: {metadatas[idx]['content_type']}"
+            for idx in indices
+        ]
+        fig.add_trace(go.Scatter(
+            x=x, y=y,
+            mode='markers',
+            name=company,
+            marker=dict(size=7, color=company_to_color[company], opacity=0.8,
+                        line=dict(width=0.5, color='white')),
+            text=hover_texts,
+            hovertemplate='%{text}<extra></extra>'
+        ))
+
+    fig.update_layout(
+        title=dict(text=title, x=0.5, xanchor='center', font=dict(size=20)),
+        xaxis=dict(title='Dimension 1', showgrid=True, gridcolor='#E0E0E0'),
+        yaxis=dict(title='Dimension 2', showgrid=True, gridcolor='#E0E0E0'),
+        legend=dict(title=dict(text='Companies'), font=dict(size=12),
+                    bgcolor='rgba(255,255,255,0.8)', bordercolor='#CCC', borderwidth=1),
+        margin=dict(l=40, r=20, t=60, b=40),
+        hovermode='closest',
+        height=600
+    )
+    return fig
+
+
+
 def create_3d_plot(
     embeddings_3d: np.ndarray,
     metadatas: List[Dict[str, Any]],
     title: str = "Vector Database 3D Visualization"
 ) -> go.Figure:
-    """
-    Create interactive 3D scatter plot with Plotly.
-    
-    Args:
-        embeddings_3d: 3D embeddings array of shape (n_samples, 3)
-        metadatas: List of metadata dicts for each embedding
-        title: Plot title
-    
-    Returns:
-        Plotly Figure object
-    """
-    # Group by company and assign colors
+    """Create interactive 3D scatter plot with Plotly."""
     company_to_color = {}
     companies = sorted(set(m["company"] for m in metadatas))
-    
     for i, company in enumerate(companies):
         company_to_color[company] = COMPANY_COLORS[i % len(COMPANY_COLORS)]
-    
+
     logger.info("Creating 3D plot for %d companies", len(companies))
-    
-    # Create figure
     fig = go.Figure()
-    
-    # Add trace for each company
     for company in companies:
-        # Filter data for this company
         indices = [i for i, m in enumerate(metadatas) if m["company"] == company]
-        
         x = embeddings_3d[indices, 0]
         y = embeddings_3d[indices, 1]
         z = embeddings_3d[indices, 2]
-        
-        # Create hover text
-        hover_texts = []
-        for idx in indices:
-            m = metadatas[idx]
-            hover_text = (
-                f"<b>{m['company']}</b><br>"
-                f"Period: {m['period_label']}<br>"
-                f"Section: {m['section']}<br>"
-                f"Page: {m['page_number']}<br>"
-                f"Type: {m['content_type']}"
-            )
-            hover_texts.append(hover_text)
-        
-        # Add scatter trace
+        hover_texts = [
+            f"<b>{metadatas[idx]['company']}</b><br>"
+            f"Period: {metadatas[idx]['period_label']}<br>"
+            f"Section: {metadatas[idx]['section']}<br>"
+            f"Page: {metadatas[idx]['page_number']}<br>"
+            f"Type: {metadatas[idx]['content_type']}"
+            for idx in indices
+        ]
         fig.add_trace(go.Scatter3d(
-            x=x,
-            y=y,
-            z=z,
+            x=x, y=y, z=z,
             mode='markers',
             name=company,
-            marker=dict(
-                size=5,
-                color=company_to_color[company],
-                opacity=0.8,
-                line=dict(width=0.5, color='white')
-            ),
+            marker=dict(size=5, color=company_to_color[company], opacity=0.8,
+                        line=dict(width=0.5, color='white')),
             text=hover_texts,
             hovertemplate='%{text}<extra></extra>'
         ))
-    
-    # Update layout
+
     fig.update_layout(
-        title=dict(
-            text=title,
-            x=0.5,
-            xanchor='center',
-            font=dict(size=20, color='#2C3E50')
-        ),
+        title=dict(text=title, x=0.5, xanchor='center', font=dict(size=20, color='#2C3E50')),
         scene=dict(
-            xaxis=dict(title='Dimension 1', backgroundcolor='#F8F9FA', gridcolor='#E0E0E0'),
-            yaxis=dict(title='Dimension 2', backgroundcolor='#F8F9FA', gridcolor='#E0E0E0'),
-            zaxis=dict(title='Dimension 3', backgroundcolor='#F8F9FA', gridcolor='#E0E0E0'),
+            xaxis=dict(title='Dim 1', backgroundcolor='#F8F9FA', gridcolor='#E0E0E0'),
+            yaxis=dict(title='Dim 2', backgroundcolor='#F8F9FA', gridcolor='#E0E0E0'),
+            zaxis=dict(title='Dim 3', backgroundcolor='#F8F9FA', gridcolor='#E0E0E0'),
             bgcolor='#FFFFFF'
         ),
-        legend=dict(
-            title=dict(text='Companies', font=dict(size=14)),
-            font=dict(size=12),
-            bgcolor='rgba(255, 255, 255, 0.8)',
-            bordercolor='#CCCCCC',
-            borderwidth=1
-        ),
+        legend=dict(title=dict(text='Companies'), font=dict(size=12),
+                    bgcolor='rgba(255,255,255,0.8)', bordercolor='#CCC', borderwidth=1),
         margin=dict(l=0, r=0, t=50, b=0),
         hovermode='closest',
         height=700
     )
-    
     return fig
 
 
 def visualize_vectors(
     method: str = 'pca',
     max_samples: Optional[int] = 2000,
-    title: Optional[str] = None
+    title: Optional[str] = None,
+    n_dims: int = 3,
 ) -> go.Figure:
     """
-    Main function to create 3D visualization of vector database.
-    
+    Main function to create 2D or 3D visualization of vector database.
+
     Args:
-        method: Dimensionality reduction method ('pca', 'tsne', 'umap')
-        max_samples: Maximum number of samples to visualize (None for all)
-        title: Custom plot title
-    
-    Returns:
-        Plotly Figure object
+        method:      'pca' or 'tsne'
+        max_samples: Maximum number of samples to visualize
+        title:       Custom plot title
+        n_dims:      2 for 2D scatter, 3 for 3D scatter
+                     Note: t-SNE always reduces to 2D for reliability.
     """
     try:
-        # Fetch data
         embeddings, metadatas = get_vector_data(max_samples=max_samples)
-        
-        # Reduce dimensions
-        embeddings_3d = reduce_dimensions(embeddings, method=method, n_components=3)
-        
-        # Create plot
+
+        # t-SNE is always 2D for reliability
+        actual_dims = 2 if method.lower() == 'tsne' else n_dims
+        reduced = reduce_dimensions(embeddings, method=method, n_components=actual_dims)
+
         if title is None:
-            title = f"Vector Database 3D Visualization ({method.upper()})"
-        
-        fig = create_3d_plot(embeddings_3d, metadatas, title=title)
-        
-        logger.info("3D visualization created successfully")
+            dim_label = f"{actual_dims}D"
+            title = f"Vector Database {dim_label} Visualization ({method.upper()})"
+
+        if actual_dims == 2:
+            fig = create_2d_plot(reduced, metadatas, title=title)
+        else:
+            fig = create_3d_plot(reduced, metadatas, title=title)
+
+        logger.info("Visualization created successfully (%dD, method=%s)", actual_dims, method)
         return fig
-    
+
     except Exception as e:
         logger.error("Failed to create visualization: %s", e)
         raise

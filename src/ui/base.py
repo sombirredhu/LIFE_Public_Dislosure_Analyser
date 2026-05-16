@@ -9,10 +9,9 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from src.config import *
-from src.rag_pipeline import answer_question
+from src.embedder import get_embedding_model, get_or_create_collection, get_collection_stats
 from src.ingestor import ingest_pdf
-from src.embedder import *
-
+from src.llm_client import fetch_available_models
 from src.logging_config import setup_logging
 
 logger = logging.getLogger(__name__)
@@ -93,145 +92,133 @@ def render_header():
 
 
 
+def _score_paid_model(model: dict) -> tuple:
+    """
+    Composite sort key for paid models. Lower = better rank.
+    Priority: Cheap → Fast → Best for complex tasks (large context + reasoning).
+
+    Returns (price_bucket, speed_rank, reasoning_rank, -context_length)
+    """
+    model_id   = model["id"].lower()
+    model_name = model.get("name", "").lower()
+
+    # Price bucket (per MTok output): 0-1, 1-3, 3-10, >10
+    try:
+        price_per_mtok = float(model.get("completion_price", 999)) * 1_000_000
+    except (ValueError, TypeError):
+        price_per_mtok = 999.0
+
+    if price_per_mtok < 1.0:
+        price_bucket = 0
+    elif price_per_mtok < 3.0:
+        price_bucket = 1
+    elif price_per_mtok < 10.0:
+        price_bucket = 2
+    else:
+        price_bucket = 3
+
+    # Speed bonus — names like "flash", "turbo", "fast", "mini", "haiku"
+    fast_keywords = ["flash", "turbo", "fast", "mini", "haiku", "instant", "lite"]
+    speed_rank = 0 if any(k in model_id or k in model_name for k in fast_keywords) else 1
+
+    # Reasoning bonus — better for complex financial queries
+    reasoning_keywords = ["thinking", "reasoning", "reasoner", "r1", "o1", "o3", "deepseek"]
+    reasoning_rank = 0 if any(k in model_id or k in model_name for k in reasoning_keywords) else 1
+
+    # Context length (higher = better for complex tasks)
+    context = model.get("context_length", 0) or 0
+
+    return (price_bucket, speed_rank, reasoning_rank, -context, price_per_mtok)
+
+
+def _model_label(model: dict) -> str:
+    """Human-readable label for a paid model dropdown option."""
+    try:
+        price_per_mtok = float(model.get("completion_price", 0)) * 1_000_000
+        price_str = f"${price_per_mtok:.2f}/MTok"
+    except (ValueError, TypeError):
+        price_str = "?"
+
+    ctx = model.get("context_length", 0) or 0
+    ctx_str = f"{ctx // 1000}K ctx" if ctx >= 1000 else ""
+    name = model.get("name", model["id"])
+
+    parts = [name]
+    if price_str:
+        parts.append(price_str)
+    if ctx_str:
+        parts.append(ctx_str)
+    return " · ".join(parts)
+
+
 def render_sidebar():
-    """Sidebar: live model selector with free/paid split."""
+    """Sidebar: unified model selector — openrouter/free default + all paid sorted by value."""
     with st.sidebar:
         st.header("⚙️ Model Settings")
 
         models = _get_models()
 
         if models:
-            free_ids  = ["openrouter/free"] + [m["id"] for m in models if m["is_free"] and m["id"] != "openrouter/free"]
-            
-            # ── Filter paid models: ONLY show models with output cost < $3/MTok ──
-            # This filters out expensive models like:
-            # - Claude Opus ($25/MTok output)
-            # - GPT-5.x ($15-75/MTok output)
-            # - Claude Sonnet 4.6 ($15/MTok output)
-            # Keeps affordable models like:
-            # - DeepSeek ($0.28-2.19/MTok output)
-            # - Gemini Flash ($0.40-1.50/MTok output)
-            # - Claude Haiku ($5/MTok output - but excluded by $3 limit)
-            
-            def is_affordable_model(model):
-                """
-                Only show Google models with output cost under $3 per million tokens.
-                Other models are not working, so we filter them out.
-                """
-                # Check output/completion price
+            # ── Build paid model list (ALL providers, not just Google) ──────
+            def _parse_price(model) -> float:
                 try:
-                    # First check if it's a Google model
-                    model_id_lower = model["id"].lower()
-                    model_name_lower = model.get("name", "").lower()
-                    
-                    # Only allow Google models (google/ prefix or "google" in name)
-                    if not ("google/" in model_id_lower or "google" in model_name_lower or "gemini" in model_id_lower):
-                        return False
-                    
-                    completion_price = model.get("completion_price", "999")
-                    # Handle both string and numeric prices
-                    if isinstance(completion_price, str):
-                        # Remove any currency symbols or extra text
-                        completion_price = completion_price.replace("$", "").strip()
-                        if completion_price == "?" or not completion_price:
-                            return False
-                    completion_price = float(completion_price)
-                    
-                    # OpenRouter returns price per token, convert to per-MTok for comparison
-                    price_per_mtok = completion_price * 1_000_000
-                    
-                    # Only show if output cost is under $3/MTok
-                    if price_per_mtok >= 3.0:
-                        return False
-                    
-                    return True
+                    return float(model.get("completion_price", 999)) * 1_000_000
                 except (ValueError, TypeError):
-                    # If we can't parse the price, exclude it to be safe
-                    return False
-            
-            def get_model_sort_key(model):
-                """
-                Sort models by priority:
-                1. Fast models first (highest priority)
-                2. Reasoning models second
-                3. Then by price (cheapest first)
-                
-                Returns tuple: (fast_priority, reasoning_priority, price)
-                Lower values = higher priority in sort
-                """
-                model_id_lower = model["id"].lower()
-                model_name_lower = model.get("name", "").lower()
-                
-                # Priority 1: Fast models (0 = fast, 1 = not fast)
-                is_fast = 0 if ("fast" in model_id_lower or "fast" in model_name_lower) else 1
-                
-                # Priority 2: Reasoning models (0 = reasoning, 1 = not reasoning)
-                is_reasoning = 0 if any(keyword in model_id_lower or keyword in model_name_lower 
-                                       for keyword in ["reasoner", "reasoning", "r1", "o1", "o3", "deepseek"]) else 1
-                
-                # Priority 3: Price (lower is better)
-                try:
-                    completion_price = float(model.get("completion_price", 999))
-                    price_per_mtok = completion_price * 1_000_000
-                except (ValueError, TypeError):
-                    price_per_mtok = 999.0  # Put unparseable prices at the end
-                
-                return (is_fast, is_reasoning, price_per_mtok)
-            
-            # Filter affordable models and sort by: fast > reasoning > cheap
-            affordable_models = [m for m in models if not m["is_free"] and is_affordable_model(m)]
-            affordable_models_sorted = sorted(affordable_models, key=get_model_sort_key)
-            paid_ids = [m["id"] for m in affordable_models_sorted]
+                    return 999.0
 
-            # ── Free model ────────────────────────────────────────────────
-            st.subheader("🆓 Free Model")
-            # Always default to openrouter/free (best free model auto-selection)
-            free_default = "openrouter/free"
-            free_idx = free_ids.index(free_default) if free_default in free_ids else 0
-            selected_free = st.selectbox(
-                "Select free model",
-                options=free_ids,
-                index=free_idx,
-                help="openrouter/free automatically selects the best available free model",
-                key="free_model_select",
+            # Include all paid models where price can be parsed and < $15/MTok
+            paid_models = [
+                m for m in models
+                if not m["is_free"] and _parse_price(m) < 15.0
+            ]
+            paid_models_sorted = sorted(paid_models, key=_score_paid_model)
+
+            # ── Unified dropdown: free first, then all paid ──────────────
+            st.subheader("🤖 Model for Complex Queries")
+            st.caption(
+                "**Default:** `openrouter/free` (auto-picks best free model)  \n"
+                "Paid models sorted: Cheapest → Fastest → Best reasoning"
             )
-            st.session_state["free_model"] = selected_free
 
-            # ── Paid model (GOOGLE ONLY) ──────────────────────────────
-            st.subheader("💰 Paid Model (Google Only)")
-            st.caption("🔒 Only Google models <$3/MTok • Sorted: Fast → Reasoning → Cheapest")
-            
-            # Auto-select best model (first in sorted list) if no preference set
-            if paid_ids:
-                # If user hasn't selected or default not in list, use best model (first)
-                paid_default = st.session_state.get("paid_model", LLM_MODEL_PAID)
-                if paid_default not in paid_ids:
-                    paid_default = paid_ids[0]  # Best model (fast/reasoning/cheap)
-                paid_idx = paid_ids.index(paid_default)
+            # Build display labels and id lists
+            all_options   = ["openrouter/free"] + [m["id"] for m in paid_models_sorted]
+            all_labels    = ["🆓 openrouter/free  (auto best-free)"] + [
+                f"💰 {_model_label(m)}" for m in paid_models_sorted
+            ]
+            label_to_id   = dict(zip(all_labels, all_options))
+
+            # Restore previous selection
+            prev = st.session_state.get("selected_model_label", all_labels[0])
+            if prev not in all_labels:
+                prev = all_labels[0]
+
+            chosen_label = st.selectbox(
+                "Select model",
+                options=all_labels,
+                index=all_labels.index(prev),
+                key="unified_model_select",
+            )
+            chosen_id = label_to_id[chosen_label]
+            st.session_state["selected_model_label"] = chosen_label
+
+            # Map to free_model / paid_model session keys used by the RAG pipeline
+            if chosen_id == "openrouter/free":
+                st.session_state["free_model"]  = "openrouter/free"
+                st.session_state["paid_model"]  = "openrouter/free"   # fallback
+                st.info("🆓 Using free tier — ideal for simple queries.")
             else:
-                paid_idx = 0
-                
-            selected_paid = st.selectbox(
-                "Select paid model",
-                options=paid_ids,
-                index=paid_idx,
-                help="Google models only (others not working) • Sorted: Fast → Reasoning → Cheapest • All <$3/MTok",
-                key="paid_model_select",
-            )
-            st.session_state["paid_model"] = selected_paid
-            
-            # Show info about selected model
-            if paid_ids:
-                selected_model = next((m for m in affordable_models_sorted if m["id"] == selected_paid), None)
-                if selected_model:
-                    # Convert price from per-token to per-million-tokens for display
-                    try:
-                        completion_price = float(selected_model['completion_price'])
-                        # OpenRouter returns price per token, multiply by 1M for per-MTok display
-                        price_per_mtok = completion_price * 1_000_000
-                        st.caption(f"💡 {selected_model['name']} • Output: ${price_per_mtok:.2f}/MTok")
-                    except (ValueError, TypeError):
-                        st.caption(f"💡 {selected_model['name']}")
+                st.session_state["free_model"]  = "openrouter/free"   # simple queries stay free
+                st.session_state["paid_model"]  = chosen_id            # complex queries use chosen
+                # Show price info for selected paid model
+                sel = next((m for m in paid_models_sorted if m["id"] == chosen_id), None)
+                if sel:
+                    price = _parse_price(sel)
+                    ctx   = (sel.get("context_length") or 0) // 1000
+                    st.success(
+                        f"💰 **Paid model selected**  \n"
+                        f"`{sel.get('name', chosen_id)}`  \n"
+                        f"Output: **${price:.2f}/MTok** · Context: **{ctx}K tokens**"
+                    )
 
             if st.button("🔄 Refresh Model List", use_container_width=True):
                 st.cache_data.clear()
@@ -244,6 +231,7 @@ def render_sidebar():
 
         st.divider()
         st.caption("Model list cached for 1 hour.")
+
 
 
 

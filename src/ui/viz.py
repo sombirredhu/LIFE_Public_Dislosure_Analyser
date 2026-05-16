@@ -1,12 +1,5 @@
 import streamlit as st
-import pandas as pd
 import logging
-import json
-import time
-import tempfile
-from datetime import datetime
-from pathlib import Path
-from typing import Any, Dict, List, Optional
 
 from src.vector_visualizer import get_visualization_stats, visualize_vectors
 
@@ -40,24 +33,42 @@ def render_tab_vector_visualization():
     st.markdown("---")
     
     # Visualization controls
-    col_method, col_samples = st.columns(2)
-    
+    col_method, col_dims, col_samples = st.columns(3)
+
     with col_method:
         method = st.selectbox(
-            "Dimensionality Reduction Method",
+            "Reduction Method",
             options=['PCA', 't-SNE'],
             index=0,
-            help="PCA is faster, t-SNE often gives better visual separation"
+            help="PCA is fast and supports 3D. t-SNE gives better clustering but is always 2D.",
+            key="viz_method"
         )
-    
+
+    with col_dims:
+        if method == 't-SNE':
+            st.selectbox("Plot Dimensions", options=["2D (t-SNE only)"], index=0,
+                         disabled=True, key="viz_dims_tsne")
+            n_dims = 2
+            st.caption("ℹ️ t-SNE is always 2D for reliability.")
+        else:
+            dims_choice = st.selectbox(
+                "Plot Dimensions",
+                options=["3D", "2D"],
+                index=0,
+                help="3D is immersive; 2D is faster to render.",
+                key="viz_dims"
+            )
+            n_dims = 3 if dims_choice == "3D" else 2
+
     with col_samples:
         max_samples = st.number_input(
-            "Max Samples to Visualize",
+            "Max Samples",
             min_value=100,
             max_value=stats['total_vectors'],
             value=min(2000, stats['total_vectors']),
             step=100,
-            help="Reduce for faster rendering. t-SNE is slower with more samples."
+            help="Reduce for faster rendering.",
+            key="viz_max_samples"
         )
     
     # Company distribution
@@ -67,14 +78,15 @@ def render_tab_vector_visualization():
             st.write(f"**{company}**: {count} vectors ({percentage:.1f}%)")
     
     # Generate visualization button
-    if st.button("🎨 Generate 3D Visualization", type="primary", use_container_width=True):
-        with st.spinner(f"Creating 3D visualization using {method}... This may take a moment."):
+    dim_label = f"{n_dims}D"
+    if st.button(f"🎨 Generate {dim_label} Visualization", type="primary", use_container_width=True):
+        with st.spinner(f"Creating {dim_label} visualization using {method}... This may take a moment."):
             try:
-                # Create visualization
                 fig = visualize_vectors(
                     method=method.lower(),
                     max_samples=int(max_samples),
-                    title=f"Vector Database 3D Visualization ({method})"
+                    title=f"Vector Database {dim_label} Visualization ({method})",
+                    n_dims=n_dims,
                 )
                 
                 # Display plot

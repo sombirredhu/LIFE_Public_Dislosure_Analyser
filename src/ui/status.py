@@ -1,16 +1,6 @@
 import streamlit as st
 import pandas as pd
-import logging
-import json
-import time
-import tempfile
-from datetime import datetime
-from pathlib import Path
-from typing import Any, Dict, List, Optional
 
-from src.config import *
-from src.rag_pipeline import answer_question
-from src.ingestor import ingest_pdf
 from src.embedder import get_collection_stats, get_or_create_collection
 
 def render_tab_index_status():
