@@ -5,5 +5,3 @@ maxUploadSize = 50
 # This prevents the transformers/zoedepth torchvision warning on startup.
 fileWatcherType = "watchdog"
 
-[theme]
-base = "light"

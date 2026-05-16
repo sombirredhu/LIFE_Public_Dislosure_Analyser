@@ -70,18 +70,18 @@ def test_all_required_metadata_fields_present():
         assert not missing, f"Missing metadata fields: {missing}"
 
 
-def test_table_content_type():
+def test_page_content_type():
+    """In page-wise mode, all chunks have content_type='page'."""
     chunks = chunk_document(_SAMPLE_DOC)
-    table_chunks = [c for c in chunks if c["metadata"]["content_type"] == "table"]
-    assert len(table_chunks) >= 1
+    for c in chunks:
+        assert c["metadata"]["content_type"] == "page"
 
 
-def test_summary_content_type_page1():
+def test_page1_content_type_is_page():
+    """In page-wise mode, even page 1 gets content_type='page'."""
     chunks = chunk_document(_SAMPLE_DOC)
     page1_chunks = [c for c in chunks if c["metadata"]["page_number"] == 1]
-    assert all(c["metadata"]["content_type"] == "summary" for c in page1_chunks), (
-        "Page 1 with section='unknown' should be tagged as summary"
-    )
+    assert all(c["metadata"]["content_type"] == "page" for c in page1_chunks)
 
 
 def test_page_label_propagated():

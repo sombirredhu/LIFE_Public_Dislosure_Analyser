@@ -22,6 +22,10 @@ logger = logging.getLogger(__name__)
 # Global embedding model instance (loaded once)
 _embedding_model = None
 
+# Global ChromaDB client + collection singletons
+_chroma_client = None
+_chroma_collection = None
+
 
 def get_embedding_model() -> SentenceTransformer:
     """Get or initialize the embedding model (singleton pattern)."""
@@ -35,10 +39,15 @@ def get_embedding_model() -> SentenceTransformer:
 
 def get_or_create_collection():
     """
-    Get or create the ChromaDB collection.
-    Returns the collection object.
+    Get or create the ChromaDB collection (singleton pattern).
+    Reuses the same PersistentClient and collection across calls.
     """
-    client = chromadb.PersistentClient(
+    global _chroma_client, _chroma_collection
+
+    if _chroma_collection is not None:
+        return _chroma_collection
+
+    _chroma_client = chromadb.PersistentClient(
         path=CHROMA_DB_PATH,
         settings=Settings(
             anonymized_telemetry=False,
@@ -47,7 +56,7 @@ def get_or_create_collection():
     )
     
     # Get or create collection — cosine distance so score = 1.0 - distance is cosine similarity
-    collection = client.get_or_create_collection(
+    _chroma_collection = _chroma_client.get_or_create_collection(
         name=CHROMA_COLLECTION_NAME,
         metadata={
             "hnsw:space": "cosine",
@@ -55,7 +64,8 @@ def get_or_create_collection():
         }
     )
     
-    return collection
+    logger.info("[EMBEDDER] ChromaDB collection '%s' ready", CHROMA_COLLECTION_NAME)
+    return _chroma_collection
 
 
 def is_already_indexed(source_file: str) -> bool:

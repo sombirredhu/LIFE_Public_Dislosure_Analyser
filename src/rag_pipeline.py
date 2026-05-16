@@ -17,8 +17,18 @@ from src.config import (
 from src.embedder import get_indexed_companies
 from src.llm_client import ask_llm
 from src.retriever import get_confidence_level, retrieve, top_up_missing_companies
+import json
 
 logger = logging.getLogger(__name__)
+
+# ── Response Cache ──────────────────────────────────────────────────
+_response_cache: Dict[str, Dict[str, Any]] = {}
+_MAX_CACHE_SIZE = 100
+
+def _get_cache_key(question: str, filters: Optional[Dict[str, Any]], top_k: Optional[int]) -> str:
+    """Generate a deterministic cache key."""
+    filters_str = json.dumps(filters, sort_keys=True) if filters else "None"
+    return f"{question}::{filters_str}::{top_k}"
 
 SYSTEM_PROMPT = """You are a financial analyst specializing in Indian life insurance industry data.
 You have access to IRDAI Public Disclosure reports from multiple life insurance companies across multiple quarters.
@@ -131,6 +141,11 @@ def answer_question(
     import re as _re
     question = _re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]', '', question)
 
+    cache_key = _get_cache_key(question, filters, top_k)
+    if cache_key in _response_cache:
+        logger.info("[RAG] Returning cached response for query")
+        return _response_cache[cache_key]
+
     complexity = classify_complexity(question)
     use_paid = complexity == "complex"
     model_name = (paid_model or LLM_MODEL_PAID) if use_paid else (free_model or LLM_MODEL_FREE)
@@ -193,13 +208,21 @@ def answer_question(
     sources = sorted(set(c["metadata"]["source_file"] for c in chunks))
     logger.info("[RAG] Done | sources=%s", sources)
 
-    return {
+    result = {
         "answer":      answer,
         "sources":     sources,
         "chunks_used": len(chunks),
         "confidence":  confidence,
         "model_used":  model_name,
     }
+
+    # Store in cache and manage size
+    _response_cache[cache_key] = result
+    if len(_response_cache) > _MAX_CACHE_SIZE:
+        # Remove oldest item (Python 3.7+ dicts preserve insertion order)
+        _response_cache.pop(next(iter(_response_cache)))
+
+    return result
 
 
 if __name__ == "__main__":

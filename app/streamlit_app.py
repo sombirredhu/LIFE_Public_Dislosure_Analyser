@@ -22,7 +22,7 @@ setup_logging()  # initialise file + console handlers before any other import lo
 
 from src.rag_pipeline import answer_question
 from src.ingestor import ingest_pdf
-from src.embedder import get_collection_stats, delete_file_chunks, get_or_create_collection, get_indexed_companies, get_available_quarters, get_available_fys, invalidate_metadata_cache
+from src.embedder import get_collection_stats, delete_file_chunks, get_or_create_collection, get_indexed_companies, get_available_quarters, get_available_fys, invalidate_metadata_cache, get_embedding_model
 from src.llm_client import fetch_available_models
 from src.config import APP_TITLE, MAX_UPLOAD_SIZE_MB, LLM_MODEL_FREE, LLM_MODEL_PAID, PDF_INPUT_DIR
 from src.definitions_manager import (
@@ -33,6 +33,19 @@ from src.vector_visualizer import visualize_vectors, get_visualization_stats
 from src.background_worker import get_worker, JobStatus
 
 logger = logging.getLogger(__name__)
+
+
+@st.cache_resource(show_spinner="Loading embedding model...")
+def _warm_up_models():
+    """Pre-load the embedding model and ChromaDB connection on first run.
+    Uses st.cache_resource so it survives Streamlit reruns."""
+    model = get_embedding_model()
+    collection = get_or_create_collection()
+    logger.info("[WARMUP] Embedding model + ChromaDB ready")
+    return model, collection
+
+# Trigger warm-up immediately (runs once on app start)
+_warm_up_models()
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
@@ -262,26 +275,26 @@ st.markdown("""
     .main-header {
         font-size: 2.5rem;
         font-weight: bold;
-        color: #1f77b4;
+        color: var(--primary-color, #1f77b4);
         margin-bottom: 0.5rem;
     }
     .confidence-high {
-        background-color: #d4edda;
-        color: #155724;
+        background-color: rgba(40, 167, 69, 0.2);
+        color: #28a745;
         padding: 0.25rem 0.5rem;
         border-radius: 0.25rem;
         font-weight: bold;
     }
     .confidence-medium {
-        background-color: #fff3cd;
-        color: #856404;
+        background-color: rgba(255, 193, 7, 0.2);
+        color: #ffc107;
         padding: 0.25rem 0.5rem;
         border-radius: 0.25rem;
         font-weight: bold;
     }
     .confidence-low {
-        background-color: #f8d7da;
-        color: #721c24;
+        background-color: rgba(220, 53, 69, 0.2);
+        color: #dc3545;
         padding: 0.25rem 0.5rem;
         border-radius: 0.25rem;
         font-weight: bold;
@@ -411,6 +424,20 @@ def render_tab_ask_question():
         if not question.strip():
             st.error("Please enter a question.")
             return
+            
+        # Rate limiting: Max 10 queries per minute per session
+        now = time.time()
+        if "rate_limit" not in st.session_state:
+            st.session_state["rate_limit"] = []
+            
+        # Clean old timestamps
+        st.session_state["rate_limit"] = [ts for ts in st.session_state["rate_limit"] if now - ts < 60]
+        
+        if len(st.session_state["rate_limit"]) >= 10:
+            st.error("⏳ Rate limit exceeded. Please wait a minute before asking more questions.")
+            return
+            
+        st.session_state["rate_limit"].append(now)
         
         # Check if this is a definition command
         def_result = _process_definition_command(question)
@@ -489,23 +516,23 @@ def render_tab_ask_question():
                 copy_button_html = f"""
                 <div style="margin: 10px 0;">
                     <button onclick="copyToClipboard()" style="
-                        background-color: #f0f2f6;
-                        border: 1px solid #d0d0d0;
+                        background-color: var(--secondary-background-color, #f0f2f6);
+                        border: 1px solid var(--border-color, #d0d0d0);
                         border-radius: 4px;
                         padding: 8px 16px;
                         cursor: pointer;
                         font-size: 14px;
                         font-weight: 500;
-                        color: #262730;
+                        color: var(--text-color, #262730);
                         display: inline-flex;
                         align-items: center;
                         gap: 6px;
-                    " onmouseover="this.style.backgroundColor='#e0e2e6'" onmouseout="this.style.backgroundColor='#f0f2f6'">
+                    ">
                         📋 Copy Answer
                     </button>
                     <span id="copy-feedback" style="
                         margin-left: 10px;
-                        color: #0e8a16;
+                        color: #28a745;
                         font-weight: 500;
                         display: none;
                     ">✓ Copied to clipboard!</span>
@@ -531,6 +558,15 @@ def render_tab_ask_question():
                 with st.expander("📄 View as Plain Text (Manual Copy)"):
                     st.code(result['answer'], language=None)
                 
+                # Export Download Button
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                st.download_button(
+                    label="📥 Download Answer as Markdown",
+                    data=f"# Question: {question}\n\n## Answer\n{result['answer']}\n\n## Sources\n" + "\n".join([f"- {s}" for s in result.get('sources', [])]),
+                    file_name=f"RAG_Answer_{timestamp}.md",
+                    mime="text/markdown",
+                )
+                
                 # Sources
                 if result['sources']:
                     st.markdown("---")
@@ -545,6 +581,16 @@ def render_tab_ask_question():
                     st.write(f"**Model Used:** {result.get('model_used', 'N/A')}")
                     if filters:
                         st.write(f"**Filters Applied:** {filters}")
+                
+                # Save to history
+                if "query_history" not in st.session_state:
+                    st.session_state["query_history"] = []
+                st.session_state["query_history"].insert(0, {
+                    "question": question,
+                    "result": result,
+                    "filters": filters,
+                    "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                })
             
             except Exception as e:
                 logger.exception("[UI] answer_question failed | question=%r | filters=%s", question[:100], filters)
@@ -1326,12 +1372,13 @@ def main():
     render_header()
 
     # Tabs
-    tab1, tab2, tab3, tab4, tab5 = st.tabs([
+    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
         "💬 Ask a Question", 
         "📤 Upload Reports", 
         "📊 Index Status",
         "📚 Definitions",
-        "🎨 3D Visualization"
+        "🎨 3D Visualization",
+        "📜 History"
     ])
 
     with tab1:
@@ -1348,6 +1395,39 @@ def main():
     
     with tab5:
         render_tab_vector_visualization()
+    
+    with tab6:
+        render_tab_history()
+
+
+def render_tab_history():
+    """Tab 6: Query History."""
+    st.header("📜 Query History")
+    
+    if "query_history" not in st.session_state or not st.session_state["query_history"]:
+        st.info("No queries asked in this session yet.")
+        return
+        
+    for i, item in enumerate(st.session_state["query_history"]):
+        with st.expander(f"Q: {item['question']} ({item['timestamp']})"):
+            st.markdown("### Answer")
+            st.markdown(item["result"]["answer"])
+            
+            if item["result"].get("sources"):
+                st.markdown("**📚 Sources:**")
+                for source in item["result"]["sources"]:
+                    st.markdown(f"- {source}")
+            
+            with st.container():
+                cols = st.columns(4)
+                cols[0].caption(f"**Model:** {item['result'].get('model_used', 'N/A')}")
+                cols[1].caption(f"**Confidence:** {item['result'].get('confidence', 'N/A')}")
+                cols[2].caption(f"**Chunks:** {item['result'].get('chunks_used', 0)}")
+                if item["filters"]:
+                    cols[3].caption(f"**Filters:** {item['filters']}")
+        
+        # Add spacing
+        st.markdown("")
 
 
 if __name__ == "__main__":
