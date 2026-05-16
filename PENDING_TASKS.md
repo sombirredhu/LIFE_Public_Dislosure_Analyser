@@ -251,7 +251,7 @@ Run this checklist to verify everything is working:
 python --version  # Should be 3.14.4
 
 # Check dependencies
-pip list | grep -E "streamlit|openai|chromadb|sentence-transformers|pdfplumber"
+pip list | grep -E "streamlit|openai|chromadb|requests|pdfplumber"
 ```
 
 ### 2. Configuration

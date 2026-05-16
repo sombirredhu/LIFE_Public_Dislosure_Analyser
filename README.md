@@ -160,7 +160,7 @@ All data stored locally in ChromaDB. No external database required.
 |-----------|-----------|-----|
 | LLM | OpenRouter (Claude/Gemini/DeepSeek) | Two-tier: free for simple, paid for complex |
 | Vector DB | ChromaDB | Simple, local, no server setup |
-| Embeddings | sentence-transformers | Free, local, no API key needed |
+| Embeddings | OpenRouter API (text-embedding-3-small) | High accuracy, no local GPU needed |
 | PDF Parser | pdfplumber | Best for table extraction |
 | Web UI | Streamlit | Fast prototyping, no frontend code |
 | Config | python-dotenv | Clean environment management |
