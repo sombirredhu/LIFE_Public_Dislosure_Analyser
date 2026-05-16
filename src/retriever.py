@@ -2,7 +2,7 @@ import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any, Dict, List, Optional
 from src.config import TOP_K_SIMPLE, SIMILARITY_THRESHOLD
-from src.embedder import get_or_create_collection, get_embedding_model
+from src.embedder import get_or_create_collection, embed_query
 
 logger = logging.getLogger(__name__)
 _DOMAIN_PREFIX = "IRDAI life insurance financial report: "
@@ -26,36 +26,34 @@ def _raw_retrieve(query_embedding: List[float], collection, top_k: int, normaliz
 
 def retrieve(query: str, filters: Optional[Dict[str, Any]] = None, top_k: int = None) -> List[Dict[str, Any]]:
     coll = get_or_create_collection()
-    model = get_embedding_model()
     total = coll.count()
     if total == 0: return []
     top_k = min(top_k or TOP_K_SIMPLE, total)
     norm = _normalize_filters(filters) if filters else None
-    emb = model.encode(_DOMAIN_PREFIX + query).tolist()
+    emb = embed_query(_DOMAIN_PREFIX + query)
     chunks = _raw_retrieve(emb, coll, top_k, norm, SIMILARITY_THRESHOLD)
     if not chunks: chunks = _raw_retrieve(emb, coll, top_k, norm, _FALLBACK_THRESHOLD)
     return chunks
 
 def retrieve_multi(queries: List[str], filters: Optional[Dict[str, Any]] = None, top_k: int = None) -> List[Dict[str, Any]]:
     all_chunks = {}
-    with ThreadPoolExecutor(max_workers=len(queries)) as pool:
+    with ThreadPoolExecutor(max_workers=min(len(queries), 4)) as pool:
         futs = {pool.submit(retrieve, q, filters, top_k): q for q in queries}
         for f in as_completed(futs):
             for c in f.result():
                 cid = c["metadata"].get("chunk_id", c["text"][:50])
-                if cid not in all_chunks or c["score"] > all_chunks[cid]["score"]: all_chunks[cid] = c
+                if cid not in all_chunks or c["score"] > all_chunks[cid]["score"]:
+                    all_chunks[cid] = c
     return sorted(all_chunks.values(), key=lambda x: x["score"], reverse=True)[:top_k]
 
 def top_up_missing_companies(query: str, chunks: List[Dict[str, Any]], expected_companies: List[str], filters: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
     present = {c["metadata"]["company_code"] for c in chunks}
     missing = [co for co in expected_companies if co not in present]
     if not missing: return chunks
-    def _fetch_one(co: str) -> List[Dict[str, Any]]:
-        return retrieve(query, filters={**(filters or {}), "company_code": co}, top_k=2)
+    def _fetch_one(co: str): return retrieve(query, filters={**(filters or {}), "company_code": co}, top_k=2)
     top_up = []
     with ThreadPoolExecutor(max_workers=8) as pool:
-        futs = {pool.submit(_fetch_one, co): co for co in missing}
-        for f in as_completed(futs):
+        for f in as_completed({pool.submit(_fetch_one, co): co for co in missing}):
             try: top_up.extend(f.result())
             except Exception: pass
     return chunks + top_up

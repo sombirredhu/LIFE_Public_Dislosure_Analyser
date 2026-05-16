@@ -1,39 +1,59 @@
 import logging
 import time
+import requests
 from typing import List, Dict, Any
 import chromadb
 from chromadb.config import Settings
-from sentence_transformers import SentenceTransformer
-from src.config import CHROMA_DB_PATH, CHROMA_COLLECTION_NAME, EMBEDDING_MODEL, EMBEDDING_DIMENSION
+from src.config import (
+    CHROMA_DB_PATH, CHROMA_COLLECTION_NAME, EMBEDDING_MODEL,
+    EMBEDDING_DIMENSION, EMBEDDING_BATCH_SIZE, OPENROUTER_API_KEY, OPENROUTER_BASE_URL
+)
 
 logger = logging.getLogger(__name__)
 
-_embedding_model = None
 _chroma_client = None
 _chroma_collection = None
 
-def get_embedding_model() -> SentenceTransformer:
-    global _embedding_model
-    if _embedding_model is None:
-        _embedding_model = SentenceTransformer(EMBEDDING_MODEL)
-    return _embedding_model
+def _embed_texts_via_api(texts: List[str]) -> List[List[float]]:
+    url = f"{OPENROUTER_BASE_URL}/embeddings"
+    headers = {"Authorization": f"Bearer {OPENROUTER_API_KEY}", "Content-Type": "application/json"}
+    all_embeddings = []
+    for i in range(0, len(texts), EMBEDDING_BATCH_SIZE):
+        batch = texts[i:i + EMBEDDING_BATCH_SIZE]
+        resp = requests.post(url, headers=headers, json={"model": EMBEDDING_MODEL, "input": batch}, timeout=60)
+        resp.raise_for_status()
+        data = resp.json()["data"]
+        data.sort(key=lambda x: x["index"])
+        all_embeddings.extend([item["embedding"] for item in data])
+    return all_embeddings
+
+def get_embedding_model():
+    return None
+
+def embed_query(text: str) -> List[float]:
+    return _embed_texts_via_api([text])[0]
 
 def get_or_create_collection():
     global _chroma_client, _chroma_collection
     if _chroma_collection is not None: return _chroma_collection
-    _chroma_client = chromadb.PersistentClient(path=CHROMA_DB_PATH, settings=Settings(anonymized_telemetry=False, allow_reset=True))
-    _chroma_collection = _chroma_client.get_or_create_collection(name=CHROMA_COLLECTION_NAME, metadata={"hnsw:space": "cosine", "description": "IRDAI Reports"})
+    _chroma_client = chromadb.PersistentClient(
+        path=CHROMA_DB_PATH,
+        settings=Settings(anonymized_telemetry=False, allow_reset=True)
+    )
+    _chroma_collection = _chroma_client.get_or_create_collection(
+        name=CHROMA_COLLECTION_NAME,
+        metadata={"hnsw:space": "cosine", "description": "IRDAI Reports"}
+    )
     return _chroma_collection
 
 def is_already_indexed(source_file: str) -> bool:
-    collection = get_or_create_collection()
-    res = collection.get(where={"source_file": source_file}, limit=1)
+    res = get_or_create_collection().get(where={"source_file": source_file}, limit=1)
     return len(res["ids"]) > 0
 
 def delete_file_chunks(source_file: str) -> int:
-    collection = get_or_create_collection()
-    res = collection.get(where={"source_file": source_file})
-    if res["ids"]: collection.delete(ids=res["ids"])
+    coll = get_or_create_collection()
+    res = coll.get(where={"source_file": source_file})
+    if res["ids"]: coll.delete(ids=res["ids"])
     return len(res["ids"])
 
 def embed_chunks(chunks: List[Dict[str, Any]], force_reindex: bool = False) -> Dict[str, Any]:
@@ -41,13 +61,16 @@ def embed_chunks(chunks: List[Dict[str, Any]], force_reindex: bool = False) -> D
     source_file = chunks[0]["metadata"]["source_file"]
     if is_already_indexed(source_file) and not force_reindex:
         return {"status": "skipped", "message": f"{source_file} already indexed", "chunks_added": 0, "already_indexed": True}
-    if is_already_indexed(source_file) and force_reindex: delete_file_chunks(source_file)
-    collection, model = get_or_create_collection(), get_embedding_model()
+    if is_already_indexed(source_file): delete_file_chunks(source_file)
     texts = [c["text"] for c in chunks]
     ids = [c["metadata"]["chunk_id"] for c in chunks]
     metas = [c["metadata"] for c in chunks]
-    embeddings = model.encode(texts, show_progress_bar=False, batch_size=16)
-    collection.add(ids=ids, embeddings=[e.tolist() for e in embeddings], documents=texts, metadatas=metas)
+    try:
+        embeddings = _embed_texts_via_api(texts)
+    except Exception as e:
+        logger.error("[EMBED] API error: %s", e)
+        return {"status": "error", "message": str(e), "chunks_added": 0}
+    get_or_create_collection().add(ids=ids, embeddings=embeddings, documents=texts, metadatas=metas)
     return {"status": "success", "message": f"Indexed {len(chunks)} chunks", "chunks_added": len(chunks), "already_indexed": False, "source_file": source_file}
 
 _CACHE_TTL = 30
@@ -55,12 +78,13 @@ _metadata_cache = {"ts": 0.0, "data": None}
 
 def _get_cached_metadatas() -> List[Dict[str, Any]]:
     now = time.time()
-    if _metadata_cache["data"] is not None and (now - _metadata_cache["ts"]) < _CACHE_TTL: return _metadata_cache["data"]
-    collection = get_or_create_collection()
-    if collection.count() == 0:
+    if _metadata_cache["data"] is not None and (now - _metadata_cache["ts"]) < _CACHE_TTL:
+        return _metadata_cache["data"]
+    coll = get_or_create_collection()
+    if coll.count() == 0:
         _metadata_cache.update({"ts": now, "data": []})
         return []
-    res = collection.get(include=["metadatas"])
+    res = coll.get(include=["metadatas"])
     _metadata_cache.update({"ts": now, "data": res["metadatas"]})
     return res["metadatas"]
 
@@ -68,16 +92,16 @@ def invalidate_metadata_cache():
     _metadata_cache.update({"ts": 0.0, "data": None})
 
 def get_indexed_companies() -> List[str]:
-    metas = _get_cached_metadatas()
-    return sorted(set(m["company_code"] for m in metas)) if metas else []
+    m = _get_cached_metadatas()
+    return sorted(set(x["company_code"] for x in m)) if m else []
 
 def get_available_quarters() -> List[str]:
-    metas = _get_cached_metadatas()
-    return sorted(set(m["quarter"] for m in metas)) if metas else []
+    m = _get_cached_metadatas()
+    return sorted(set(x["quarter"] for x in m)) if m else []
 
 def get_available_fys() -> List[str]:
-    metas = _get_cached_metadatas()
-    return sorted(set(m["fy"] for m in metas)) if metas else []
+    m = _get_cached_metadatas()
+    return sorted(set(x["fy"] for x in m)) if m else []
 
 def get_collection_stats() -> Dict[str, Any]:
     metas = _get_cached_metadatas()

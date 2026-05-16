@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from src.config import *
-from src.embedder import get_embedding_model, get_or_create_collection, get_collection_stats
+from src.embedder import get_or_create_collection, get_collection_stats
 from src.ingestor import ingest_pdf
 from src.llm_client import fetch_available_models
 from src.logging_config import setup_logging
@@ -197,10 +197,9 @@ def render_sidebar():
         st.caption("Model list cached for 1 hour.")
 
 def _warm_up_models():
-    model = get_embedding_model()
     collection = get_or_create_collection()
-    logger.info("[WARMUP] Embedding model + ChromaDB ready")
-    return model, collection
+    logger.info("[WARMUP] ChromaDB ready (embeddings via OpenRouter API)")
+    return None, collection
 
 def _get_models():
     return fetch_available_models()

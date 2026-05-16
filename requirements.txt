@@ -1,13 +1,9 @@
 # PDF Processing
 pdfplumber~=0.11.9
 
-# LLM (OpenRouter uses OpenAI-compatible API)
+# LLM + Embeddings (via OpenRouter API — no local GPU/model needed)
 openai~=2.36.0
-
-# Embeddings (free, local — no API key needed)
-# For CPU-only torch: pip install torch>=2.11.0 --index-url https://download.pytorch.org/whl/cpu
-sentence-transformers~=5.4.1
-torch>=2.11.0
+requests~=2.32.3
 
 # Vector Database
 chromadb~=1.5.9
