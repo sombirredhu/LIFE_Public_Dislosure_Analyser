@@ -1,7 +1,8 @@
 import logging
 import re
 import time
-from typing import Any, Dict, List, Optional
+from collections import defaultdict
+from typing import Any, Dict, List, Optional, Set
 import json
 from src.config import (
     LLM_MAX_INPUT_CHARS, LLM_MODEL_FREE, LLM_MODEL_PAID,
@@ -16,11 +17,21 @@ logger = logging.getLogger(__name__)
 _response_cache: Dict[str, Dict[str, Any]] = {}
 _MAX_CACHE_SIZE = 100
 
+# Optimizer-level cache: avoids repeated LLM calls for similar complex queries
+_optimizer_cache: Dict[str, Dict[str, Any]] = {}
+_MAX_OPTIMIZER_CACHE = 64
+
+def _get_optimizer_cache_key(question: str) -> str:
+    """Normalize question for optimizer cache: lowercase, strip format words, collapse whitespace."""
+    normalized = _FORMAT_WORDS.sub(' ', question.lower()).strip()
+    normalized = re.sub(r'\s{2,}', ' ', normalized).strip(' .,?!')
+    return normalized
+
 def _get_cache_key(q: str, f: Optional[Dict[str, Any]], k: Optional[int], fm: Optional[str], pm: Optional[str]) -> str:
     return f"{q}::{json.dumps(f, sort_keys=True) if f else 'N'}::{k}::{fm}::{pm}"
 
 SYSTEM_PROMPT = """You are a financial analyst specializing in Indian life insurance.
-Answer based ONLY on excerpts. Rules: 1. Mention company, quarter, FY. 2. Use markdown tables for comparisons. 3. monetary values in ₹ Cr. 4. Cite sources.
+Answer based ONLY on excerpts. Rules: 1. Mention company, quarter, FY. 2. Use markdown tables for comparisons. 3. monetary values in ₹ Cr. 4. Cite sources with company + L-page when available.
 """
 
 _FORMAT_WORDS = re.compile(
@@ -29,8 +40,446 @@ _FORMAT_WORDS = re.compile(
     r'(format|form|style|way|manner)?\.?\s*',
     re.I
 )
+_SEARCH_NOISE_WORDS = re.compile(
+    r'\b(compare|comparison|show|list|rank|ranking|across|between|for|all|companies|company[-\s]*wise|each|metric|metrics|cite|sources?|with|and|the|of|to|page|pages|l-page)\b',
+    re.I,
+)
+_LPAGE_TOKEN_RE = re.compile(r'\bL-\d+[A-Z]?(?:-[A-Z]-[A-Z]{2})?\b', re.I)
+_TERM_LPAGE_CACHE: Dict[str, List[str]] = {}
+_RETRIEVAL_STOPWORDS = {
+    "query", "this", "that", "from", "into", "with", "without", "using",
+    "about", "what", "which", "where", "when", "who", "whom",
+    "month", "months", "quarter", "year", "quarters", "years",
+    "highest", "lowest", "top", "bottom", "best", "worst",
+    "value", "values", "reference", "references", "ranking", "rank",
+    "company", "companies", "wise", "across", "between",
+}
+_GENERIC_METRIC_WORDS = {
+    "ratio", "schedule", "account", "statement", "data", "business",
+    "investment", "investments", "page", "pages", "quarterly", "annual",
+    "total", "aggregate", "details",
+}
 
-def _refine_user_request(question: str, free_model: Optional[str] = None) -> Dict[str, str]:
+def _contains_term(query_text: str, term: str) -> bool:
+    t = (term or "").strip().lower()
+    if len(t) < 2:
+        return False
+    return re.search(rf'(?<!\w){re.escape(t)}(?!\w)', query_text.lower()) is not None
+
+def _load_term_to_page_map() -> Dict[str, str]:
+    try:
+        from pathlib import Path
+        term_path = Path(PROCESSED_OUTPUT_DIR) / "master_term_to_page.json"
+        if term_path.exists():
+            with open(term_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                return data if isinstance(data, dict) else {}
+    except Exception:
+        logger.exception("[RAG] Failed to load master_term_to_page.json")
+    return {}
+
+def _load_page_definitions_map() -> Dict[str, List[str]]:
+    try:
+        from pathlib import Path
+        defs_path = Path(PROCESSED_OUTPUT_DIR) / "master_page_definitions.json"
+        if defs_path.exists():
+            with open(defs_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                if isinstance(data, dict):
+                    out: Dict[str, List[str]] = {}
+                    for lpage, terms in data.items():
+                        if isinstance(terms, list):
+                            out[lpage.upper()] = [str(t).lower() for t in terms]
+                        else:
+                            out[lpage.upper()] = [str(terms).lower()]
+                    return out
+    except Exception:
+        logger.exception("[RAG] Failed to load master_page_definitions.json")
+    return {}
+
+def _infer_lpages_from_processed_docs(query_terms: List[str], top_n: int = 1) -> Dict[str, List[str]]:
+    """
+    Infer likely L-pages for query terms from processed document content.
+    This is data-driven and avoids hardcoded term-to-page mappings.
+    """
+    try:
+        from pathlib import Path
+        processed_dir = Path(PROCESSED_OUTPUT_DIR)
+        doc_files = list(processed_dir.glob("*_Q*_FY*.json"))
+        if not doc_files:
+            return {}
+
+        result: Dict[str, List[str]] = {}
+        term_counts: Dict[str, Dict[str, int]] = {t: {} for t in query_terms}
+        for doc in doc_files:
+            try:
+                with open(doc, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+            except Exception:
+                continue
+
+            for page in data.get("pages", []):
+                lpage = (page.get("page_label_normalized") or page.get("page_label") or "").upper()
+                if not lpage.startswith("L-"):
+                    continue
+                text_parts = []
+                text_parts.extend(page.get("text_blocks", []))
+                for tbl in page.get("tables", []):
+                    raw = tbl.get("raw_text")
+                    if raw:
+                        text_parts.append(raw)
+                page_text = "\n".join(text_parts).lower()
+                if not page_text:
+                    continue
+
+                for term in query_terms:
+                    if term in page_text:
+                        term_counts[term][lpage] = term_counts[term].get(lpage, 0) + 1
+
+        for term, counts in term_counts.items():
+            ranked = sorted(counts.items(), key=lambda kv: kv[1], reverse=True)
+            if not ranked:
+                _TERM_LPAGE_CACHE[term] = []
+                result[term] = []
+                continue
+            top_count = ranked[0][1]
+            strong = [lp for lp, c in ranked if c >= max(2, int(top_count * 0.6))]
+            _TERM_LPAGE_CACHE[term] = strong[:top_n]
+            result[term] = _TERM_LPAGE_CACHE[term]
+        return result
+    except Exception:
+        logger.exception("[RAG] Failed to infer L-pages from processed docs")
+        return {}
+
+def _unique_terms(items: List[str]) -> List[str]:
+    seen = set()
+    out = []
+    for item in items:
+        key = item.strip().lower()
+        if not key or key in seen:
+            continue
+        seen.add(key)
+        out.append(item.strip())
+    return out
+
+def _extract_period_tokens(text: str) -> List[str]:
+    tokens: List[str] = []
+    q_match = re.findall(r'\bQ[1-4]\b', text, flags=re.I)
+    fy_match = re.findall(r'\bFY\d{2}\b', text, flags=re.I)
+    tokens.extend([q.upper() for q in q_match])
+    tokens.extend([fy.upper() for fy in fy_match])
+    return _unique_terms(tokens)
+
+def _extract_query_terms_for_relevance(text: str) -> List[str]:
+    cleaned = _SEARCH_NOISE_WORDS.sub(" ", text.lower())
+    words = re.findall(r'\b[a-z]{3,}\b', cleaned)
+    return _unique_terms([w for w in words if w not in _RETRIEVAL_STOPWORDS])
+
+def _candidate_lpages_from_terms(terms: List[str], query_text: str) -> Set[str]:
+    explicit_lpages = [lp.upper() for lp in _LPAGE_TOKEN_RE.findall(query_text)]
+    target_lpages: Set[str] = set(explicit_lpages)
+    if not terms:
+        return target_lpages
+
+    query_lower = query_text.lower()
+    query_words = set(terms)
+    page_scores: Dict[str, int] = {}
+
+    # Strong signal: exact (boundary-aware) term map match
+    term_to_page = _load_term_to_page_map()
+    for term, lp in term_to_page.items():
+        term_l = str(term).lower().strip()
+        if len(term_l) < 3:
+            continue
+        if _contains_term(query_lower, term_l):
+            lpage = str(lp).upper()
+            page_scores[lpage] = page_scores.get(lpage, 0) + 5
+
+    # Medium signal: definition overlap / phrase match
+    defs_map = _load_page_definitions_map()
+    for lpage, defs_terms in defs_map.items():
+        best_score = 0
+        for dt in defs_terms:
+            dt_l = str(dt).lower().strip()
+            if not dt_l:
+                continue
+            dt_words = {
+                w for w in re.findall(r'\b[a-z]{3,}\b', dt_l)
+                if w not in _RETRIEVAL_STOPWORDS and w not in _GENERIC_METRIC_WORDS
+            }
+            overlap = query_words & dt_words
+            phrase_hit = len(dt_l) >= 5 and _contains_term(query_lower, dt_l)
+            local_score = (4 if phrase_hit else 0) + len(overlap)
+            if local_score > best_score:
+                best_score = local_score
+        if best_score >= 2:
+            page_scores[lpage.upper()] = max(page_scores.get(lpage.upper(), 0), best_score)
+
+    metric_terms = [t for t in terms if t not in _GENERIC_METRIC_WORDS]
+    max_pages = min(12, max(3, len(metric_terms) * 2))
+
+    ranked_pages = sorted(page_scores.items(), key=lambda kv: kv[1], reverse=True)
+    for lpage, _ in ranked_pages:
+        target_lpages.add(lpage)
+        if len(target_lpages) >= max_pages:
+            break
+
+    return target_lpages
+
+def _score_chunk_relevance(chunk: Dict[str, Any], terms: List[str], target_lpages: Set[str]) -> int:
+    meta = chunk.get("metadata", {})
+    text = (chunk.get("text") or "").lower()
+    section = str(meta.get("section", "")).lower()
+    lpage = str(meta.get("page_label", "")).upper()
+    score = 0
+
+    if lpage and any(lpage == t or lpage.startswith(f"{t}-") or t.startswith(f"{lpage}-") for t in target_lpages):
+        score += 3
+
+    hits = 0
+    for t in terms:
+        if t in text:
+            hits += 1
+        elif t in section:
+            hits += 1
+        if hits >= 3:
+            break
+    score += hits
+
+    # Boost high-similarity chunks slightly.
+    sim = float(chunk.get("score", 0.0))
+    if sim >= 0.75:
+        score += 1
+    return score
+
+def _prune_and_balance_chunks(
+    question: str,
+    search_q: str,
+    chunks: List[Dict[str, Any]],
+    top_k: int,
+    filters: Optional[Dict[str, Any]] = None,
+) -> List[Dict[str, Any]]:
+    """
+    Reduce retrieval noise by keeping chunks aligned to intent terms/L-pages, then
+    balancing by company so broad comparisons don't over-return irrelevant pages.
+    """
+    if not chunks:
+        return chunks
+
+    terms = _extract_query_terms_for_relevance(f"{question} {search_q}")
+    target_lpages = _candidate_lpages_from_terms(terms, f"{question} {search_q}")
+
+    scored = []
+    for c in chunks:
+        rel = _score_chunk_relevance(c, terms, target_lpages)
+        item = dict(c)
+        item["_rel"] = rel
+        scored.append(item)
+
+    # If at least one chunk matches intent, drop obvious noise.
+    if any(s["_rel"] > 0 for s in scored):
+        scored = [s for s in scored if s["_rel"] > 0]
+
+    scored.sort(key=lambda x: (x["_rel"], x.get("score", 0.0)), reverse=True)
+
+    by_company: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
+    for s in scored:
+        co = s.get("metadata", {}).get("company_code", "__unknown__")
+        by_company[co].append(s)
+
+    metric_count = len(set(terms))
+    lpage_intent_count = len(target_lpages)
+
+    # Dynamic cap: allow deeper coverage for multi-metric comparisons.
+    # Single metric: ~2/company; 2 metrics: ~4/company; 3+ metrics: ~5/company.
+    if lpage_intent_count >= 3 or metric_count >= 9:
+        per_company_cap = 5
+    elif lpage_intent_count == 2 or metric_count >= 6:
+        per_company_cap = 4
+    else:
+        per_company_cap = 2
+
+    # If user selected specific company/company set, skip aggressive balancing.
+    if filters and "company_code" in filters:
+        per_company_cap = min(max(per_company_cap, 3), top_k)
+
+    selected: List[Dict[str, Any]] = []
+    selected_ids: Set[str] = set()
+
+    def _chunk_uid(c: Dict[str, Any]) -> str:
+        meta = c.get("metadata", {})
+        return str(meta.get("chunk_id") or f"{meta.get('source_file','')}::{meta.get('page_number','')}::{c.get('text','')[:80]}")
+
+    def _lpage_match(page_label: str, target: str) -> bool:
+        p = (page_label or "").upper()
+        t = (target or "").upper()
+        return p == t or p.startswith(f"{t}-") or t.startswith(f"{p}-")
+
+    # First pass per company: one best chunk per detected L-page intent.
+    for company_chunks in by_company.values():
+        company_selected: List[Dict[str, Any]] = []
+        if target_lpages:
+            for tlp in sorted(target_lpages):
+                match = next(
+                    (
+                        c for c in company_chunks
+                        if _lpage_match(str(c.get("metadata", {}).get("page_label", "")), tlp)
+                        and _chunk_uid(c) not in selected_ids
+                    ),
+                    None,
+                )
+                if match:
+                    uid = _chunk_uid(match)
+                    selected_ids.add(uid)
+                    company_selected.append(match)
+                if len(company_selected) >= per_company_cap:
+                    break
+
+        # Always ensure at least one chunk/company.
+        if not company_selected and company_chunks:
+            best = company_chunks[0]
+            uid = _chunk_uid(best)
+            if uid not in selected_ids:
+                selected_ids.add(uid)
+                company_selected.append(best)
+
+        # Second pass for this company: fill remaining top-ranked chunks to cap.
+        if len(company_selected) < per_company_cap:
+            for c in company_chunks:
+                uid = _chunk_uid(c)
+                if uid in selected_ids:
+                    continue
+                selected_ids.add(uid)
+                company_selected.append(c)
+                if len(company_selected) >= per_company_cap:
+                    break
+
+        selected.extend(company_selected)
+
+    # Global hard cap tuned to "intent-coverage per company" for broad compare.
+    if by_company:
+        dynamic_cap = min(top_k, max(len(by_company) * per_company_cap, len(by_company)))
+        selected = selected[:dynamic_cap]
+
+    # Cleanup helper field
+    for s in selected:
+        s.pop("_rel", None)
+
+    return selected if selected else chunks[:top_k]
+
+def _compact_vector_query(text: str) -> str:
+    """
+    Build compact vector query with only retrieval-relevant keywords:
+    period + L-page + metric terms.
+    """
+    q_lower = text.lower()
+
+    def _norm_words(s: str) -> set:
+        ws = re.findall(r'\b[a-z]{3,}\b', s.lower())
+        out = set()
+        for w in ws:
+            if w.endswith("s") and len(w) > 4:
+                w = w[:-1]
+            out.add(w)
+        return out
+
+    tokens: List[str] = []
+    explicit_lpages = [lp.upper() for lp in _LPAGE_TOKEN_RE.findall(text)]
+    tokens.extend(_extract_period_tokens(text))
+    tokens.extend(explicit_lpages)
+
+    query_words = _norm_words(_SEARCH_NOISE_WORDS.sub(" ", q_lower))
+    query_words = {w for w in query_words if w not in _RETRIEVAL_STOPWORDS}
+
+    page_scores: Dict[str, int] = {}
+    anchor_terms: Set[str] = set()
+
+    # Exact term mapping from index-derived term map (boundary-aware)
+    term_to_page = _load_term_to_page_map()
+    for term, lpage in term_to_page.items():
+        term_l = str(term).lower().strip()
+        if len(term_l) < 3:
+            continue
+        if _contains_term(q_lower, term_l):
+            lp = str(lpage).upper()
+            page_scores[lp] = page_scores.get(lp, 0) + 5
+            anchor_terms.add(term_l)
+
+    # Fuzzy mapping using index-derived page definitions (strict overlap)
+    defs_map = _load_page_definitions_map()
+    matched_words_from_defs: Set[str] = set()
+    for lpage, terms in defs_map.items():
+        best_term = ""
+        best_score = 0
+        best_overlap_words: Set[str] = set()
+        for term in terms:
+            term_l = str(term).lower().strip()
+            if not term_l:
+                continue
+            term_words = {
+                w for w in _norm_words(term_l)
+                if w not in _RETRIEVAL_STOPWORDS and w not in _GENERIC_METRIC_WORDS
+            }
+            overlap_words = query_words & term_words
+            phrase_hit = len(term_l) >= 5 and _contains_term(q_lower, term_l)
+            score = (4 if phrase_hit else 0) + len(overlap_words)
+            if score > best_score:
+                best_score = score
+                best_term = term_l
+                best_overlap_words = overlap_words
+
+        if best_score >= 2:
+            lp = str(lpage).upper()
+            page_scores[lp] = max(page_scores.get(lp, 0), best_score)
+            if best_term:
+                anchor_terms.add(best_term)
+            matched_words_from_defs.update(best_overlap_words)
+
+    metric_terms = [w for w in query_words if w not in _GENERIC_METRIC_WORDS]
+    max_pages = min(12, max(3, len(metric_terms) * 2))
+
+    for lp, _score in sorted(page_scores.items(), key=lambda kv: kv[1], reverse=True):
+        tokens.append(lp)
+        if len({t for t in tokens if t.upper().startswith("L-")}) >= max_pages:
+            break
+
+    # Keep high-signal anchor terms and compact raw metric terms
+    for t in sorted(anchor_terms, key=len):
+        tokens.append(t)
+
+    raw_metric_words = [
+        w for w in re.findall(r'\b[a-z]{3,}\b', _SEARCH_NOISE_WORDS.sub(" ", q_lower))
+        if w not in _RETRIEVAL_STOPWORDS and w not in _GENERIC_METRIC_WORDS
+    ]
+    for w in raw_metric_words[:10]:
+        tokens.append(w)
+
+    # Corpus-driven L-page inference for remaining query terms (non-hardcoded).
+    term_candidates = [
+        w for w in metric_terms
+        if w not in matched_words_from_defs and w not in anchor_terms
+    ]
+    inferred = _infer_lpages_from_processed_docs(term_candidates, top_n=2 if len(metric_terms) >= 6 else 1)
+    inferred_added = 0
+    inferred_cap = min(6, max(2, len(metric_terms)))
+    for term in term_candidates:
+        for lp in inferred.get(term, []):
+            if inferred_added >= inferred_cap:
+                break
+            tokens.append(lp)
+            inferred_added += 1
+        if inferred_added >= inferred_cap:
+            break
+
+    tokens = _unique_terms(tokens)
+    if tokens:
+        return " ".join(tokens)
+
+    fallback = _SEARCH_NOISE_WORDS.sub(" ", text)
+    fallback = re.sub(r'\s{2,}', ' ', fallback).strip(" .,?!")
+    return fallback or text
+
+def _refine_user_request(question: str, free_model: Optional[str] = None, complexity: str = "simple") -> Dict[str, Any]:
     """
     Refine user question by:
     1. Extracting format instructions
@@ -38,25 +487,40 @@ def _refine_user_request(question: str, free_model: Optional[str] = None) -> Dic
     3. Creating analysis instructions for LLM summarization
     
     Uses LLM with project context to intelligently rewrite queries, with rule-based fallback.
+    For simple queries, skips the LLM call entirely and uses fast rule-based refinement.
     """
     # Extract format instructions
     format_matches = _FORMAT_WORDS.findall(question)
     format_inst = " ".join(m[1] for m in format_matches).strip() if format_matches else ""
     
-    # Try LLM-based intelligent query rewriting with project context
+    # Skip LLM optimizer for simple queries — go straight to rule-based (fast path)
+    if complexity == "simple":
+        logger.info("[RAG] Simple query detected, using fast rule-based refinement (skipping LLM optimizer)")
+        return _rule_based_refinement(question, format_inst)
+    
+    # Check optimizer cache for complex queries (avoid repeated LLM calls)
+    opt_cache_key = _get_optimizer_cache_key(question)
+    if opt_cache_key in _optimizer_cache:
+        logger.info("[RAG] Optimizer cache hit, reusing previous LLM rewrite")
+        cached = _optimizer_cache[opt_cache_key]
+        # Re-apply current format instruction on cache hit
+        if format_inst and format_inst not in cached.get("format_instruction", ""):
+            cached = {**cached, "format_instruction": f"{cached['format_instruction']} {format_inst}"}
+        return cached
+    
+    # Try LLM-based intelligent query rewriting with project context (complex queries only)
     try:
         # Load actual L-page definitions from the system
         from pathlib import Path
-        import json
         master_defs_path = Path(PROCESSED_OUTPUT_DIR) / "master_page_definitions.json"
         lpage_definitions = {}
         if master_defs_path.exists():
             with open(master_defs_path, 'r', encoding='utf-8') as f:
                 lpage_definitions = json.load(f)
         
-        # Create dynamic L-page reference
-        lpage_reference = "\n".join([f"  * {lpage}: {terms[0] if isinstance(terms, list) else terms}" 
-                                     for lpage, terms in sorted(lpage_definitions.items())[:20]])
+        # Create dynamic L-page reference — compact format to fit ALL definitions
+        lpage_reference = " | ".join([f"{lpage}: {terms[0] if isinstance(terms, list) else terms}" 
+                                     for lpage, terms in sorted(lpage_definitions.items())])
         
         project_context = f"""You are a query optimizer for an IRDAI insurance financial reports analysis system.
 
@@ -101,7 +565,7 @@ Analysis: "Extract premium data from L-4 schedule for each company. Identify and
 
 USER QUESTION: {question}
 
-Generate TWO optimized queries:
+Generate THREE items:
 
 1. SEARCH_QUERY: Optimized for vector DB retrieval
    - Focus on L-page identifiers and section names
@@ -114,26 +578,29 @@ Generate TWO optimized queries:
    - Don't prescribe specific column names - let LLM figure it out
    - Specify format requirements (table, comparison, etc.)
    - Keep it flexible and intent-focused (max 40 words)
+   
+3. ALT_QUERIES: 2-3 alternative search terms for multi-query retrieval (only if needed to broaden search)
 
 Return ONLY valid JSON:
-{{"search_query": "...", "analysis_instruction": "..."}}"""
+{{"search_query": "...", "analysis_instruction": "...", "alt_queries": ["...", "..."]}}"""
 
         logger.debug(f"[RAG] Rewriting query with LLM: '{question}'")
-        # Use paid model for query rewriting - it's just one call and ensures quality
-        response = ask_llm("You are a query optimization expert.", rewrite_prompt, use_paid=True, paid_model=free_model)
+        # Use free model for query rewriting — optimizer output is small (~50 tokens)
+        response = ask_llm("You are a query optimization expert.", rewrite_prompt, use_paid=False, free_model=free_model)
         
-        # Parse JSON response
-        import json
-        # Extract JSON from response (handle markdown code blocks)
+        # Parse JSON response (handle markdown code blocks)
         json_match = re.search(r'\{.*\}', response, re.DOTALL)
         if json_match:
             result = json.loads(json_match.group())
             search_q = result.get('search_query', '').strip()
             analysis_inst = result.get('analysis_instruction', '').strip()
+            alt_queries = result.get('alt_queries', [])
+            if not isinstance(alt_queries, list): alt_queries = []
             
             # Validate results
             if search_q and len(search_q) > 5 and len(search_q) < 200:
                 if analysis_inst and len(analysis_inst) > 10:
+                    search_q = _compact_vector_query(f"{search_q} {question}")
                     logger.info(f"[RAG] LLM query rewrite successful")
                     logger.info(f"  Original: '{question}'")
                     logger.info(f"  Search: '{search_q}'")
@@ -143,10 +610,18 @@ Return ONLY valid JSON:
                     if format_inst:
                         analysis_inst = f"{analysis_inst} {format_inst}"
                     
-                    return {
+                    result_dict = {
                         "search_query": search_q,
-                        "format_instruction": analysis_inst
+                        "format_instruction": analysis_inst,
+                        "alt_queries": alt_queries
                     }
+                    
+                    # Store in optimizer cache
+                    _optimizer_cache[opt_cache_key] = result_dict
+                    if len(_optimizer_cache) > _MAX_OPTIMIZER_CACHE:
+                        _optimizer_cache.pop(next(iter(_optimizer_cache)))
+                    
+                    return result_dict
         
         raise ValueError("Invalid LLM response format")
         
@@ -154,62 +629,27 @@ Return ONLY valid JSON:
         logger.warning(f"[RAG] LLM query rewrite failed ({e}), using rule-based fallback")
     
     # FALLBACK: Rule-based enhancement
-    search_q = _FORMAT_WORDS.sub(' ', question).strip()
-    search_q = re.sub(r'\s{2,}', ' ', search_q).strip(' .,?!')
-    if not search_q:
-        search_q = question
-    
-    original_q = search_q
-    search_q_lower = search_q.lower()
-    
-    # Remove "all companies", "company wise" from search query (not useful for vector DB)
-    search_q = re.sub(r'\b(for\s+)?all\s+companies\b', '', search_q, flags=re.I).strip()
-    search_q = re.sub(r'\b(company\s*wise|each\s+company|companywise)\b', '', search_q, flags=re.I).strip()
-    
-    # Enhance with L-page identifiers and specific terms
-    if re.search(r'\bpremium\b', search_q_lower) and not re.search(r'\b(first|renewal|single)\b', search_q_lower):
-        search_q = f"{search_q} L-4 first year renewal single premium"
-    elif re.search(r'\bpremium\b', search_q_lower):
-        search_q = f"{search_q} L-4 premium schedule"
-    
-    if re.search(r'\bsolvency\b', search_q_lower):
-        search_q = f"{search_q} L-32 solvency margin ratio"
-    
-    if re.search(r'\bclaim', search_q_lower):
-        search_q = f"{search_q} L-39 L-40 claims settlement"
-    
-    if re.search(r'\binvestment', search_q_lower):
-        search_q = f"{search_q} L-12 L-13 L-14 shareholders policyholders"
-    
-    if re.search(r'\bcommission\b', search_q_lower):
-        search_q = f"{search_q} L-5 commission"
-    
-    if re.search(r'\bexpense', search_q_lower):
-        search_q = f"{search_q} L-6 operating expenses"
-    
-    if re.search(r'\b(revenue|income)\b', search_q_lower):
-        search_q = f"{search_q} L-1 revenue account"
-    
-    if re.search(r'\b(profit|loss|p&l|pnl)\b', search_q_lower):
-        search_q = f"{search_q} L-2 profit loss"
-    
-    if re.search(r'\bbalance\s*sheet\b', search_q_lower):
-        search_q = f"{search_q} L-3 balance sheet assets liabilities"
-    
-    # Clean up extra spaces
-    search_q = re.sub(r'\s{2,}', ' ', search_q).strip()
+    return _rule_based_refinement(question, format_inst)
+
+
+def _rule_based_refinement(question: str, format_inst: str = "") -> Dict[str, Any]:
+    """Fast rule-based query refinement. Used directly for simple queries and as fallback for complex ones."""
+    stripped = _FORMAT_WORDS.sub(' ', question).strip()
+    stripped = re.sub(r'\s{2,}', ' ', stripped).strip(' .,?!')
+    search_q = _compact_vector_query(stripped or question)
     
     # Create analysis instruction from original question
     analysis_inst = question
     if format_inst:
         analysis_inst = f"{question} {format_inst}"
     
-    if search_q != original_q:
-        logger.info(f"[RAG] Rule-based query enhancement: '{original_q}' → '{search_q}'")
+    if search_q != (stripped or question):
+        logger.info(f"[RAG] Rule-based compact query: '{stripped or question}' → '{search_q}'")
     
     return {
         "search_query": search_q,
-        "format_instruction": analysis_inst
+        "format_instruction": analysis_inst,
+        "alt_queries": []
     }
 
 def _extract_auto_filters(q: str) -> Dict[str, Any]:
@@ -229,32 +669,22 @@ def _extract_auto_filters(q: str) -> Dict[str, Any]:
         if re.search(r'\b' + re.escape(f_.lower()) + r'\b', ql): f["fy"] = f_; break
     return f
 
-def _generate_queries(q: str, fm: Optional[str] = None) -> List[str]:
-    """Generate alternative queries for better retrieval. Skip if it takes too long."""
-    prompt = f"Generate 3 diverse search queries for finding data in IRDAI financial reports for: '{q}'. Return ONLY a JSON array of strings, nothing else."
-    try:
-        logger.debug("[RAG] Generating multi-query variations...")
-        start_time = time.time()
-        
-        # Use a shorter timeout for query generation (not critical)
-        res = ask_llm("Return only a JSON array.", prompt, use_paid=False, free_model=fm)
-        
-        duration = time.time() - start_time
-        logger.debug(f"[RAG] Multi-query generation took {duration:.2f}s")
-        
-        match = re.search(r'\[.*\]', res, re.DOTALL)
-        if not match: return [q]
-        qs = json.loads(match.group())
-        if not isinstance(qs, list) or not all(isinstance(x, str) for x in qs): return [q]
-        return list(set([q] + [x.strip() for x in qs if x.strip()]))[:4]
-    except Exception as e:
-        logger.warning(f"[RAG] Multi-query generation failed ({e}), using original query")
-        return [q]
 
-_COMPLEX_KEYWORDS = re.compile(r'\b(compare|vs\.?|versus|all\s+companies|company\s+wise|companywise|each\s+company|rank|ranking|which\s+company|across|between)\b', re.I)
+_COMPLEX_KEYWORDS = re.compile(r'\b(compare|vs\.?|versus|all\s+companies|company[-\s]*wise|each\s+company|rank|ranking|which\s+company|across|between)\b', re.I)
 _SUPERLATIVE_KEYWORDS = re.compile(r'\b(highest|lowest|top|bottom|best|worst|most|least|trend|growth)\b', re.I)
+_ANALYTICAL_COMPLEX_KEYWORDS = re.compile(r'\bclaim\s+settlement\s+ratio\b', re.I)
+
+def _format_source_ref(chunk: Dict[str, Any]) -> str:
+    meta = chunk["metadata"]
+    file_name = meta.get("source_file", "unknown")
+    company = meta.get("company", "unknown")
+    period = meta.get("period_label", "unknown")
+    lpage = meta.get("page_label") or f"Page {meta.get('page_number', 'N/A')}"
+    section = meta.get("section", "unknown")
+    return f"{file_name} | {company} | {period} | {lpage} | {section}"
 
 def classify_complexity(q: str) -> str:
+    if _ANALYTICAL_COMPLEX_KEYWORDS.search(q): return "complex"
     if _COMPLEX_KEYWORDS.search(q): return "complex"
     cos = get_indexed_companies()
     mentioned = sum(1 for c in cos if c.lower() in q.lower())
@@ -274,32 +704,39 @@ def answer_question(question: str, filters: Optional[Dict[str, Any]] = None, top
 
     logger.info(f"[RAG] Processing question: '{question[:100]}...'")
     
-    refined = _refine_user_request(question, free_model=free_model)
+    # Classify complexity FIRST so optimizer can skip LLM for simple queries
+    complexity = classify_complexity(question)
+    
+    refined = _refine_user_request(question, free_model=free_model, complexity=complexity)
     search_q, format_inst = refined["search_query"], refined["format_instruction"]
 
-    merged_filters = {**(_extract_auto_filters(search_q)), **(filters or {})}
-    complexity = classify_complexity(search_q)
+    merged_filters = {**(_extract_auto_filters(question)), **(filters or {})}
     use_paid = complexity == "complex"
     model_name = (paid_model or LLM_MODEL_PAID) if use_paid else (free_model or LLM_MODEL_FREE)
     effective_top_k = top_k or (TOP_K_COMPLEX if use_paid else TOP_K_SIMPLE)
     
     logger.info(f"[RAG] Complexity: {complexity}, Model: {model_name}, Top-K: {effective_top_k}")
 
-    # Multi-query generation (only for complex queries, and only if enabled)
+    # Multi-query generation (now merged into optimizer)
     query_gen_start = time.time()
     if use_paid and ENABLE_MULTI_QUERY:
-        queries = _generate_queries(search_q, fm=free_model)
+        queries = [search_q] + refined.get("alt_queries", [])
     else:
         queries = [search_q]
         if use_paid and not ENABLE_MULTI_QUERY:
             logger.info("[RAG] Multi-query generation disabled (ENABLE_MULTI_QUERY=False)")
+    # Deduplicate queries while preserving order
+    queries = list(dict.fromkeys(q.strip() for q in queries if q.strip()))[:4]
     query_gen_time = time.time() - query_gen_start
-    logger.info(f"[RAG] Query generation took {query_gen_time:.2f}s, generated {len(queries)} queries")
+    logger.info(f"[RAG] Query setup took {query_gen_time:.2f}s, using {len(queries)} queries")
     
     # Retrieval
     retrieval_start = time.time()
     from src.retriever import retrieve_multi
-    chunks = retrieve_multi(queries, filters=merged_filters, top_k=effective_top_k)
+    if len(queries) == 1:
+        chunks = retrieve(queries[0], filters=merged_filters, top_k=effective_top_k)
+    else:
+        chunks = retrieve_multi(queries, filters=merged_filters, top_k=effective_top_k)
     retrieval_time = time.time() - retrieval_start
     logger.info(f"[RAG] Retrieval took {retrieval_time:.2f}s, found {len(chunks)} chunks")
 
@@ -310,28 +747,69 @@ def answer_question(question: str, filters: Optional[Dict[str, Any]] = None, top
         topup_time = time.time() - topup_start
         logger.info(f"[RAG] Company top-up took {topup_time:.2f}s, total chunks: {len(chunks)}")
 
-    if not chunks: 
-        logger.warning("[RAG] No chunks found")
-        return {"answer": "No relevant info found.", "sources": [], "chunks_used": 0, "confidence": "none", "model_used": LLM_MODEL_FREE}
+    pre_prune_count = len(chunks)
+    chunks = _prune_and_balance_chunks(
+        question=question,
+        search_q=search_q,
+        chunks=chunks,
+        top_k=effective_top_k,
+        filters=merged_filters,
+    )
+    if len(chunks) != pre_prune_count:
+        logger.info(f"[RAG] Relevance pruning reduced chunks: {pre_prune_count} -> {len(chunks)}")
 
-    # Context assembly
+    if not chunks:
+        logger.warning("[RAG] No chunks found")
+        return {"answer": "No relevant info found.", "sources": [], "chunks_used": 0, "confidence": "none", "model_used": model_name}
+
+    # Context assembly — accumulate chars accurately (chunks are sorted by relevance)
     total_chars = sum(len(c["text"]) for c in chunks)
     if total_chars > LLM_MAX_INPUT_CHARS:
-        avg = max(total_chars // len(chunks), 1)
-        chunks = chunks[:LLM_MAX_INPUT_CHARS // avg]
-        logger.info(f"[RAG] Truncated chunks from {len(chunks)} to fit {LLM_MAX_INPUT_CHARS} char limit")
+        original_count = len(chunks)
+        kept = []
+        running_chars = 0
+        for c in chunks:
+            if running_chars + len(c["text"]) > LLM_MAX_INPUT_CHARS:
+                break
+            kept.append(c)
+            running_chars += len(c["text"])
+        chunks = kept
+        logger.info(f"[RAG] Truncated chunks from {original_count} to {len(chunks)} to fit {LLM_MAX_INPUT_CHARS} char limit ({running_chars} chars used)")
 
-    ctx = "\n\n---\n\n".join([f"Source: {c['metadata']['source_file']} | Company: {c['metadata']['company']} | Period: {c['metadata']['period_label']} | Section: {c['metadata']['section']}\n\n{c['text']}" for c in chunks])
+    ctx = "\n\n---\n\n".join(
+        [
+            f"Source: {c['metadata']['source_file']} | Company: {c['metadata']['company']} | Period: {c['metadata']['period_label']} | L-Page: {c['metadata'].get('page_label') or 'N/A'} | Section: {c['metadata']['section']}\n\n{c['text']}"
+            for c in chunks
+        ]
+    )
     fmt = f"\nFormat Instruction: {format_inst}" if format_inst else ""
+    summary_query = f"Question: {question}{fmt}"
     
     # LLM call
     llm_start = time.time()
     logger.info(f"[RAG] Calling LLM with {len(ctx)} chars of context...")
-    answer = ask_llm(SYSTEM_PROMPT, f"Question: {question}{fmt}\n\nExcerpts:\n{ctx}", use_paid=use_paid, free_model=free_model, paid_model=paid_model)
+    answer = ask_llm(SYSTEM_PROMPT, f"{summary_query}\n\nExcerpts:\n{ctx}", use_paid=use_paid, free_model=free_model, paid_model=paid_model)
     llm_time = time.time() - llm_start
     logger.info(f"[RAG] LLM response took {llm_time:.2f}s")
 
-    res = {"answer": answer, "sources": sorted(set(c["metadata"]["source_file"] for c in chunks)), "chunks_used": len(chunks), "confidence": get_confidence_level(chunks), "model_used": model_name}
+    source_refs = []
+    seen = set()
+    for chunk in chunks:
+        ref = _format_source_ref(chunk)
+        if ref not in seen:
+            source_refs.append(ref)
+            seen.add(ref)
+    res = {
+        "answer": answer,
+        "sources": source_refs,
+        "chunks_used": len(chunks),
+        "confidence": get_confidence_level(chunks),
+        "model_used": model_name,
+        "query_debug": {
+            "vector_query": search_q,
+            "summary_query": summary_query,
+        },
+    }
     _response_cache[cache_key] = res
     if len(_response_cache) > _MAX_CACHE_SIZE: _response_cache.pop(next(iter(_response_cache)))
     

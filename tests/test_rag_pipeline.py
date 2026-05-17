@@ -180,3 +180,249 @@ class TestAnswerQuestion:
             call_kwargs = mock_llm.call_args[1]
             assert call_kwargs.get("free_model") == "test-free" or \
                    mock_llm.call_args[0] is not None  # LLM was called
+
+    def test_cache_hit_for_same_query_and_same_model(self):
+        """Same query + same model should return cached answer without second LLM call."""
+        from src.rag_pipeline import answer_question
+
+        mock_chunks = [{
+            "text": "Persistency 13th month | 82.3%",
+            "metadata": {
+                "company": "ICICI",
+                "company_code": "ICICI",
+                "quarter": "Q3",
+                "fy": "FY26",
+                "period_label": "Q3 FY26",
+                "source_file": "ICICI_Q3_FY26.pdf",
+                "page_number": 6,
+                "section": "Analytical Ratios",
+            },
+            "score": 0.91,
+        }]
+
+        with patch("src.rag_pipeline.retrieve") as mock_retrieve, \
+             patch("src.rag_pipeline.ask_llm") as mock_llm:
+            mock_retrieve.return_value = mock_chunks
+            mock_llm.return_value = "Cached answer"
+
+            q = "What is persistency for ICICI in Q3 FY26?"
+            r1 = answer_question(q, free_model="free-a", paid_model="paid-a")
+            r2 = answer_question(q, free_model="free-a", paid_model="paid-a")
+
+            assert r1["answer"] == "Cached answer"
+            assert r2["answer"] == "Cached answer"
+            assert mock_llm.call_count == 1
+            assert mock_retrieve.call_count == 1
+
+    def test_cache_miss_when_model_changes_for_same_query(self):
+        """Same query with different selected model should not reuse cache."""
+        from src.rag_pipeline import answer_question
+
+        mock_chunks = [{
+            "text": "Expense ratio | 8.2%",
+            "metadata": {
+                "company": "TataAIA",
+                "company_code": "TataAIA",
+                "quarter": "Q3",
+                "fy": "FY26",
+                "period_label": "Q3 FY26",
+                "source_file": "TataAIA_Q3_FY26.pdf",
+                "page_number": 6,
+                "section": "Operating Expenses",
+            },
+            "score": 0.89,
+        }]
+
+        with patch("src.rag_pipeline.retrieve") as mock_retrieve, \
+             patch("src.rag_pipeline.ask_llm") as mock_llm:
+            mock_retrieve.return_value = mock_chunks
+            mock_llm.side_effect = ["Answer model A", "Answer model B"]
+
+            q = "What is expense ratio for TataAIA in Q3 FY26?"
+            r1 = answer_question(q, free_model="free-a", paid_model="paid-a")
+            r2 = answer_question(q, free_model="free-a", paid_model="paid-b")
+
+            assert r1["answer"] == "Answer model A"
+            assert r2["answer"] == "Answer model B"
+            assert mock_llm.call_count == 2
+            assert mock_retrieve.call_count == 2
+
+
+class TestRelevancePruning:
+    """Noise-reduction and company-balancing behavior for retrieved chunks."""
+
+    def test_prune_keeps_relevant_lpage_chunks(self):
+        from src.rag_pipeline import _prune_and_balance_chunks
+
+        chunks = [
+            {
+                "text": "Premium schedule values for Q3 FY26",
+                "metadata": {"company_code": "A", "page_label": "L-4", "section": "Premium Schedule"},
+                "score": 0.82,
+            },
+            {
+                "text": "Commission and operating expenses details",
+                "metadata": {"company_code": "A", "page_label": "L-6", "section": "Operating Expenses"},
+                "score": 0.84,
+            },
+            {
+                "text": "Premium growth commentary",
+                "metadata": {"company_code": "B", "page_label": "L-4", "section": "Premium Schedule"},
+                "score": 0.80,
+            },
+        ]
+
+        with patch("src.rag_pipeline._candidate_lpages_from_terms", return_value={"L-4"}):
+            pruned = _prune_and_balance_chunks(
+                question="Compare premium for Q3 FY26",
+                search_q="Q3 FY26 L-4 premium schedule",
+                chunks=chunks,
+                top_k=10,
+            )
+
+        pages = [c["metadata"].get("page_label") for c in pruned]
+        assert "L-4" in pages
+        assert len(pruned) <= len(chunks)
+
+    def test_prune_balances_per_company_in_broad_compare(self):
+        from src.rag_pipeline import _prune_and_balance_chunks
+
+        chunks = []
+        for company in ["A", "B", "C"]:
+            chunks.extend([
+                {
+                    "text": f"Premium schedule primary metric {company}",
+                    "metadata": {"company_code": company, "page_label": "L-4", "section": "Premium Schedule"},
+                    "score": 0.85,
+                },
+                {
+                    "text": f"Premium schedule secondary metric {company}",
+                    "metadata": {"company_code": company, "page_label": "L-4", "section": "Premium Schedule"},
+                    "score": 0.81,
+                },
+                {
+                    "text": f"Unrelated investment notes {company}",
+                    "metadata": {"company_code": company, "page_label": "L-15", "section": "Investments"},
+                    "score": 0.79,
+                },
+            ])
+
+        with patch("src.rag_pipeline._candidate_lpages_from_terms", return_value={"L-4"}):
+            pruned = _prune_and_balance_chunks(
+                question="Compare company-wise premium for Q3 FY26",
+                search_q="Q3 FY26 premium L-4 schedule",
+                chunks=chunks,
+                top_k=20,
+            )
+
+        # Broad compare should stay near 1-2 chunks per company unless strongly needed.
+        assert 3 <= len(pruned) <= 9
+        companies = {c["metadata"]["company_code"] for c in pruned}
+        assert companies == {"A", "B", "C"}
+
+    def test_prune_expands_to_5_per_company_for_three_metrics(self):
+        from src.rag_pipeline import _prune_and_balance_chunks
+
+        chunks = []
+        for company in ["A", "B", "C"]:
+            chunks.extend([
+                {
+                    "text": f"{company} premium data",
+                    "metadata": {"company_code": company, "page_label": "L-4", "section": "Premium Schedule"},
+                    "score": 0.88,
+                },
+                {
+                    "text": f"{company} premium extra details",
+                    "metadata": {"company_code": company, "page_label": "L-4-DETAIL", "section": "Premium Schedule"},
+                    "score": 0.83,
+                },
+                {
+                    "text": f"{company} expense ratio details",
+                    "metadata": {"company_code": company, "page_label": "L-6", "section": "Operating Expenses"},
+                    "score": 0.87,
+                },
+                {
+                    "text": f"{company} expense notes",
+                    "metadata": {"company_code": company, "page_label": "L-6-DETAIL", "section": "Operating Expenses"},
+                    "score": 0.81,
+                },
+                {
+                    "text": f"{company} persistency 13th 25th 37th",
+                    "metadata": {"company_code": company, "page_label": "L-22", "section": "Analytical Ratios"},
+                    "score": 0.86,
+                },
+                {
+                    "text": f"{company} other non-core page",
+                    "metadata": {"company_code": company, "page_label": "L-31", "section": "Assets"},
+                    "score": 0.78,
+                },
+            ])
+
+        with patch("src.rag_pipeline._candidate_lpages_from_terms", return_value={"L-4", "L-6", "L-22"}):
+            pruned = _prune_and_balance_chunks(
+                question="Compare premium, expense ratio and persistency company-wise for Q3 FY26",
+                search_q="Q3 FY26 L-4 premium L-6 expense ratio L-22 persistency",
+                chunks=chunks,
+                top_k=40,
+            )
+
+        # 3 companies x cap 5 => up to 15 selected
+        assert 12 <= len(pruned) <= 15
+        by_company = {}
+        for c in pruned:
+            by_company.setdefault(c["metadata"]["company_code"], []).append(c)
+        assert set(by_company.keys()) == {"A", "B", "C"}
+        assert all(len(v) <= 5 for v in by_company.values())
+
+
+class TestVectorQueryCompaction:
+    def test_pat_query_avoids_unrelated_pages(self):
+        from src.rag_pipeline import _compact_vector_query
+
+        q = "List company-wise PAT for Q3 FY26 and rank all companies from highest to lowest, with values and L-page references."
+        term_map = {
+            "pat": "L-2",
+            "profit after tax": "L-2-A-PL",
+        }
+        defs_map = {
+            "L-2": ["profit and loss account", "profit after tax"],
+            "L-14A": ["aggregate value of investments other than equity shares and mutual fund"],
+            "L-40": ["quarterly claims data"],
+        }
+
+        with patch("src.rag_pipeline._load_term_to_page_map", return_value=term_map), \
+             patch("src.rag_pipeline._load_page_definitions_map", return_value=defs_map), \
+             patch("src.rag_pipeline._infer_lpages_from_processed_docs", return_value={}):
+            vq = _compact_vector_query(q)
+
+        vq_upper = vq.upper()
+        assert "Q3" in vq_upper and "FY26" in vq_upper
+        assert "L-2" in vq_upper
+        assert "PAT" in vq_upper
+        assert "L-40" not in vq_upper
+        assert "L-14A" not in vq_upper
+
+    def test_multi_metric_query_keeps_multiple_lpages(self):
+        from src.rag_pipeline import _compact_vector_query
+
+        q = "Compare company-wise premium, expense ratio and persistency for Q3 FY26."
+        term_map = {
+            "premium": "L-4",
+            "expense ratio": "L-6",
+            "persistency": "L-22",
+        }
+        defs_map = {
+            "L-4": ["premium schedule"],
+            "L-6": ["operating expenses"],
+            "L-22": ["analytical ratios persistency"],
+        }
+
+        with patch("src.rag_pipeline._load_term_to_page_map", return_value=term_map), \
+             patch("src.rag_pipeline._load_page_definitions_map", return_value=defs_map), \
+             patch("src.rag_pipeline._infer_lpages_from_processed_docs", return_value={}):
+            vq = _compact_vector_query(q)
+
+        vq_upper = vq.upper()
+        assert "L-4" in vq_upper
+        assert "L-6" in vq_upper
+        assert "L-22" in vq_upper

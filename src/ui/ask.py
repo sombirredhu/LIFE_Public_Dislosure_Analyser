@@ -3,8 +3,7 @@ import logging
 import json
 import time
 from datetime import datetime
-from typing import Any, Dict, Optional
-import re
+from typing import Any, Dict
 from src.config import *
 from src.rag_pipeline import answer_question
 from src.embedder import (
@@ -12,7 +11,6 @@ from src.embedder import (
     get_available_quarters, get_available_fys,
     invalidate_metadata_cache
 )
-from src.definitions_manager import add_page_definition, add_calculation, search_definitions
 
 logger = logging.getLogger(__name__)
 
@@ -23,25 +21,40 @@ def render_tab_ask_question():
     if stats['total_chunks'] == 0:
         st.warning("⚠️ No data indexed yet. Please upload PDF files in the 'Upload Reports' tab first.")
         return
-    col1, col2, col3 = st.columns(3)
-    with col1: st.metric("Indexed Files", stats['unique_files'])
-    with col2: st.metric("Total Chunks", stats['total_chunks'])
-    with col3: st.metric("Companies", len(stats['chunks_by_company']))
     st.markdown("---")
-    with st.expander("💡 Quick Commands for Definitions"):
-        st.markdown("**Add Page Definition:** `define GWP as L-4`\n**Add Calculation:** `define Margin % = Margin / ANP`\n**Search:** `what is GWP?`")
+    suggestions = [
+        ("Premium Ranking", "List company-wise premium for Q3 FY26 and rank all companies from highest to lowest, with values and L-page references."),
+        ("PAT Ranking", "List company-wise PAT for Q3 FY26 and rank all companies from highest to lowest, with values and L-page references."),
+        ("Expense & Persistency", "Compare company-wise expense ratio and persistency for Q3 FY26, show ranking for each metric, and cite L-page sources."),
+    ]
+
+    col_q = st.container()
     
-    # Add clear cache button
-    col_q, col_cache = st.columns([5, 1])
-    with col_cache:
-        if st.button("🗑️ Clear Cache", help="Clear cached responses to force fresh answers"):
-            from src.rag_pipeline import _response_cache
-            _response_cache.clear()
-            st.success("✅ Cache cleared!")
-            logger.info("[UI] User manually cleared response cache")
-    
+    st.markdown("**🧭 Suggested Questions (click to auto-fill):**")
+    s1, s2, s3 = st.columns(3)
+    selected_suggestion = None
+    with s1:
+        if st.button(suggestions[0][0], use_container_width=True, key="suggestion_comparison_btn"):
+            selected_suggestion = suggestions[0][1]
+    with s2:
+        if st.button(suggestions[1][0], use_container_width=True, key="suggestion_trend_btn"):
+            selected_suggestion = suggestions[1][1]
+    with s3:
+        if st.button(suggestions[2][0], use_container_width=True, key="suggestion_summary_btn"):
+            selected_suggestion = suggestions[2][1]
+
+    if "ask_question_input_widget" not in st.session_state:
+        st.session_state["ask_question_input_widget"] = ""
+    if selected_suggestion:
+        st.session_state["ask_question_input_widget"] = selected_suggestion
+
     with col_q:
-        question = st.text_area("Enter your question:", placeholder="Example: Which company had the highest gross written premium in Q1 FY25?", height=100, key="ask_question_input")
+        question = st.text_area(
+            "Enter your question:",
+            placeholder="Example: Which company had the highest gross written premium in Q1 FY25?",
+            height=100,
+            key="ask_question_input_widget",
+        )
     col1, col2, col3 = st.columns(3)
     with col1:
         available_companies = get_indexed_companies()
@@ -59,15 +72,6 @@ def render_tab_ask_question():
             st.error("Please enter a question.")
             return
         
-        # Clear cache if model changed
-        if "last_model_used" in st.session_state:
-            current_model = st.session_state.get("paid_model", "")
-            if current_model != st.session_state["last_model_used"]:
-                logger.info(f"[UI] Model changed from {st.session_state['last_model_used']} to {current_model}, clearing cache")
-                from src.rag_pipeline import _response_cache
-                _response_cache.clear()
-        st.session_state["last_model_used"] = st.session_state.get("paid_model", "")
-        
         now = time.time()
         if "rate_limit" not in st.session_state: st.session_state["rate_limit"] = []
         st.session_state["rate_limit"] = [ts for ts in st.session_state["rate_limit"] if now - ts < 60]
@@ -75,11 +79,6 @@ def render_tab_ask_question():
             st.error("⏳ Rate limit exceeded. Please wait a minute before asking more questions.")
             return
         st.session_state["rate_limit"].append(now)
-        def_result = _process_definition_command(question)
-        if def_result:
-            if def_result["success"]: st.success(def_result["message"])
-            else: st.error(def_result["message"])
-            return
         filters: Dict[str, Any] = {}
         if company_filter: filters["company_code"] = company_filter[0] if len(company_filter) == 1 else {"$in": company_filter}
         if quarter_filter != "All": filters["quarter"] = quarter_filter
@@ -142,30 +141,10 @@ def _render_last_answer():
         st.write(f"**Confidence:** {result['confidence']}")
         st.write(f"**Model Used:** {result.get('model_used', 'N/A')}")
         if filters: st.write(f"**Filters Applied:** {filters}")
-
-def _process_definition_command(text: str) -> Optional[Dict[str, Any]]:
-    page_pattern1 = re.compile(r'(?:define|add definition:?)\s+(.+?)\s+(?:as|=)\s+(l-\d+)', re.IGNORECASE)
-    match = page_pattern1.search(text)
-    if match:
-        success, message = add_page_definition(match.group(1).strip(), match.group(2).strip().upper())
-        return {"success": success, "message": message}
-    calc_pattern = re.compile(r'(?:define|add calculation:?)\s+(.+?)\s*=\s*(.+)', re.IGNORECASE)
-    match = calc_pattern.search(text)
-    if match:
-        if not match.group(2).strip().upper().startswith('L-'):
-            success, message = add_calculation(match.group(1).strip(), match.group(2).strip())
-            return {"success": success, "message": message}
-    search_pattern = re.compile(r'(?:what is|define)\s+(.+?)[\?]?$', re.IGNORECASE)
-    match = search_pattern.search(text)
-    if match and len(text.split()) <= 5:
-        term = match.group(1).strip()
-        result = search_definitions(term)
-        if result["found"]:
-            msg_parts = [f"**{term}**"]
-            if result["type"] in ["page", "both"]:
-                msg_parts.append(f"📄 Page: {result['lpage']}")
-                if result["related_terms"]: msg_parts.append(f"Related: {', '.join(result['related_terms'])}")
-            if result["type"] in ["calculation", "both"]: msg_parts.append(f"🧮 Formula: {result['formula']}")
-            return {"success": True, "message": "\n".join(msg_parts)}
-        else: return {"success": False, "message": f"No definition found for '{term}'"}
-    return None
+    query_debug = result.get("query_debug", {})
+    if query_debug:
+        with st.expander("🔎 Query Translation (click to expand)", expanded=False):
+            st.markdown("**Vector Query (used for retrieval):**")
+            st.code(query_debug.get("vector_query", ""), language=None)
+            st.markdown("**Summary Query (sent to LLM):**")
+            st.code(query_debug.get("summary_query", ""), language=None)

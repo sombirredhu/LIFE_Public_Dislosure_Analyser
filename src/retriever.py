@@ -7,6 +7,7 @@ from src.embedder import get_or_create_collection, embed_query, embed_queries
 logger = logging.getLogger(__name__)
 _DOMAIN_PREFIX = "IRDAI life insurance financial report: "
 _FALLBACK_THRESHOLD = 0.10
+_LAST_RESORT_THRESHOLD = -1.0
 
 def _normalize_filters(filters: Dict[str, Any]) -> Dict[str, Any]:
     if not filters or len(filters) == 1: return filters
@@ -25,6 +26,7 @@ def _raw_retrieve(query_embedding: List[float], collection, top_k: int, norm_fil
     if res["ids"] and res["ids"][0]:
         for i in range(len(res["ids"][0])):
             score = round(1.0 - res["distances"][0][i], 4)
+            score = max(0.0, min(1.0, score))
             if score >= threshold:
                 chunks.append({"text": res["documents"][0][i], "metadata": res["metadatas"][0][i], "score": score})
     return chunks
@@ -37,7 +39,15 @@ def retrieve(query: str, filters: Optional[Dict[str, Any]] = None, top_k: int = 
     norm = _normalize_filters(filters) if filters else None
     emb = embed_query(_DOMAIN_PREFIX + query)
     chunks = _raw_retrieve(emb, coll, top_k, norm, SIMILARITY_THRESHOLD)
-    if not chunks: chunks = _raw_retrieve(emb, coll, top_k, norm, _FALLBACK_THRESHOLD)
+    if not chunks:
+        chunks = _raw_retrieve(emb, coll, top_k, norm, _FALLBACK_THRESHOLD)
+    if not chunks:
+        raw_emb = embed_query(query)
+        chunks = _raw_retrieve(raw_emb, coll, top_k, norm, SIMILARITY_THRESHOLD)
+        if not chunks:
+            chunks = _raw_retrieve(raw_emb, coll, top_k, norm, _FALLBACK_THRESHOLD)
+        if not chunks:
+            chunks = _raw_retrieve(raw_emb, coll, top_k, norm, _LAST_RESORT_THRESHOLD)
     return chunks
 
 def retrieve_multi(queries: List[str], filters: Optional[Dict[str, Any]] = None, top_k: int = None) -> List[Dict[str, Any]]:
@@ -59,6 +69,22 @@ def retrieve_multi(queries: List[str], filters: Optional[Dict[str, Any]] = None,
             for c in _raw_retrieve(emb, coll, effective_k, norm, _FALLBACK_THRESHOLD):
                 cid = c["metadata"].get("chunk_id", c["text"][:80])
                 if cid not in all_chunks or c["score"] > all_chunks[cid]["score"]: all_chunks[cid] = c
+    if not all_chunks:
+        raw_embs = embed_queries(queries)
+        for emb in raw_embs:
+            for c in _raw_retrieve(emb, coll, effective_k, norm, SIMILARITY_THRESHOLD):
+                cid = c["metadata"].get("chunk_id", c["text"][:80])
+                if cid not in all_chunks or c["score"] > all_chunks[cid]["score"]: all_chunks[cid] = c
+        if not all_chunks:
+            for emb in raw_embs:
+                for c in _raw_retrieve(emb, coll, effective_k, norm, _FALLBACK_THRESHOLD):
+                    cid = c["metadata"].get("chunk_id", c["text"][:80])
+                    if cid not in all_chunks or c["score"] > all_chunks[cid]["score"]: all_chunks[cid] = c
+        if not all_chunks:
+            for emb in raw_embs:
+                for c in _raw_retrieve(emb, coll, effective_k, norm, _LAST_RESORT_THRESHOLD):
+                    cid = c["metadata"].get("chunk_id", c["text"][:80])
+                    if cid not in all_chunks or c["score"] > all_chunks[cid]["score"]: all_chunks[cid] = c
     return sorted(all_chunks.values(), key=lambda x: x["score"], reverse=True)[:effective_k]
 
 def top_up_missing_companies(query: str, chunks: List[Dict[str, Any]], expected: List[str], filters: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:

@@ -26,11 +26,19 @@ def fetch_available_models() -> List[Dict[str, Any]]:
         logger.exception("Failed to fetch models")
         return []
 
+_openai_client = None
+
+def _get_openai_client() -> OpenAI:
+    global _openai_client
+    if _openai_client is None:
+        if not OPENROUTER_API_KEY: raise ValueError("OPENROUTER_API_KEY is not set")
+        _openai_client = OpenAI(base_url=OPENROUTER_BASE_URL, api_key=OPENROUTER_API_KEY)
+    return _openai_client
+
 def ask_llm(system_prompt: str, user_message: str, use_paid: bool = False, max_retries: int = 3, free_model: Optional[str] = None, paid_model: Optional[str] = None) -> str:
-    if not OPENROUTER_API_KEY: raise ValueError("OPENROUTER_API_KEY is not set")
     model = (paid_model or LLM_MODEL_PAID) if use_paid else (free_model or LLM_MODEL_FREE)
     max_tokens = LLM_MAX_TOKENS_COMPLEX if use_paid else LLM_MAX_TOKENS_SIMPLE
-    client = OpenAI(base_url=OPENROUTER_BASE_URL, api_key=OPENROUTER_API_KEY)
+    client = _get_openai_client()
     last_err = None
     
     for attempt in range(max_retries):
