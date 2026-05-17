@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Optional
 import json
 from src.config import (
     LLM_MAX_INPUT_CHARS, LLM_MODEL_FREE, LLM_MODEL_PAID,
-    TOP_K_COMPLEX, TOP_K_SIMPLE, ENABLE_MULTI_QUERY,
+    TOP_K_COMPLEX, TOP_K_SIMPLE, ENABLE_MULTI_QUERY, PROCESSED_OUTPUT_DIR,
 )
 from src.embedder import get_indexed_companies, get_available_quarters, get_available_fys
 from src.llm_client import ask_llm
@@ -45,34 +45,56 @@ def _refine_user_request(question: str, free_model: Optional[str] = None) -> Dic
     
     # Try LLM-based intelligent query rewriting with project context
     try:
-        project_context = """You are a query optimizer for an IRDAI insurance financial reports analysis system.
+        # Load actual L-page definitions from the system
+        from pathlib import Path
+        import json
+        master_defs_path = Path(PROCESSED_OUTPUT_DIR) / "master_page_definitions.json"
+        lpage_definitions = {}
+        if master_defs_path.exists():
+            with open(master_defs_path, 'r', encoding='utf-8') as f:
+                lpage_definitions = json.load(f)
+        
+        # Create dynamic L-page reference
+        lpage_reference = "\n".join([f"  * {lpage}: {terms[0] if isinstance(terms, list) else terms}" 
+                                     for lpage, terms in sorted(lpage_definitions.items())[:20]])
+        
+        project_context = f"""You are a query optimizer for an IRDAI insurance financial reports analysis system.
 
 PROJECT CONTEXT:
 - This system compares financial data across 6 Indian life insurance companies
 - Data comes from quarterly IRDAI public disclosure reports (L-forms)
-- Key L-page definitions:
-  * L-1: Revenue Account
-  * L-2: Profit & Loss Account  
-  * L-3: Balance Sheet
-  * L-4: Premium Schedule (first year, renewal, single premium, total)
-  * L-5: Commission Schedule
-  * L-6: Operating Expenses
-  * L-7: Benefits Paid
-  * L-32: Solvency Margin and Ratio
-  * L-39/L-40: Claims Settlement Data
-  * L-12/L-13/L-14: Investments (Shareholders/Policyholders/Linked)
-  * L-36: Premium by Policy Type
+- Available L-page definitions (from actual data):
+{lpage_reference}
+
+KEY PRINCIPLES:
+1. SEARCH QUERY OPTIMIZATION:
+   - Focus on L-page identifiers and document section names
+   - Include relevant financial terms that appear in documents
+   - Remove comparison words ("all companies", "compare", "each company")
+   - Keep it concise and focused on retrieval
+
+2. TERMINOLOGY FLEXIBILITY:
+   - User may use informal terms (e.g., "regular premium" instead of "first year premium")
+   - Don't hardcode mappings - let the LLM discover actual terms from retrieved data
+   - In analysis instruction, tell LLM to: "identify and extract relevant columns/metrics from the data"
+   - Let LLM figure out what "regular premium" means by looking at actual table headers
+
+3. ANALYSIS INSTRUCTION:
+   - Tell LLM WHAT to do, not HOW to map terms
+   - Example: "Extract all premium-related columns from the data and present in table format"
+   - NOT: "Extract first year, renewal, single premium" (too prescriptive)
+   - Let LLM be smart about finding the right data based on user intent
 
 VECTOR DB RETRIEVAL RULES:
 - Vector DB stores individual company chunks (no "all companies" concept)
-- Search query should focus on: L-page identifiers, specific financial terms, data types
-- Avoid: "all companies", "compare", "each company" (these are for analysis, not search)
-- Good search terms: "L-4 premium first year renewal single", "L-32 solvency ratio margin"
+- Search for document sections (L-pages) and general financial terms
+- Good: "L-4 premium schedule", "L-32 solvency", "L-39 claims"
+- Avoid: specific column names (let LLM discover those from data)
 
-ANALYSIS INSTRUCTION RULES:
-- Tell LLM what data to extract and how to present it
-- Specify comparison requirements, format (table/list), metrics to include
-- Example: "Extract first year, renewal, single, and total premium for each company. Present in table format."
+EXAMPLE:
+User: "show regular premium for all companies"
+Search Query: "L-4 premium schedule"
+Analysis: "Extract premium data from L-4 schedule for each company. Identify and include all premium types/columns present in the data. Present in table format."
 """
 
         rewrite_prompt = f"""{project_context}
@@ -82,15 +104,16 @@ USER QUESTION: {question}
 Generate TWO optimized queries:
 
 1. SEARCH_QUERY: Optimized for vector DB retrieval
-   - Focus on L-page identifiers and specific financial terms
+   - Focus on L-page identifiers and section names
+   - Include general financial terms (premium, solvency, claims, etc.)
    - Remove comparison/aggregation words
    - Keep it concise (max 15 words)
 
 2. ANALYSIS_INSTRUCTION: Instructions for LLM to analyze retrieved data
-   - Specify what metrics to extract
-   - Specify how to present (table, comparison, etc.)
-   - Include any format requirements
-   - Keep it clear and specific (max 30 words)
+   - Tell LLM to discover and extract relevant data from what's retrieved
+   - Don't prescribe specific column names - let LLM figure it out
+   - Specify format requirements (table, comparison, etc.)
+   - Keep it flexible and intent-focused (max 40 words)
 
 Return ONLY valid JSON:
 {{"search_query": "...", "analysis_instruction": "..."}}"""
