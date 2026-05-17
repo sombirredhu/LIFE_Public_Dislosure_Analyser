@@ -165,3 +165,9 @@ def _render_last_answer():
             if chunks_per_company:
                 st.markdown("**Chunks per Company (post-pruning):**")
                 st.json(chunks_per_company)
+            if query_debug.get("context_chars") is not None or query_debug.get("context_tokens_est") is not None:
+                st.markdown("**Context Budget Used:**")
+                st.code(
+                    f"chars={query_debug.get('context_chars', 0)} | tokens_est={query_debug.get('context_tokens_est', 0)}",
+                    language=None,
+                )

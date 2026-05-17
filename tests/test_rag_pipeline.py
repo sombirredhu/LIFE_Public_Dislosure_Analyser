@@ -247,6 +247,36 @@ class TestAnswerQuestion:
             assert mock_llm.call_count == 2
             assert mock_retrieve.call_count == 2
 
+    def test_query_debug_includes_context_budget_fields(self):
+        from src.rag_pipeline import answer_question
+
+        mock_chunks = [{
+            "text": "Premium schedule | value",
+            "metadata": {
+                "company": "TataAIA",
+                "company_code": "TataAIA",
+                "quarter": "Q3",
+                "fy": "FY26",
+                "period_label": "Q3 FY26",
+                "source_file": "TataAIA_Q3_FY26.pdf",
+                "page_number": 4,
+                "page_label": "L-4",
+                "section": "Premium Schedule",
+            },
+            "score": 0.9,
+        }]
+
+        with patch("src.rag_pipeline.retrieve", return_value=mock_chunks), \
+             patch("src.rag_pipeline.get_indexed_companies", return_value=[]), \
+             patch("src.rag_pipeline.ask_llm", return_value="ok"):
+            result = answer_question("What is premium for TataAIA Q3 FY26?")
+
+        qd = result.get("query_debug", {})
+        assert "context_chars" in qd
+        assert "context_tokens_est" in qd
+        assert qd["context_chars"] > 0
+        assert qd["context_tokens_est"] > 0
+
 
 class TestRelevancePruning:
     """Noise-reduction and company-balancing behavior for retrieved chunks."""

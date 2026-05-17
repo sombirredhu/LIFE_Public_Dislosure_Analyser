@@ -27,12 +27,15 @@ def fetch_available_models() -> List[Dict[str, Any]]:
         return []
 
 _openai_client = None
+_openai_client_sig = None
 
 def _get_openai_client() -> OpenAI:
-    global _openai_client
-    if _openai_client is None:
+    global _openai_client, _openai_client_sig
+    current_sig = (OPENROUTER_BASE_URL, OPENROUTER_API_KEY, id(OpenAI))
+    if _openai_client is None or _openai_client_sig != current_sig:
         if not OPENROUTER_API_KEY: raise ValueError("OPENROUTER_API_KEY is not set")
         _openai_client = OpenAI(base_url=OPENROUTER_BASE_URL, api_key=OPENROUTER_API_KEY)
+        _openai_client_sig = current_sig
     return _openai_client
 
 def ask_llm(system_prompt: str, user_message: str, use_paid: bool = False, max_retries: int = 3, free_model: Optional[str] = None, paid_model: Optional[str] = None) -> str:
@@ -59,6 +62,12 @@ def ask_llm(system_prompt: str, user_message: str, use_paid: bool = False, max_r
             
             duration = time.time() - start_time
             logger.info(f"[LLM] Success: {model} responded in {duration:.2f}s")
+            try:
+                fr = res.choices[0].finish_reason
+                if fr == "length":
+                    logger.warning("[LLM] Response reached output length limit (finish_reason='length')")
+            except Exception:
+                pass
             return res.choices[0].message.content
             
         except (RateLimitError, APITimeoutError) as e:

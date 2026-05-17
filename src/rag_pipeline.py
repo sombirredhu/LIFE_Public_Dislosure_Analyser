@@ -29,7 +29,10 @@ def _get_optimizer_cache_key(question: str) -> str:
     return normalized
 
 def _get_cache_key(q: str, f: Optional[Dict[str, Any]], k: Optional[int], fm: Optional[str], pm: Optional[str]) -> str:
-    return f"{q}::{json.dumps(f, sort_keys=True) if f else 'N'}::{k}::{fm}::{pm}"
+    # Include callable identities so tests/monkeypatching don't leak stale cached responses
+    # across different patched pipelines, while preserving normal runtime cache behavior.
+    runtime_salt = f"{id(retrieve)}:{id(ask_llm)}"
+    return f"{q}::{json.dumps(f, sort_keys=True) if f else 'N'}::{k}::{fm}::{pm}::{runtime_salt}"
 
 SYSTEM_PROMPT = """You are a financial analyst specializing in Indian life insurance.
 Answer based ONLY on excerpts. Rules: 1. Mention company, quarter, FY. 2. Use markdown tables for comparisons. 3. monetary values in ₹ Cr. 4. Cite sources with company + L-page when available.
@@ -66,6 +69,18 @@ def _contains_term(query_text: str, term: str) -> bool:
     if len(t) < 2:
         return False
     return re.search(rf'(?<!\w){re.escape(t)}(?!\w)', query_text.lower()) is not None
+
+def _estimate_text_tokens(text: str) -> int:
+    """
+    Token estimate for budgeting during retrieval/LLM context packing.
+    Uses a conservative lexical heuristic (better than plain chars/4 for mixed table text).
+    """
+    if not text:
+        return 0
+    lexical = re.findall(r"\w+|[^\w\s]", text, flags=re.UNICODE)
+    approx = int(len(lexical) * 1.05)  # small safety margin
+    char_floor = len(text) // 5
+    return max(approx, char_floor)
 
 def _load_term_to_page_map() -> Dict[str, str]:
     try:
@@ -303,6 +318,9 @@ def _prune_and_balance_chunks(
     # If user selected specific company/company set, skip aggressive balancing.
     if filters and "company_code" in filters:
         per_company_cap = min(max(per_company_cap, 3), top_k)
+    elif len(by_company) <= 1:
+        # Single-company queries should not be aggressively capped; keep ranking depth.
+        per_company_cap = top_k
 
     selected: List[Dict[str, Any]] = []
     selected_ids: Set[str] = set()
@@ -788,7 +806,7 @@ def answer_question(question: str, filters: Optional[Dict[str, Any]] = None, top
         filters=plan.merged_filters,
     )
     if len(chunks) != pre_prune_count:
-        logger.info(f"[RAG] Relevance pruning reduced chunks: {pre_prune_count} -> {len(chunks)}")
+        logger.warning(f"[RAG] Relevance pruning truncated chunks: {pre_prune_count} -> {len(chunks)}")
 
     debug_terms = _extract_query_terms_for_relevance(f"{question} {plan.search_query}")
     debug_lpages = sorted(_candidate_lpages_from_terms(debug_terms, f"{question} {plan.search_query}"))
@@ -801,19 +819,32 @@ def answer_question(question: str, filters: Optional[Dict[str, Any]] = None, top
         logger.warning("[RAG] No chunks found")
         return {"answer": "No relevant info found.", "sources": [], "chunks_used": 0, "confidence": "none", "model_used": plan.model_name}
 
-    # Context assembly — accumulate chars accurately (chunks are sorted by relevance)
+    # Context assembly budget guard:
+    # keep both char and token budgets to reduce overflow risk on mixed table text.
     total_chars = sum(len(c["text"]) for c in chunks)
-    if total_chars > LLM_MAX_INPUT_CHARS:
+    total_tokens = sum(_estimate_text_tokens(c["text"]) for c in chunks)
+    char_budget = LLM_MAX_INPUT_CHARS
+    token_budget = max(1024, LLM_MAX_INPUT_CHARS // 4)
+    if total_chars > char_budget or total_tokens > token_budget:
         original_count = len(chunks)
         kept = []
         running_chars = 0
+        running_tokens = 0
         for c in chunks:
-            if running_chars + len(c["text"]) > LLM_MAX_INPUT_CHARS:
+            c_chars = len(c["text"])
+            c_tokens = _estimate_text_tokens(c["text"])
+            if running_chars + c_chars > char_budget:
+                break
+            if running_tokens + c_tokens > token_budget:
                 break
             kept.append(c)
-            running_chars += len(c["text"])
+            running_chars += c_chars
+            running_tokens += c_tokens
         chunks = kept
-        logger.info(f"[RAG] Truncated chunks from {original_count} to {len(chunks)} to fit {LLM_MAX_INPUT_CHARS} char limit ({running_chars} chars used)")
+        logger.warning(
+            "[RAG] Input budget guard truncated chunks %s -> %s (chars %s/%s, tokens %s/%s)",
+            original_count, len(chunks), running_chars, char_budget, running_tokens, token_budget
+        )
 
     ctx = "\n\n---\n\n".join(
         [
@@ -856,6 +887,8 @@ def answer_question(question: str, filters: Optional[Dict[str, Any]] = None, top
             "intent_terms": debug_terms,
             "resolved_lpages": debug_lpages,
             "chunks_per_company": chunks_per_company,
+            "context_chars": sum(len(c["text"]) for c in chunks),
+            "context_tokens_est": sum(_estimate_text_tokens(c["text"]) for c in chunks),
         },
     }
     _response_cache[cache_key] = res
