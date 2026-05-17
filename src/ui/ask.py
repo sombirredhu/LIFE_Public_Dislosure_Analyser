@@ -11,6 +11,7 @@ from src.embedder import (
     get_available_quarters, get_available_fys,
     invalidate_metadata_cache
 )
+from src.history_store import append_history_entry
 
 logger = logging.getLogger(__name__)
 
@@ -97,6 +98,10 @@ def render_tab_ask_question():
                 st.session_state["last_answer"] = {"question": question, "result": result, "filters": filters, "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "model_selected": st.session_state.get("selected_model_label", "")}
                 if "query_history" not in st.session_state: st.session_state["query_history"] = []
                 st.session_state["query_history"].insert(0, st.session_state["last_answer"].copy())
+                try:
+                    append_history_entry(st.session_state["last_answer"])
+                except Exception:
+                    logger.exception("[UI] Failed to persist query history entry")
             except Exception as e:
                 logger.exception("[UI] answer_question failed | question=%r | filters=%s", question[:100], filters)
                 st.error(f"❌ Error: {str(e)}")
