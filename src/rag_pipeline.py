@@ -78,7 +78,7 @@ def _generate_queries(q: str, fm: Optional[str] = None) -> List[str]:
         logger.warning(f"[RAG] Multi-query generation failed ({e}), using original query")
         return [q]
 
-_COMPLEX_KEYWORDS = re.compile(r'\b(compare|vs\.?|versus|all\s+companies|rank|ranking|which\s+company|across|between)\b', re.I)
+_COMPLEX_KEYWORDS = re.compile(r'\b(compare|vs\.?|versus|all\s+companies|company\s+wise|companywise|each\s+company|rank|ranking|which\s+company|across|between)\b', re.I)
 _SUPERLATIVE_KEYWORDS = re.compile(r'\b(highest|lowest|top|bottom|best|worst|most|least|trend|growth)\b', re.I)
 
 def classify_complexity(q: str) -> str:
