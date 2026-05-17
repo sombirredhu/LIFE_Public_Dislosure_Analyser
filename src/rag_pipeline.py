@@ -34,71 +34,160 @@ def _refine_user_request(question: str, free_model: Optional[str] = None) -> Dic
     """
     Refine user question by:
     1. Extracting format instructions
-    2. Enhancing query with domain-specific terms for better retrieval
+    2. Creating optimized search query for vector DB retrieval
+    3. Creating analysis instructions for LLM summarization
+    
+    Uses LLM with project context to intelligently rewrite queries, with rule-based fallback.
     """
     # Extract format instructions
     format_matches = _FORMAT_WORDS.findall(question)
     format_inst = " ".join(m[1] for m in format_matches).strip() if format_matches else ""
-    if format_inst:
-        format_inst = f"Present the answer in {format_inst} format."
     
-    # Remove format words from search query
+    # Try LLM-based intelligent query rewriting with project context
+    try:
+        project_context = """You are a query optimizer for an IRDAI insurance financial reports analysis system.
+
+PROJECT CONTEXT:
+- This system compares financial data across 6 Indian life insurance companies
+- Data comes from quarterly IRDAI public disclosure reports (L-forms)
+- Key L-page definitions:
+  * L-1: Revenue Account
+  * L-2: Profit & Loss Account  
+  * L-3: Balance Sheet
+  * L-4: Premium Schedule (first year, renewal, single premium, total)
+  * L-5: Commission Schedule
+  * L-6: Operating Expenses
+  * L-7: Benefits Paid
+  * L-32: Solvency Margin and Ratio
+  * L-39/L-40: Claims Settlement Data
+  * L-12/L-13/L-14: Investments (Shareholders/Policyholders/Linked)
+  * L-36: Premium by Policy Type
+
+VECTOR DB RETRIEVAL RULES:
+- Vector DB stores individual company chunks (no "all companies" concept)
+- Search query should focus on: L-page identifiers, specific financial terms, data types
+- Avoid: "all companies", "compare", "each company" (these are for analysis, not search)
+- Good search terms: "L-4 premium first year renewal single", "L-32 solvency ratio margin"
+
+ANALYSIS INSTRUCTION RULES:
+- Tell LLM what data to extract and how to present it
+- Specify comparison requirements, format (table/list), metrics to include
+- Example: "Extract first year, renewal, single, and total premium for each company. Present in table format."
+"""
+
+        rewrite_prompt = f"""{project_context}
+
+USER QUESTION: {question}
+
+Generate TWO optimized queries:
+
+1. SEARCH_QUERY: Optimized for vector DB retrieval
+   - Focus on L-page identifiers and specific financial terms
+   - Remove comparison/aggregation words
+   - Keep it concise (max 15 words)
+
+2. ANALYSIS_INSTRUCTION: Instructions for LLM to analyze retrieved data
+   - Specify what metrics to extract
+   - Specify how to present (table, comparison, etc.)
+   - Include any format requirements
+   - Keep it clear and specific (max 30 words)
+
+Return ONLY valid JSON:
+{{"search_query": "...", "analysis_instruction": "..."}}"""
+
+        logger.debug(f"[RAG] Rewriting query with LLM: '{question}'")
+        # Use paid model for query rewriting - it's just one call and ensures quality
+        response = ask_llm("You are a query optimization expert.", rewrite_prompt, use_paid=True, paid_model=free_model)
+        
+        # Parse JSON response
+        import json
+        # Extract JSON from response (handle markdown code blocks)
+        json_match = re.search(r'\{.*\}', response, re.DOTALL)
+        if json_match:
+            result = json.loads(json_match.group())
+            search_q = result.get('search_query', '').strip()
+            analysis_inst = result.get('analysis_instruction', '').strip()
+            
+            # Validate results
+            if search_q and len(search_q) > 5 and len(search_q) < 200:
+                if analysis_inst and len(analysis_inst) > 10:
+                    logger.info(f"[RAG] LLM query rewrite successful")
+                    logger.info(f"  Original: '{question}'")
+                    logger.info(f"  Search: '{search_q}'")
+                    logger.info(f"  Analysis: '{analysis_inst}'")
+                    
+                    # Combine format instruction with analysis instruction
+                    if format_inst:
+                        analysis_inst = f"{analysis_inst} {format_inst}"
+                    
+                    return {
+                        "search_query": search_q,
+                        "format_instruction": analysis_inst
+                    }
+        
+        raise ValueError("Invalid LLM response format")
+        
+    except Exception as e:
+        logger.warning(f"[RAG] LLM query rewrite failed ({e}), using rule-based fallback")
+    
+    # FALLBACK: Rule-based enhancement
     search_q = _FORMAT_WORDS.sub(' ', question).strip()
     search_q = re.sub(r'\s{2,}', ' ', search_q).strip(' .,?!')
     if not search_q:
         search_q = question
     
-    # Rule-based query enhancement for better retrieval
     original_q = search_q
     search_q_lower = search_q.lower()
     
-    # Enhance "company wise" or "each company" queries
-    if re.search(r'\b(company\s*wise|each\s+company|all\s+companies|companywise)\b', search_q_lower):
-        # Add "for all companies" if not already present
-        if 'all companies' not in search_q_lower:
-            search_q = f"{search_q} for all companies"
+    # Remove "all companies", "company wise" from search query (not useful for vector DB)
+    search_q = re.sub(r'\b(for\s+)?all\s+companies\b', '', search_q, flags=re.I).strip()
+    search_q = re.sub(r'\b(company\s*wise|each\s+company|companywise)\b', '', search_q, flags=re.I).strip()
     
-    # Enhance premium queries with specific terms
+    # Enhance with L-page identifiers and specific terms
     if re.search(r'\bpremium\b', search_q_lower) and not re.search(r'\b(first|renewal|single)\b', search_q_lower):
-        search_q = f"{search_q} first year renewal single premium L-4 schedule"
+        search_q = f"{search_q} L-4 first year renewal single premium"
+    elif re.search(r'\bpremium\b', search_q_lower):
+        search_q = f"{search_q} L-4 premium schedule"
     
-    # Enhance solvency queries
     if re.search(r'\bsolvency\b', search_q_lower):
         search_q = f"{search_q} L-32 solvency margin ratio"
     
-    # Enhance claims queries
     if re.search(r'\bclaim', search_q_lower):
-        search_q = f"{search_q} L-39 L-40 claims settlement data"
+        search_q = f"{search_q} L-39 L-40 claims settlement"
     
-    # Enhance investment queries
     if re.search(r'\binvestment', search_q_lower):
         search_q = f"{search_q} L-12 L-13 L-14 shareholders policyholders"
     
-    # Enhance commission queries
     if re.search(r'\bcommission\b', search_q_lower):
-        search_q = f"{search_q} L-5 commission schedule"
+        search_q = f"{search_q} L-5 commission"
     
-    # Enhance expense queries
     if re.search(r'\bexpense', search_q_lower):
         search_q = f"{search_q} L-6 operating expenses"
     
-    # Enhance revenue/income queries
     if re.search(r'\b(revenue|income)\b', search_q_lower):
         search_q = f"{search_q} L-1 revenue account"
     
-    # Enhance profit/loss queries
     if re.search(r'\b(profit|loss|p&l|pnl)\b', search_q_lower):
-        search_q = f"{search_q} L-2 profit loss account"
+        search_q = f"{search_q} L-2 profit loss"
     
-    # Enhance balance sheet queries
     if re.search(r'\bbalance\s*sheet\b', search_q_lower):
         search_q = f"{search_q} L-3 balance sheet assets liabilities"
     
-    # Log if query was enhanced
-    if search_q != original_q:
-        logger.info(f"[RAG] Query enhanced: '{original_q}' → '{search_q}'")
+    # Clean up extra spaces
+    search_q = re.sub(r'\s{2,}', ' ', search_q).strip()
     
-    return {"search_query": search_q, "format_instruction": format_inst}
+    # Create analysis instruction from original question
+    analysis_inst = question
+    if format_inst:
+        analysis_inst = f"{question} {format_inst}"
+    
+    if search_q != original_q:
+        logger.info(f"[RAG] Rule-based query enhancement: '{original_q}' → '{search_q}'")
+    
+    return {
+        "search_query": search_q,
+        "format_instruction": analysis_inst
+    }
 
 def _extract_auto_filters(q: str) -> Dict[str, Any]:
     f = {}
