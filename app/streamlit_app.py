@@ -6,7 +6,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from src.logging_config import setup_logging
 setup_logging()
 
-from src.config import APP_TITLE
+from src.config import APP_TITLE, config_health_report
 from src.ui.base import (_check_password, render_css, render_header, render_sidebar, _warm_up_models, _auto_reindex_if_needed)
 from src.ui.ask import render_tab_ask_question
 from src.ui.upload import render_tab_upload
@@ -18,6 +18,12 @@ from src.ui.defs import render_tab_definitions
 def main():
     st.set_page_config(page_title=APP_TITLE, page_icon="📊", layout="wide", initial_sidebar_state="expanded")
     if not _check_password(): return
+    health = config_health_report()
+    if health["errors"]:
+        st.error("Configuration errors detected:\n- " + "\n- ".join(health["errors"]))
+        st.stop()
+    if health["warnings"]:
+        st.warning("Configuration warnings:\n- " + "\n- ".join(health["warnings"]))
     _warm_up_models()
     _auto_reindex_if_needed()
     render_css()

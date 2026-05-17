@@ -1,6 +1,7 @@
 import os
 import logging
 from pathlib import Path
+from typing import Dict, List
 from dotenv import load_dotenv
 
 for lib in ['pdfminer', 'pdfplumber', 'PIL', 'matplotlib', 'urllib3', 'chromadb']:
@@ -53,3 +54,34 @@ def validate_config():
     os.makedirs(PDF_INPUT_DIR, exist_ok=True)
     os.makedirs(PROCESSED_OUTPUT_DIR, exist_ok=True)
     return True
+
+def config_health_report() -> Dict[str, List[str]]:
+    """
+    Non-throwing runtime health report for UI diagnostics.
+    """
+    errors: List[str] = []
+    warnings: List[str] = []
+
+    if not OPENROUTER_API_KEY:
+        errors.append("OPENROUTER_API_KEY is not set.")
+
+    if not OPENROUTER_BASE_URL.startswith("http"):
+        warnings.append("OPENROUTER_BASE_URL does not look like a valid URL.")
+
+    if LLM_MAX_TOKENS_SIMPLE <= 0 or LLM_MAX_TOKENS_COMPLEX <= 0:
+        errors.append("LLM_MAX_TOKENS_SIMPLE/COMPLEX must be > 0.")
+
+    if TOP_K_SIMPLE <= 0 or TOP_K_COMPLEX <= 0:
+        errors.append("TOP_K_SIMPLE/TOP_K_COMPLEX must be > 0.")
+
+    if SIMILARITY_THRESHOLD < -1.0 or SIMILARITY_THRESHOLD > 1.0:
+        warnings.append("SIMILARITY_THRESHOLD is outside expected range [-1, 1].")
+
+    pdf_dir = Path(PDF_INPUT_DIR)
+    proc_dir = Path(PROCESSED_OUTPUT_DIR)
+    if not pdf_dir.exists():
+        warnings.append(f"PDF_INPUT_DIR does not exist yet: {pdf_dir}")
+    if not proc_dir.exists():
+        warnings.append(f"PROCESSED_OUTPUT_DIR does not exist yet: {proc_dir}")
+
+    return {"errors": errors, "warnings": warnings}
