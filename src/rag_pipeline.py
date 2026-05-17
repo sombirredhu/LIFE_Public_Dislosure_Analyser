@@ -11,6 +11,7 @@ from src.config import (
 from src.embedder import get_indexed_companies, get_available_quarters, get_available_fys
 from src.llm_client import ask_llm
 from src.retriever import get_confidence_level, retrieve, top_up_missing_companies
+from src.rag.types import QueryPlan
 
 logger = logging.getLogger(__name__)
 
@@ -692,6 +693,48 @@ def classify_complexity(q: str) -> str:
     if _SUPERLATIVE_KEYWORDS.search(q) and mentioned == 0: return "complex"
     return "simple"
 
+def _build_query_plan(
+    question: str,
+    filters: Optional[Dict[str, Any]],
+    top_k: Optional[int],
+    free_model: Optional[str],
+    paid_model: Optional[str],
+) -> QueryPlan:
+    """
+    Build a typed plan for query processing. This is the first extraction point
+    for modularizing rag_pipeline into planner/retriever/summarizer components.
+    """
+    complexity = classify_complexity(question)
+    refined = _refine_user_request(question, free_model=free_model, complexity=complexity)
+    search_q, format_inst = refined["search_query"], refined["format_instruction"]
+
+    merged_filters = {**(_extract_auto_filters(question)), **(filters or {})}
+    use_paid = complexity == "complex"
+    model_name = (paid_model or LLM_MODEL_PAID) if use_paid else (free_model or LLM_MODEL_FREE)
+    effective_top_k = top_k or (TOP_K_COMPLEX if use_paid else TOP_K_SIMPLE)
+
+    if use_paid and ENABLE_MULTI_QUERY:
+        queries = [search_q] + refined.get("alt_queries", [])
+    else:
+        queries = [search_q]
+        if use_paid and not ENABLE_MULTI_QUERY:
+            logger.info("[RAG] Multi-query generation disabled (ENABLE_MULTI_QUERY=False)")
+    queries = list(dict.fromkeys(q.strip() for q in queries if q.strip()))[:4]
+
+    return QueryPlan(
+        question=question,
+        search_query=search_q,
+        format_instruction=format_inst,
+        complexity=complexity,
+        use_paid=use_paid,
+        model_name=model_name,
+        top_k=effective_top_k,
+        merged_filters=merged_filters,
+        queries=queries,
+        free_model=free_model,
+        paid_model=paid_model,
+    )
+
 def answer_question(question: str, filters: Optional[Dict[str, Any]] = None, top_k: int = None, free_model: Optional[str] = None, paid_model: Optional[str] = None) -> Dict[str, Any]:
     import time
     overall_start = time.time()
@@ -703,30 +746,19 @@ def answer_question(question: str, filters: Optional[Dict[str, Any]] = None, top
         return _response_cache[cache_key]
 
     logger.info(f"[RAG] Processing question: '{question[:100]}...'")
-    
-    # Classify complexity FIRST so optimizer can skip LLM for simple queries
-    complexity = classify_complexity(question)
-    
-    refined = _refine_user_request(question, free_model=free_model, complexity=complexity)
-    search_q, format_inst = refined["search_query"], refined["format_instruction"]
 
-    merged_filters = {**(_extract_auto_filters(question)), **(filters or {})}
-    use_paid = complexity == "complex"
-    model_name = (paid_model or LLM_MODEL_PAID) if use_paid else (free_model or LLM_MODEL_FREE)
-    effective_top_k = top_k or (TOP_K_COMPLEX if use_paid else TOP_K_SIMPLE)
-    
-    logger.info(f"[RAG] Complexity: {complexity}, Model: {model_name}, Top-K: {effective_top_k}")
+    plan = _build_query_plan(
+        question=question,
+        filters=filters,
+        top_k=top_k,
+        free_model=free_model,
+        paid_model=paid_model,
+    )
 
-    # Multi-query generation (now merged into optimizer)
+    logger.info(f"[RAG] Complexity: {plan.complexity}, Model: {plan.model_name}, Top-K: {plan.top_k}")
+
     query_gen_start = time.time()
-    if use_paid and ENABLE_MULTI_QUERY:
-        queries = [search_q] + refined.get("alt_queries", [])
-    else:
-        queries = [search_q]
-        if use_paid and not ENABLE_MULTI_QUERY:
-            logger.info("[RAG] Multi-query generation disabled (ENABLE_MULTI_QUERY=False)")
-    # Deduplicate queries while preserving order
-    queries = list(dict.fromkeys(q.strip() for q in queries if q.strip()))[:4]
+    queries = plan.queries
     query_gen_time = time.time() - query_gen_start
     logger.info(f"[RAG] Query setup took {query_gen_time:.2f}s, using {len(queries)} queries")
     
@@ -734,33 +766,40 @@ def answer_question(question: str, filters: Optional[Dict[str, Any]] = None, top
     retrieval_start = time.time()
     from src.retriever import retrieve_multi
     if len(queries) == 1:
-        chunks = retrieve(queries[0], filters=merged_filters, top_k=effective_top_k)
+        chunks = retrieve(queries[0], filters=plan.merged_filters, top_k=plan.top_k)
     else:
-        chunks = retrieve_multi(queries, filters=merged_filters, top_k=effective_top_k)
+        chunks = retrieve_multi(queries, filters=plan.merged_filters, top_k=plan.top_k)
     retrieval_time = time.time() - retrieval_start
     logger.info(f"[RAG] Retrieval took {retrieval_time:.2f}s, found {len(chunks)} chunks")
 
     # Company top-up (only for complex queries)
-    if use_paid and (indexed := get_indexed_companies()):
+    if plan.use_paid and (indexed := get_indexed_companies()):
         topup_start = time.time()
-        chunks = top_up_missing_companies(search_q, chunks, indexed, merged_filters)
+        chunks = top_up_missing_companies(plan.search_query, chunks, indexed, plan.merged_filters)
         topup_time = time.time() - topup_start
         logger.info(f"[RAG] Company top-up took {topup_time:.2f}s, total chunks: {len(chunks)}")
 
     pre_prune_count = len(chunks)
     chunks = _prune_and_balance_chunks(
         question=question,
-        search_q=search_q,
+        search_q=plan.search_query,
         chunks=chunks,
-        top_k=effective_top_k,
-        filters=merged_filters,
+        top_k=plan.top_k,
+        filters=plan.merged_filters,
     )
     if len(chunks) != pre_prune_count:
         logger.info(f"[RAG] Relevance pruning reduced chunks: {pre_prune_count} -> {len(chunks)}")
 
+    debug_terms = _extract_query_terms_for_relevance(f"{question} {plan.search_query}")
+    debug_lpages = sorted(_candidate_lpages_from_terms(debug_terms, f"{question} {plan.search_query}"))
+    chunks_per_company: Dict[str, int] = {}
+    for c in chunks:
+        co = c.get("metadata", {}).get("company_code", "unknown")
+        chunks_per_company[co] = chunks_per_company.get(co, 0) + 1
+
     if not chunks:
         logger.warning("[RAG] No chunks found")
-        return {"answer": "No relevant info found.", "sources": [], "chunks_used": 0, "confidence": "none", "model_used": model_name}
+        return {"answer": "No relevant info found.", "sources": [], "chunks_used": 0, "confidence": "none", "model_used": plan.model_name}
 
     # Context assembly — accumulate chars accurately (chunks are sorted by relevance)
     total_chars = sum(len(c["text"]) for c in chunks)
@@ -782,13 +821,19 @@ def answer_question(question: str, filters: Optional[Dict[str, Any]] = None, top
             for c in chunks
         ]
     )
-    fmt = f"\nFormat Instruction: {format_inst}" if format_inst else ""
+    fmt = f"\nFormat Instruction: {plan.format_instruction}" if plan.format_instruction else ""
     summary_query = f"Question: {question}{fmt}"
     
     # LLM call
     llm_start = time.time()
     logger.info(f"[RAG] Calling LLM with {len(ctx)} chars of context...")
-    answer = ask_llm(SYSTEM_PROMPT, f"{summary_query}\n\nExcerpts:\n{ctx}", use_paid=use_paid, free_model=free_model, paid_model=paid_model)
+    answer = ask_llm(
+        SYSTEM_PROMPT,
+        f"{summary_query}\n\nExcerpts:\n{ctx}",
+        use_paid=plan.use_paid,
+        free_model=plan.free_model,
+        paid_model=plan.paid_model,
+    )
     llm_time = time.time() - llm_start
     logger.info(f"[RAG] LLM response took {llm_time:.2f}s")
 
@@ -804,10 +849,13 @@ def answer_question(question: str, filters: Optional[Dict[str, Any]] = None, top
         "sources": source_refs,
         "chunks_used": len(chunks),
         "confidence": get_confidence_level(chunks),
-        "model_used": model_name,
+        "model_used": plan.model_name,
         "query_debug": {
-            "vector_query": search_q,
+            "vector_query": plan.search_query,
             "summary_query": summary_query,
+            "intent_terms": debug_terms,
+            "resolved_lpages": debug_lpages,
+            "chunks_per_company": chunks_per_company,
         },
     }
     _response_cache[cache_key] = res

@@ -148,3 +148,15 @@ def _render_last_answer():
             st.code(query_debug.get("vector_query", ""), language=None)
             st.markdown("**Summary Query (sent to LLM):**")
             st.code(query_debug.get("summary_query", ""), language=None)
+            intent_terms = query_debug.get("intent_terms", [])
+            if intent_terms:
+                st.markdown("**Intent Terms (primary retrieval drivers):**")
+                st.code(", ".join(intent_terms), language=None)
+            lpages = query_debug.get("resolved_lpages", [])
+            if lpages:
+                st.markdown("**Resolved L-Pages:**")
+                st.code(", ".join(lpages), language=None)
+            chunks_per_company = query_debug.get("chunks_per_company", {})
+            if chunks_per_company:
+                st.markdown("**Chunks per Company (post-pruning):**")
+                st.json(chunks_per_company)
