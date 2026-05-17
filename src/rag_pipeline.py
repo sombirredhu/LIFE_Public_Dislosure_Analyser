@@ -1,5 +1,6 @@
 import logging
 import re
+import time
 from typing import Any, Dict, List, Optional
 import json
 from src.config import (
@@ -30,13 +31,73 @@ _FORMAT_WORDS = re.compile(
 )
 
 def _refine_user_request(question: str, free_model: Optional[str] = None) -> Dict[str, str]:
+    """
+    Refine user question by:
+    1. Extracting format instructions
+    2. Enhancing query with domain-specific terms for better retrieval
+    """
+    # Extract format instructions
     format_matches = _FORMAT_WORDS.findall(question)
     format_inst = " ".join(m[1] for m in format_matches).strip() if format_matches else ""
-    search_q = _FORMAT_WORDS.sub(' ', question).strip()
-    search_q = re.sub(r'\s{2,}', ' ', search_q).strip(' .,?!')
-    if not search_q: search_q = question
     if format_inst:
         format_inst = f"Present the answer in {format_inst} format."
+    
+    # Remove format words from search query
+    search_q = _FORMAT_WORDS.sub(' ', question).strip()
+    search_q = re.sub(r'\s{2,}', ' ', search_q).strip(' .,?!')
+    if not search_q:
+        search_q = question
+    
+    # Rule-based query enhancement for better retrieval
+    original_q = search_q
+    search_q_lower = search_q.lower()
+    
+    # Enhance "company wise" or "each company" queries
+    if re.search(r'\b(company\s*wise|each\s+company|all\s+companies|companywise)\b', search_q_lower):
+        # Add "for all companies" if not already present
+        if 'all companies' not in search_q_lower:
+            search_q = f"{search_q} for all companies"
+    
+    # Enhance premium queries with specific terms
+    if re.search(r'\bpremium\b', search_q_lower) and not re.search(r'\b(first|renewal|single)\b', search_q_lower):
+        search_q = f"{search_q} first year renewal single premium L-4 schedule"
+    
+    # Enhance solvency queries
+    if re.search(r'\bsolvency\b', search_q_lower):
+        search_q = f"{search_q} L-32 solvency margin ratio"
+    
+    # Enhance claims queries
+    if re.search(r'\bclaim', search_q_lower):
+        search_q = f"{search_q} L-39 L-40 claims settlement data"
+    
+    # Enhance investment queries
+    if re.search(r'\binvestment', search_q_lower):
+        search_q = f"{search_q} L-12 L-13 L-14 shareholders policyholders"
+    
+    # Enhance commission queries
+    if re.search(r'\bcommission\b', search_q_lower):
+        search_q = f"{search_q} L-5 commission schedule"
+    
+    # Enhance expense queries
+    if re.search(r'\bexpense', search_q_lower):
+        search_q = f"{search_q} L-6 operating expenses"
+    
+    # Enhance revenue/income queries
+    if re.search(r'\b(revenue|income)\b', search_q_lower):
+        search_q = f"{search_q} L-1 revenue account"
+    
+    # Enhance profit/loss queries
+    if re.search(r'\b(profit|loss|p&l|pnl)\b', search_q_lower):
+        search_q = f"{search_q} L-2 profit loss account"
+    
+    # Enhance balance sheet queries
+    if re.search(r'\bbalance\s*sheet\b', search_q_lower):
+        search_q = f"{search_q} L-3 balance sheet assets liabilities"
+    
+    # Log if query was enhanced
+    if search_q != original_q:
+        logger.info(f"[RAG] Query enhanced: '{original_q}' → '{search_q}'")
+    
     return {"search_query": search_q, "format_instruction": format_inst}
 
 def _extract_auto_filters(q: str) -> Dict[str, Any]:
