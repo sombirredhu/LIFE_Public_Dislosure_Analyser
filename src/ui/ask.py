@@ -30,7 +30,18 @@ def render_tab_ask_question():
     st.markdown("---")
     with st.expander("💡 Quick Commands for Definitions"):
         st.markdown("**Add Page Definition:** `define GWP as L-4`\n**Add Calculation:** `define Margin % = Margin / ANP`\n**Search:** `what is GWP?`")
-    question = st.text_area("Enter your question:", placeholder="Example: Which company had the highest gross written premium in Q1 FY25?", height=100, key="ask_question_input")
+    
+    # Add clear cache button
+    col_q, col_cache = st.columns([5, 1])
+    with col_cache:
+        if st.button("🗑️ Clear Cache", help="Clear cached responses to force fresh answers"):
+            from src.rag_pipeline import _response_cache
+            _response_cache.clear()
+            st.success("✅ Cache cleared!")
+            logger.info("[UI] User manually cleared response cache")
+    
+    with col_q:
+        question = st.text_area("Enter your question:", placeholder="Example: Which company had the highest gross written premium in Q1 FY25?", height=100, key="ask_question_input")
     col1, col2, col3 = st.columns(3)
     with col1:
         available_companies = get_indexed_companies()
@@ -47,6 +58,16 @@ def render_tab_ask_question():
         if not question.strip():
             st.error("Please enter a question.")
             return
+        
+        # Clear cache if model changed
+        if "last_model_used" in st.session_state:
+            current_model = st.session_state.get("paid_model", "")
+            if current_model != st.session_state["last_model_used"]:
+                logger.info(f"[UI] Model changed from {st.session_state['last_model_used']} to {current_model}, clearing cache")
+                from src.rag_pipeline import _response_cache
+                _response_cache.clear()
+        st.session_state["last_model_used"] = st.session_state.get("paid_model", "")
+        
         now = time.time()
         if "rate_limit" not in st.session_state: st.session_state["rate_limit"] = []
         st.session_state["rate_limit"] = [ts for ts in st.session_state["rate_limit"] if now - ts < 60]
@@ -65,14 +86,23 @@ def render_tab_ask_question():
         if fy_filter != "All": filters["fy"] = fy_filter
         with st.spinner("🤔 Thinking..."):
             try:
+                logger.info(f"[UI] Calling answer_question with free_model={st.session_state.get('free_model')}, paid_model={st.session_state.get('paid_model')}")
                 result = answer_question(question, filters=filters if filters else None, free_model=st.session_state.get("free_model"), paid_model=st.session_state.get("paid_model"))
+                
+                # Check if result is valid
+                if not result or not result.get("answer"):
+                    st.error("❌ Received empty response from the system. Please try again.")
+                    logger.error(f"[UI] Empty result received: {result}")
+                    return
+                
                 st.session_state["last_answer"] = {"question": question, "result": result, "filters": filters, "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "model_selected": st.session_state.get("selected_model_label", "")}
                 if "query_history" not in st.session_state: st.session_state["query_history"] = []
                 st.session_state["query_history"].insert(0, st.session_state["last_answer"].copy())
             except Exception as e:
                 logger.exception("[UI] answer_question failed | question=%r | filters=%s", question[:100], filters)
-                st.error(f"Error: {str(e)}")
+                st.error(f"❌ Error: {str(e)}")
                 st.exception(e)
+                return
     _render_last_answer()
 
 def _render_last_answer():
