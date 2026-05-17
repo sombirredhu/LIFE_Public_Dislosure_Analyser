@@ -5,12 +5,14 @@
   "fy": "FY26",
   "period_label": "Q3 FY2025-26",
   "source_file": "ShriramInsurance_Q3_FY26.pdf",
+  "company_full_name": "Shriram Capital Private Limited",
   "total_pages": 76,
   "page_definitions_found": true,
   "pages": [
     {
       "page_number": 1,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": null,
       "section": "unknown",
       "text_blocks": [
@@ -21,6 +23,7 @@
     {
       "page_number": 2,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": null,
       "section": "unknown",
       "text_blocks": [
@@ -31,6 +34,7 @@
     {
       "page_number": 3,
       "page_label": "L-1-A-RA",
+      "page_label_normalized": "L-1-A-RA",
       "company_name": null,
       "section": "Revenue Account",
       "text_blocks": [
@@ -41,6 +45,7 @@
     {
       "page_number": 4,
       "page_label": "L-1-A-RA",
+      "page_label_normalized": "L-1-A-RA",
       "company_name": null,
       "section": "Revenue Account",
       "text_blocks": [
@@ -51,6 +56,7 @@
     {
       "page_number": 5,
       "page_label": "L-1-A-RA",
+      "page_label_normalized": "L-1-A-RA",
       "company_name": null,
       "section": "Revenue Account",
       "text_blocks": [
@@ -61,6 +67,7 @@
     {
       "page_number": 6,
       "page_label": "L-1-A-RA",
+      "page_label_normalized": "L-1-A-RA",
       "company_name": null,
       "section": "Revenue Account",
       "text_blocks": [
@@ -71,6 +78,7 @@
     {
       "page_number": 7,
       "page_label": "L-2-A-PL",
+      "page_label_normalized": "L-2-A-PL",
       "company_name": null,
       "section": "Profit & Loss Account",
       "text_blocks": [
@@ -81,6 +89,7 @@
     {
       "page_number": 8,
       "page_label": "L-3-A-BS",
+      "page_label_normalized": "L-3-A-BS",
       "company_name": null,
       "section": "Balance Sheet",
       "text_blocks": [
@@ -91,8 +100,9 @@
     {
       "page_number": 9,
       "page_label": "L-4-PREMIUM",
+      "page_label_normalized": "L-4",
       "company_name": null,
-      "section": "unknown",
+      "section": "Premium Schedule",
       "text_blocks": [
         "FORM L-4-PREMIUM SCHEDULE\n(Rs. in Lakhs)\nFor the quarter Upto the quarter For the quarter Upto the quarter\nParticulars\nDecember 31, 2025 December 31, 2025 December 31, 2024 December 31, 2024\nFirst year premiums 41,213 1,02,833 49,454 1,07,735\nRenewal Premiums 60,524 1,62,925 49,361 1,20,884\nSingle Premiums 19,548 50,936 16,292 49,564\nTOTAL PREMIUM 1,21,285 3,16,694 1,15,107 2,78,183\nPremium Income from Business written :\nIn India 1,21,285 3,16,694 1,15,107 2,78,183\nOutside India - - - -\n*Premium income excluding GST\nVersion:1 Date of upload: February 13,2025 7"
       ],
@@ -101,6 +111,7 @@
     {
       "page_number": 10,
       "page_label": "L-5",
+      "page_label_normalized": "L-5",
       "company_name": null,
       "section": "Commission Schedule",
       "text_blocks": [
@@ -111,8 +122,9 @@
     {
       "page_number": 11,
       "page_label": "L-6-OPERATING",
+      "page_label_normalized": "L-6",
       "company_name": null,
-      "section": "unknown",
+      "section": "Operating Expenses Schedule",
       "text_blocks": [
         "FORM L-6-OPERATING EXPENSES SCHEDULE\n(Rs. in Lakhs)\nFor the quarter Upto the quarter For the quarter Upto the quarter\nS.No. Particulars\nDecember 31, 2025 December 31, 2025 December 31, 2024 December 31, 2024\n1 Employees’ remuneration & welfare benefits 21,424 59,463 17,351 47,040\n2 Travel, conveyance and vehicle running expenses 1,371 3,732 951 2,646\n3 Training expenses 1,182 4,088 821 2,266\n4 Rents, rates & taxes 1,041 2,915 747 2,128\n5 Repairs (4) 52 7 78\n6 Printing & stationery 80 326 242 504\n7 Communication expenses 187 564 217 515\n8 Legal & professional charges 620 1,983 604 1,470\n9 Medical fees 72 206 67 171\n10 Auditors' fees, expenses etc\na) as auditor 5 14 5 15\nb) as adviser or in any other capacity, in respect of\n(i) Taxation matters - - - -\n(ii) Insurance matters - - - -\n(iii) Management services; and - - - -\nc) in any other capacity 1 2 - 3\n11 Advertisement and publicity 469 786 151 1,419\n12 Interest & Bank Charges 106 338 112 385\n13 Depreciation 453 1,273 325 968\n14 Brand/Trade Mark usage fee/charges 25 55 207 580\n15 Business Development and Sales Promotion Expenses 77 1,002 550 1,464\n16 Stamp duty on policies 423 1,109 676 1,529\n17 Information Technology Expenses 499 2,107 756 2,269\n18 Goods and Services Tax (GST) 2,903 4,567 183 447\n19 Others expenses 831 2,401 739 2,343\nTOTAL 31,766 86,984 24,713 68,240\nIn India 31,766 86,984 24,713 68,240\nOutside India - - - -\nVersion:1 Date of upload: February 13,2025 9"
       ],
@@ -121,8 +133,9 @@
     {
       "page_number": 12,
       "page_label": "L-7-BENEFITS",
+      "page_label_normalized": "L-7",
       "company_name": null,
-      "section": "unknown",
+      "section": "Benefits Paid Schedule",
       "text_blocks": [
         "FORM L-7-BENEFITS PAID SCHEDULE\nBENEFITS PAID [NET] (Rs. in Lakhs)\nS. For the quarter Upto the quarter For the quarter Upto the quarter\nParticulars\nNo. December 31, 2025 December 31, 2025 December 31, 2024 December 31, 2024\n1. Insurance Claims\n(a) Claims by Death 22,128 61,369 14,634 41,793\n(b) Claims by Maturity 17,885 41,689 9,611 19,695\n(c) Annuities/Pension payment 443 1,128 230 645\n(d) Periodical Benefit 6,172 14,337 3,453 7,817\n(e) Health - - - -\n(f) Surrenders 6,995 20,004 6,117 18,533\n(g) Other benefits\n(i) Others 193 928 136 518\n(ii) Partial withdrawal 26 41 49 56\n(iii) Riders 310 754 102 523\nBenefits Paid (Gross)\nIn India 54,151 1,40,251 34,331 89,582\nOutside India - - - -\n2. (Amount ceded in reinsurance): -\n(a) Claims by Death (2,825) (6,690) (984) (2,506)\n(b) Claims by Maturity - - - -\n(c) Annuities/Pension payment - - - -\n(d) Periodical Benefit - - - -\n(e) Health - - - -\n3. Amount accepted in reinsurance: -\n(a) Claims by Death - - - -\n(b) Claims by Maturity - - - -\n(c) Annuities/Pension payment - - - -\n(d) Periodical Benefit - - - -\n(e) Health - - - -\nTOTAL 51,326 1,33,561 33,347 87,075\nBenefits Paid (Net)\nIn India 51,326 1,33,561 33,347 87,075\nOutside India - - - -\nNotes:\na) Claims incurred shall comprises of claims paid, specific claims settlement costs wherever applicable and change in the outstanding provision for claims at the year-end.\nb) Fees and expenses connected with claims shall be included in claims.\nc) Legal and other fees and expenses shall also form part of the claims cost, wherever applicable.\nVersion:1 Date of upload: February 13,2025 10"
       ],
@@ -131,8 +144,9 @@
     {
       "page_number": 13,
       "page_label": "L-8-SHARE",
+      "page_label_normalized": "L-8",
       "company_name": null,
-      "section": "unknown",
+      "section": "Share Capital Schedule",
       "text_blocks": [
         "FORM L-8-SHARE CAPITAL SCHEDULE\n(Rs. in Lakhs)\nAs at As at\nS.No. Particulars\nDecember 31, 2025 December 31, 2024\n1 Authorised Capital\n55,01,50,000 Equity Shares of Rs. 10/- Each 55,015 55,015\n2 Issued Capital\n18,17,44,652 (Previous Year 18,03,82,318 Equity Shares) of Rs. 10/- 18,174 18,038\nEach\n3 Subscribed Capital\n18,17,44,652 (Previous Year 18,03,82,318 Equity Shares) of Rs. 10/- 18,174 18,038\nEach\n4 Called-up Capital\n18,17,44,652 (Previous Year 18,03,82,318 Equity Shares) of Rs. 10/- 18,174 18,038\nEach\nLess : Calls unpaid - -\nAdd : Shares forfeited - -\n(Amount Originally paid up )\nLess : Par value of Equity Shares bought back - -\nLess : Preliminary Expenses - -\n( Expenses including commission or brokerage on underwriting or\nsubscription of shares )\nTOTAL 18,174 18,038\nVersion:1 Date of upload: February 13,2025 11"
       ],
@@ -141,8 +155,9 @@
     {
       "page_number": 14,
       "page_label": "L-9-PATTERN",
+      "page_label_normalized": "L-9",
       "company_name": "Shriram Capital Private Limited",
-      "section": "unknown",
+      "section": "Pattern of Shareholding",
       "text_blocks": [
         "FORM L-9-PATTERN OF SHAREHOLDING SCHEDULE\nPATTERN OF SHAREHOLDING\n[As certified by the Management]\nAs at As at\nDecember 31, 2025 December 31, 2024\nShareholder\nNumber of % of Number of % of\nShares Holdings Shares Holdings\nPromoters\nIndian - Shriram Capital Private Limited 8,54,35,007 47% 8,54,35,007 47%\nR Thyagarajan D V Ravi C/O Shriram Ownership Trust 89,39,967 5% 89,39,967 5%\nR Thyagarajan 1 0% 1 0%\nForeign - Sanlam Emerging Markets (Mauritius) Limited 4,12,56,250 23% 4,12,56,250 23%\nInvestors\nIndian:\nPiramal Enterprises Limited 2,67,48,845 15% 2,67,48,845 15%\nForeign:\nTPG India Investments II INC, Mauritius 1,26,19,900 7% 1,26,19,900 7%\nOthers-Domestic 67,44,682 4% 53,82,348 3%\nTOTAL 18,17,44,652 100% 18,03,82,318 100%\nVersion:1 Date of upload: February 13,2025 12"
       ],
@@ -151,8 +166,9 @@
     {
       "page_number": 15,
       "page_label": "L-9A-SHAREHOLDING",
+      "page_label_normalized": "L-9A",
       "company_name": null,
-      "section": "unknown",
+      "section": "Detailed Pattern of Shareholding",
       "text_blocks": [
         "L-9A-Shareholding Pattern\nPART (A) :\nPARTICULARS OF THE SHAREHOLDING PATTERN OF THE SHRIRAM LIFE INSURANCE COMPANY LIMITED, AS AT QUARTER ENDED DECEMBER 31, 2025\nPaid up equity\nSl No Category No. of Investors No of shares held % of shareholdings Shares pledged or otherwise encumbered Shares under Lock in period\n(Rs. In Lakhs)\nAs a percentage\nAs a percentage of Total\nNumber of of Total shares\n(I) (II) (III) (IV) (V) Number of shares (VI) shares held\nshares(VIII) held (IX) =\n(VII) = (VI)/(III)*100\n(VIII)/(III)*100\nA Promoters & Promoters Group\nA.1Indian Promoters\nIndividuals/HUF\ni)Mr. R Thyagarajan 1 1 0 .00 0 .00 - - - -\n(Names of major shareholders) - - - - - - - -\n-\nii)Bodies Corporate:\nShriram Capital Private Limited (formerly Shriram Financial Ventures\n(Chennai) P Ltd) 1 8 ,54,35,007 4 7.01 8 ,543.50 - - - -\niii)Financial Institutions/Banks - - - - - - - -\niv)Central Government/State Government(s)/President of India - - - - - - - -\nv)Persons acting in Concert (Please specify) - - - - - - - -\n-\nvi)Any other (Please specify) - - - - - - - -\nMr. R Thyagarajan and Mr. D. V. Ravi ( holding in trust for SHRIRAM\nOWNERSHIP TRUST) 1 8 9,39,967 4 .92 8 94.00\nA.2Foreign Promoters\ni)Individuals\n(Names of major shareholders) - - - - - - - -\nii)Bodies Corporate: -\n(i) Sanlam Emerging Markets (Mauritius) Limited 1 4 ,12,56,250 2 2.70 4 ,125.63 - - - -\n-\niii)Any other (Please specify) - - - - - - - -\nBNon Promoters\nB.1Public Shareholders\n1.1)Institutions\ni)Mutual Funds - - - - - - - -\nii)Foreign Portfolio Investors - - - - - - - -\niii)Financial Institutions/Banks - - - - - - - -\niv)Insurance Companies - - - - - - - -\nv)FII belonging to Foreign promoter - - - - - - - -\nvi)FII belonging to Foreign promoter of Indian promoter - - - - - - - -\nvii)Provident Fund/Pension Fund - - - - - - - -\nviii)Alternative Investment Fund - - - - - - - -\nix)Any other (Please specify) - - - - - - - -\nCentral Government/State\n1.2)Government (s)/President of India - - - - - - - -\n1.3)Non-Institutions\ni)Individual share capital upto Rs. 2 Lacs 4 55 8 ,55,933 0 .47 8 5.59 - - - -\nii)Individual share capital in excess of Rs. 2 Lacs 1 3 4 ,07,100 0 .22 4 0.71 - - - -\niii)NBFCs registered with RBI - - - - - - - -\niv)Others: - - - - - - - -\nTrusts - - - - - - - -\nNon Resident Indian(NRI) - - - - - - - -\nClearing Members - - - - - - - -\nNon Resident Indian Non Repatriable - - - - - - - -\nBodies Corporate - - - - - - - -\nBodies Corporate (Others) 1 5 1 4,893 0 .01 1 .49 - - - -\nPiramal Enterprises Ltd. 1 2 ,67,48,845 1 4.72 2 ,674.88 - - - -\nIEPF - - - - - - - -\nv)Any other (Please specify) - - - -\nHUFs, LLPs and other transferees 1 4 8 8,249 0 .05 8 .82 - - - -\nOverseas Body Corporate - TPG India Investments II Inc, Mauritius 1 1 ,26,19,900 6 .94 1 ,261.99 - - - -\n- - - -\nB.2Non Public Shareholders - - - -\n2.1)Custodian/DR Holder - - - - - -\n2.2)Any other (Please specify) - - - - - -\nEmployees 4 96 5 2,51,507 2 .89 5 25.15 - - - -\nShriram Group Executives Welfare Trust 1 1 ,27,000 0 .07 1 2.70 - - - -\nTotal: 1 ,000 1 8,17,44,652 1 00.00 1 8,174.47 - - - -\nFoot Notes\ni) All holdings, above 1% of the paid up equity, have to be separately disclosed.\nii) Indian Promoters - As defined under Regulation 3 (1) (l) of the Insurance Regulatory and Development Authority of India (Registration, Capital Structure, Transfer of Shares and Amalgamation of Insurers) Regulations, 2024\niii) Where a company is listed, the cloumn \"shares pledged or otherwise encumbered\" shall not be applicable to \"Non Promoters\" category.\niv) Shriram Capital Pvt. Ltd and Shriram Ownership Trust have become the promoter of the company on amalgamation of Shriram LI Holdings Pvt. Ltd with the company as approved by the Hon’ble NCLT Hyderabad and Chennai\nVersion:1 Date of upload: February 13,2025 13"
       ],
@@ -161,6 +177,7 @@
     {
       "page_number": 16,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": null,
       "section": "unknown",
       "text_blocks": [
@@ -171,8 +188,9 @@
     {
       "page_number": 17,
       "page_label": "L-10-RESERVES",
+      "page_label_normalized": "L-10",
       "company_name": null,
-      "section": "unknown",
+      "section": "Reserves and Surplus Schedule",
       "text_blocks": [
         "FORM L-10-RESERVES AND SURPLUS SCHEDULE\n(Rs. in Lakhs)\nAs at As at\nS.No. Particulars\nDecember 31, 2025 December 31, 2024\n1 Capital Reserve 2 2\n2 Capital Redemption Reserve - -\n3 Share Premium\nOpening Balance 754 584\nAdd:Additions during the period 190 170\nLess: Deletion during the period^ (22) -\n922 754\n4 Revaluation Reserve\nOpening balance 4,493 -\nAdd: Addition during the year - -\nGross Total 4,493 -\nLess: Depreciation charged on revaluation reserve in (22) -\ncurrent year\nClosing Balance 4,471 -\n5 General Reserves - -\nLess: Amount utilized for Buy-back of shares - -\nLess: Amount utilized for issue of Bonus shares - -\n6 Catastrophe Reserve - -\n7 Other Reserves\nEmployees stock option outstanding\nOpening Balance - -\nAdd: Addition during the period 9 -\nGross Total 9 -\nLess: Reduction during the period - -\nClosing Balance 9 -\n8 Balance of profit in Profit and Loss Account 62,934 64,238\nTOTAL 68,339 64,994\n^ The Company has adjusted the debenture raising expenses of ₹ 22 Lakhs (December 31, 2024: ₹ Nil/NA) against the Share Premium\naccount as per Section 52 of the Companies Act, 2013.\nVersion:1 Date of upload: February 13,2025 15"
       ],
@@ -181,8 +199,9 @@
     {
       "page_number": 18,
       "page_label": "L-11-BORROWINGS",
+      "page_label_normalized": "L-11",
       "company_name": null,
-      "section": "unknown",
+      "section": "Borrowings Schedule",
       "text_blocks": [
         "FORM L-11-BORROWINGS SCHEDULE\n(Rs. in Lakhs)\nAs at As at\nS.No. Particulars\nDecember 31, 2025 December 31, 2024\n1 In the form of Debentures/ Bonds 9,000 -\n2 From Banks - -\n3 From Financial Institutions - -\n4 Others - -\nTOTAL 9,000 -\nNote:\n1.During the period ended December 31,2025, the company had issued, Unsecured, subordinated, listed, rated,\nredeemable, taxable, non-convertible debentures (NCDs) in the nature of ‘Subordinated Debt’ as per the IRDAI\n(Registration, Capital Structure, Transfer of Shares and Amalgamation of Insurers) Regulations, 2024 aggregating to ₹\n9,000 Lakhs at a coupon rate of 9.55% p.a. payable annually. The said NCDs were allotted on December 30, 2025 and are\nredeemable at the end of 10 years from the date of allotment with a call option to the Company to redeem the NCDs post\nthe completion of 5 years from the deemed date of allotment and annually thereafter.\n2. Amount due within 12 months of the balance sheet date: Nil\nDISCLOSURE FOR SECURED BORROWINGS\n(Rs. in Lakhs)\nAmount\nSl.No. Source / Instrument Amount of Security Nature of Security\nBorrowed\n1 Nil Nil Nil Nil\nNote:\na) The extent to which the borrowings are secured shall be separately disclosed stating the nature of the security under\neach sub-head, as given above.\nb) Amounts due within 12 months from the date of Balance Sheet should be shown separately.\nc) Debentures include NCDs issued as per IRDAI (Other Forms of Capital) Regulations, 2022\nVersion:1 Date of upload: February 13,2025 16"
       ],
@@ -191,8 +210,9 @@
     {
       "page_number": 19,
       "page_label": "L-12-INVESTMENTS",
+      "page_label_normalized": "L-12",
       "company_name": null,
-      "section": "unknown",
+      "section": "Investments - Shareholders' Schedule",
       "text_blocks": [
         "FORM L-12-INVESTMENTS - SHAREHOLDERS' SCHEDULE\n(Rs. in Lakhs)\nAs at As at\nS.No. Particulars\nDecember 31, 2025 December 31, 2024\nLONG TERM INVESTMENTS\n1 Government securities and Government guaranteed bonds including 20,455 15,053\nTreasury Bills\n2 Other Approved Securities 15,507 19,012\n3 Other Investments\n(a) Shares\n(aa) Equity 6,052 5,791\n(ab) Preference - -\n(b) Mutual Funds - -\n(c) Derivative Instruments - -\n(d) Debentures/ Bonds 13,725 10,833\n(e) Other Securities - -\n(f) Subsidiaries - -\n(g)Investment Properties-Real Estate - -\n4 Investments in Infrastructure and Social Sector 25,888 19,521\n5 Other than Approved Investments\n(a) Equity 6,180 5,737\n(b) Debentures/Bond - -\n(c ) others 703 424\nSHORT TERM INVESTMENTS\n1 Government securities and Government guaranteed bonds including - -\nTreasury Bills\n2 Other Approved Securities 274 3,314\n3 Other Investments\n(a)Shares\n(aa) Equity - -\n(bb) Preference - -\n(b)Mutual Funds - -\n(c)Derivative Instruments - -\n(d)Debentures/ Bonds 1,799 -\n(e)Other Securities 6,399 449\n(f)Subsidiaries - -\n(g)Investment Properties-Real Estate - -\n4 Investments in Infrastructure and Social Sector - 160\n5 Other than Approved Investments - -\n(a) Debentures/Bond - -\n(b) Mutual Funds - -\nTOTAL 96,984 80,294\nINVESTMENTS -\nIn India 96,984 80,294\nOutside India - -\nTOTAL 96,984 80,294\nNote: Investmentsmaturingwithintwelvemonthsfrombalancesheetdateandinvestmentsmadewiththespecificintentiontodisposeofwithin\ntwelve months from balance sheet date have been classified as short-term investments.\nInvestments in Subsidiary, Holding Company, Joint Venture &\n1 Nil Nil\nAssociates at cost\n2 Investments made out of Catastrophe reserve Nil Nil\nVersion:1 Date of upload: February 13,2025 17"
       ],
@@ -201,8 +221,9 @@
     {
       "page_number": 20,
       "page_label": "L-13-INVESTMENTS",
+      "page_label_normalized": "L-13",
       "company_name": null,
-      "section": "unknown",
+      "section": "Investments - Policyholders' Schedule",
       "text_blocks": [
         "FORM L-13-INVESTMENTS POLICYHOLDERS SCHEDULE\n(Rs. in Lakhs)\nAs at As at\nS.No. Particulars\nDecember 31, 2025 December 31, 2024\nLONG TERM INVESTMENTS\n1 Government securities and Government guaranteed bonds including 4,59,561 3,73,329\nTreasury Bills\n2 Other Approved Securities 3,21,393 2,83,341\n3 Other Investments\n(a) Shares\n(aa) Equity 70,344 57,046\n(bb) Preference - -\n(b) Mutual Funds - -\n(c) Derivative Instruments - -\n(d) Debentures/ Bonds 1,65,568 1,68,043\n(e) Other Securities - Fixed Deposits - -\n(f) Subsidiaries - -\n(g) Investment Properties-Real Estate 2,052 -\n4 Investments in Infrastructure and Social Sector 2,54,009 2,38,385\n5 Other than Approved Investments\n(a) Equity - -\n(b) Debentures/Bond - 2,129\n(b) Others 75 -\nSHORT TERM INVESTMENTS\n1 Government securities and Government guaranteed bonds including 366 1,498\nTreasury Bills\n2 Other Approved Securities 2,303 1,656\n3 Other Investments\n(a) Shares\n(aa) Equity - -\n(bb) Preference - -\n(b) Mutual Funds 3,302 -\n(c) Derivative Instruments - -\n(d) Debentures/ Bonds 7,921 3,547\n(e) Other Securities 7,477 7,349\n(f) Subsidiaries - -\n(g) Investment Properties-Real Estate - -\n4 Investments in Infrastructure and Social Sector 3,508 3,291\n5 Other than Approved Investments\n(a) Debenture / Bonds - -\n(b) Mutual Funds - -\nTOTAL 12,97,878 11,39,614\nINVESTMENTS\nIn India 12,97,878 11,39,614\nOutside India - -\nTOTAL 12,97,878 11,39,614\nNote: 1. Investments maturingwithintwelvemonths frombalancesheet dateandinvestments madewiththespecific intentiontodisposeof\nwithin twelve months from balance sheet date have been classified as short-term investments.\n2.Investment Properties - Real Estate\" represents investment in units of Real Estate Investment Trusts (REIT)\nInvestments in Subsidiary, Holding Company, Joint Venture &\n1 Nil Nil\nAssociates at cost\n2 Investments made out of Catastrophe reserve Nil Nil\nVersion:1 Date of upload: February 13,2025 18"
       ],
@@ -211,8 +232,9 @@
     {
       "page_number": 21,
       "page_label": "L-14-ASSETS",
+      "page_label_normalized": "L-14",
       "company_name": null,
-      "section": "unknown",
+      "section": "Investments - Assets Held to Cover Linked Liabilities Schedule",
       "text_blocks": [
         "FORM L-14-ASSETS HELD TO COVER LINKED LIABILITIES SCHEDULE\n(Rs. in Lakhs)\nAs at As at\nS.No. Particulars\nDecember 31, 2025 December 31, 2024\nLONG TERM INVESTMENTS\n1 Government securities and Government guaranteed bonds including 5,189 4,348\nTreasury Bills\n2 Other Approved Securities 1,767 1,832\n3 Other Investments\n(a)Shares\n(aa) Equity 58,639 39,173\n(bb) Preference - -\n(b)Mutual Funds - -\n(c)Derivative Instruments - -\n(d)Debentures/ Bonds 617 705\n(e)Other Securities - -\n(f) Subsidiaries - -\n(g)Investment Properties-Real Estate - -\n4 Investments in Infrastructure and Social Sector\n(a)Equity 1,213 1,218\n(b)Bond 3,508 3,593\n5 Other than Approved Investments\n(a)Equity 1,576 2,753\n(b)Debenture / Bond - -\nSHORT TERM INVESTMENTS\n1 Government securities and Government guaranteed bonds including 6,119 3,854\nTreasury Bills\n2 Other Approved Securities 224 84\n3 Other Investments - -\n(a)Shares -\n(aa)Equity - -\n(bb)Preference - -\n(b)Mutual Funds - 231\n(c)Derivative Instruments - -\n(d)Debentures/ Bonds 91 446\n(e)Other Securities - -\n(f) Subsidiaries - -\n(g)Investment Properties-Real Estate - -\n4 Investments in Infrastructure and Social Sector\n(a)Equity - -\n(b)Bond 38 10\n5 Other than Approved Investments - -\n(a)Debenture / Bonds - -\n(b)Mutual Funds - -\nNet Current Assets 1,069 917\nTOTAL 80,051 59,164\nINVESTMENTS\nIn India 80,051 59,164\nOutside India\nTOTAL 80,051 59,164\nNote: Investmentsmaturingwithintwelvemonthsfrombalancesheetdateandinvestmentsmadewiththespecificintentiontodisposeofwithin\ntwelve months from balance sheet date have been classified as short-term investments\n1 Investments in Subsidiary, Holding Company, Joint Venture &\nNil Nil\nAssociates at cost\n2 Investments made out of Catastrophe reserve Nil Nil\nVersion:1 Date of upload: February 13,2025 19"
       ],
@@ -221,6 +243,7 @@
     {
       "page_number": 22,
       "page_label": "L-14A",
+      "page_label_normalized": "L-14A",
       "company_name": null,
       "section": "Aggregate value of Investments other than Equity Shares and Mutual Fund",
       "text_blocks": [
@@ -231,8 +254,9 @@
     {
       "page_number": 23,
       "page_label": "L-15-LOANS",
+      "page_label_normalized": "L-15",
       "company_name": null,
-      "section": "unknown",
+      "section": "Loans Schedule",
       "text_blocks": [
         "FORM L-15-LOANS SCHEDULE\n(Rs. in Lakhs)\nAs at As at\nS.No. Particulars\nDecember 31, 2025 December 31, 2024\n1 SECURITY-WISE CLASSIFICATION\nSecured\n(a) On mortgage of property\n(aa) In India - -\n(bb) Outside India - -\n(b)On Shares, Bonds, Govt. Securities, etc. - -\n(c) Loans against policies 32,623 26,018\n(d)Others - -\nUnsecured - -\nTOTAL 32,623 26,018\n2 BORROWER-WISE CLASSIFICATION\n(a)Central and State Governments - -\n(b)Banks and Financial Institutions - -\n(c)Subsidiaries - -\n(d)Companies - -\n(e)Loans against policies 32,623 26,018\n(f)Others - -\nTOTAL 32,623 26,018\n3 PERFORMANCE-WISE CLASSIFICATION\n(a) Loans classified as standard\n(aa) In India 32,623 26,018\n(bb) Outside India - -\n(b)Non-standard loans less provisions\n(aa) In India - -\n(bb) Outside India - -\nTOTAL 32,623 26,018\n4 MATURITY-WISE CLASSIFICATION\n(a)Short Term 4,756 2,418\n(b)Long Term 27,867 23,600\nTOTAL 32,623 26,018\nProvisions against Non-performing Loans\nNon-Performing Loans Loan Amount Provision\n1 Sub-standard - -\n2 Doubtful - -\n3 Loss - -\nTOTAL - -\nNote : Short-term loans include those where the principal is repayable within 12 months from Balance Sheet date. Long term loans are the loans\nother than short-term loan.\nVersion:1 Date of upload: February 13,2025 21"
       ],
@@ -241,8 +265,9 @@
     {
       "page_number": 24,
       "page_label": "L-16-FIXED",
+      "page_label_normalized": "L-16",
       "company_name": null,
-      "section": "unknown",
+      "section": "Fixed Assets Schedule",
       "text_blocks": [
         "FORM L-16-FIXED ASSETS SCHEDULE\n(Rs. in Lakhs)\nCost/Gross Block Depreciation Net Block\nParticulars As at April 1, As at December As at April 1, On Sales/ As at December As at December As at December\nAdditions Deductions For the Period\n2025 31,2025 2025 Adjustments 31,2025 31,2025 31,2024\nGoodwill - - - - - - - - - -\nIntangibles - Computer Software 8,531 955 - 9,486 7,152 496 - 7,648 1,838 559\nLand-Freehold 3,543 - - 3,543 - - - - 3,543 563\nLeasehold Property - - - - - - - - - -\nBuildings 3,230 - - 3,230 637 39 - 676 2,554 1,084\nFurniture & Fittings 3,573 452 181 3,844 1,806 215 142 1,879 1,965 1,594\nInformation Technology Equipment 3,579 560 694 3,445 2,588 398 599 2,386 1,059 953\nVehicles 78 - - 78 42 5 - 47 31 37\nOffice Equipment 759 60 45 773 513 31 45 499 274 238\nElectrical Equipment 1,755 247 107 1,895 867 112 87 892 1,003 854\nTotal 25,047 2,275 1,027 26,295 13,605 1,296 874 14,027 12,268 5,882\nCapital Work In Progress\n(Including advances for capital works/items) 41 1,074 943 172 - - - - 172 44\nGrand Total 25,088 3,349 1,970 26,467 13,605 1,296 874 14,027 12,440 -\nPrevious Year 17,307 2,174 673 18,808 12,220 967 305 12,882 5,926 5,926\nVersion:1 Date of upload: February 13,2025 22"
       ],
@@ -251,8 +276,9 @@
     {
       "page_number": 25,
       "page_label": "L-17-CASH",
+      "page_label_normalized": "L-17",
       "company_name": null,
-      "section": "unknown",
+      "section": "Cash and Bank Balance Schedule",
       "text_blocks": [
         "FORM L-17-CASH AND BANK BALANCE SCHEDULE\n(Rs. in Lakhs)\nAs at As at\nS.No. Particulars\nDecember 31, 2025 December 31, 2024\n1 Cash (including cheques, drafts and stamps) 2,895 3,604\n2 Bank Balances\n(a)Deposit Accounts\n(aa) Short-term (due within 12 months of the date of Balance Sheet) - -\n(bb) Others - -\n(b)Current Accounts 12,368 11,923\n3 Money at Call and Short Notice\n(a) With Banks - -\n(b)With other Institutions 6,502 3,982\n4 Others - -\nTOTAL 21,765 19,509\nBalances with non-scheduled banks included in 2 and 3 above - -\nCASH & BANK BALANCES\nIn India 21,765 19,509\nOutside India - -\nTOTAL 21,765 19,509\n*Cheques on hand amount to Rs.403 Lakhs.Corresponding amount as on December 31,2024 Rs.364 Lakhs.\nVersion:1 Date of upload: February 13,2025 23"
       ],
@@ -261,8 +287,9 @@
     {
       "page_number": 26,
       "page_label": "L-18-ADVANCES",
+      "page_label_normalized": "L-18",
       "company_name": null,
-      "section": "unknown",
+      "section": "Advances & Other Assets Schedule",
       "text_blocks": [
         "FORM L-18-ADVANCES AND OTHER ASSETS SCHEDULE\n(Rs. in Lakhs)\nAs at As at\nS.No. Particulars\nDecember 31, 2025 December 31, 2024\nADVANCES\n1 Reserve deposits with ceding companies - -\n2 Application money for investments - -\n3 Prepayments 303 254\n4 Advances to Directors/Officers - -\n5 Advance tax paid and taxes deducted at source (Net of provision for taxation) 1,547 -\n6 GST Unutilised Credit 761 1,689\n7 Others Advances -\n- Advances towards services 1,160 779\n- Others 158 113\n- Rent Deposit 1,074 845\nTOTAL (A) 5,002 3,680\nOTHER ASSETS\n1 Income accrued on investments 28,196 25,917\n2 Outstanding Premiums 14,807 11,580\n3 Agents’ Balances 398 62\n4 Foreign Agencies Balances - -\n5 Due from other entities carrying on insurance business (including reinsures) 3,708 2,213\n6 Due from subsidiaries/ holding company - -\n7 Investments held for Unclaimed Amount of Policyholders 607 555\n8 Interest on investments held for Unclaimed Amount of Policyholders 256 204\n9 Others\na. Security Deposits & Others $ 1,813 2,738\nb. Redemption receivable 527 3,049\nc. Deposit with Court 824 668\nd. Derivative Asset - 3,354\ne. Derivative Margin Money Investment 5,416 -\nTOTAL (B) 56,552 50,339\nTOTAL (A+B) 61,554 54,019\n$ Includes advance GST Paid, Bank balance earmarked for bank guatantees provided\nVersion:1 Date of upload: February 13,2025 24"
       ],
@@ -271,8 +298,9 @@
     {
       "page_number": 27,
       "page_label": "L-19-CURRENT",
+      "page_label_normalized": "L-19",
       "company_name": null,
-      "section": "unknown",
+      "section": "Current Liabilities Schedule",
       "text_blocks": [
         "FORM L-19-CURRENT LIABILITIES SCHEDULE\n(Rs. in Lakhs)\nAs at As at\nS.No. Particulars\nDecember 31, 2025 December 31, 2024\n1 Agents’ Balances 8,220 4,465\n2 Balances due to other insurance companies 6,429 4,846\n3 Deposits held on re-insurance ceded - -\n4 Premiums received in advance 4,492 3,968\n5 Unallocated premium 4,236 4,143\n6 Sundry creditors 9,976 10,064\n7 Due to subsidiaries/ holding company - -\n8 Claims Outstanding 10,375 4,929\n9 Annuities Due 6 -\n10 Due to Officers/ Directors - -\n11 Unclaimed Amount of policyholders 606 555\n12 Income accrued on Unclaimed amounts 256 204\n13 Interest payable on debentures/bonds 5 -\n14 Others\na.Goods and Services Tax Liability 627 1,817\nb.Tax Deducted at Source 536 648\nc.Policy Deposits 5,614 5,780\nd.Other Payables 3,387 2,997\ne.Unsettled Purchase 2,652 3,192\nf.Subscription Payable 223 131\ng.Derivative margin money payable 201 2,941\nh.Derivative Liabilities 5,056 -\nTOTAL 62,898 50,680\nDetails of Unclaimed Amounts and Investment Income thereon\n(Rs. in Lakhs)\nAs at As at\nParticulars\nDecember 31, 2025 December 31, 2024\nOpening Balance as at 1st April 858 4,275\nAdd: Amount transferred to unclaimed amount 85 6\nAdd: Cheques issued out of the unclaimed amount but not encashed by the -\n-\npolicyholders (To be included only when the cheques are stale)\nAdd: Investment Income on Unclaimed Fund 58 69\nLess: Amount of claims paid during the period 139 475\nLess: Amount transferred to SCWF during the period - -\n(net of claims paid in respect of amounts transferred earlier)\nClosing Balance of Unclaimed Fund 862 3,875\nVersion:1 Date of upload: February 13,2025 25"
       ],
@@ -281,8 +309,9 @@
     {
       "page_number": 28,
       "page_label": "L-20-PROVISIONS",
+      "page_label_normalized": "L-20",
       "company_name": null,
-      "section": "unknown",
+      "section": "Provisions Schedule",
       "text_blocks": [
         "FORM L-20-PROVISIONS SCHEDULE\n(Rs. in Lakhs)\nAs at As at\nS.No. Particulars\nDecember 31, 2025 December 31, 2024\n1 For taxation (less payments and taxes deducted at source) - 5,266\n2 For Employee Benefits -\nProvision for Gratuity, Leave Encashment 2,297 1,374\n3 For Others - -\nTOTAL 2,297 6,640\nVersion:1 Date of upload: February 13,2025 26"
       ],
@@ -291,8 +320,9 @@
     {
       "page_number": 29,
       "page_label": "L-21-MISC",
+      "page_label_normalized": "L-21",
       "company_name": null,
-      "section": "unknown",
+      "section": "Misc Expenditure Schedule",
       "text_blocks": [
         "FORM L-21-MISC EXPENDITURE SCHEDULE\n(To the extent not written off or adjusted)\n(Rs. in Lakhs)\nAs at As at\nS.No. Particulars\nDecember 31, 2025 December 31, 2024\n1 Discount Allowed in issue of shares/ debentures - -\n2 Others - -\nTOTAL - -\nVersion:1 Date of upload: February 13,2025 27"
       ],
@@ -301,6 +331,7 @@
     {
       "page_number": 30,
       "page_label": "L-22",
+      "page_label_normalized": "L-22",
       "company_name": null,
       "section": "Analytical Ratios",
       "text_blocks": [
@@ -311,6 +342,7 @@
     {
       "page_number": 31,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": null,
       "section": "unknown",
       "text_blocks": [
@@ -321,8 +353,9 @@
     {
       "page_number": 32,
       "page_label": "L-23-RECEIPT",
+      "page_label_normalized": "L-23",
       "company_name": null,
-      "section": "unknown",
+      "section": "Receipts & Payment Schedule",
       "text_blocks": [
         "FORM L-23-RECEIPT AND PAYMENTS SCHEDULE\nAnnual Submission\nVersion:1 Date of upload: February 13,2025 30"
       ],
@@ -331,6 +364,7 @@
     {
       "page_number": 33,
       "page_label": "L-24",
+      "page_label_normalized": "L-24",
       "company_name": null,
       "section": "Valuation of Net Liablities",
       "text_blocks": [
@@ -341,6 +375,7 @@
     {
       "page_number": 34,
       "page_label": "L-25",
+      "page_label_normalized": "L-25",
       "company_name": null,
       "section": "(i) & (ii)",
       "text_blocks": [
@@ -351,6 +386,7 @@
     {
       "page_number": 35,
       "page_label": "L-25",
+      "page_label_normalized": "L-25",
       "company_name": null,
       "section": "(i) & (ii)",
       "text_blocks": [
@@ -361,6 +397,7 @@
     {
       "page_number": 36,
       "page_label": "L-25",
+      "page_label_normalized": "L-25",
       "company_name": null,
       "section": "(i) & (ii)",
       "text_blocks": [
@@ -371,6 +408,7 @@
     {
       "page_number": 37,
       "page_label": "L-25",
+      "page_label_normalized": "L-25",
       "company_name": null,
       "section": "(i) & (ii)",
       "text_blocks": [
@@ -381,6 +419,7 @@
     {
       "page_number": 38,
       "page_label": "L-26",
+      "page_label_normalized": "L-26",
       "company_name": "Shriram Life Insurance Company Limited",
       "section": "Investment Assets (Life Insurers)",
       "text_blocks": [
@@ -391,6 +430,7 @@
     {
       "page_number": 39,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": "Shriram Life Insurance Company Limited",
       "section": "unknown",
       "text_blocks": [
@@ -401,6 +441,7 @@
     {
       "page_number": 40,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": "Shriram Life Insurance Company Limited",
       "section": "unknown",
       "text_blocks": [
@@ -411,6 +452,7 @@
     {
       "page_number": 41,
       "page_label": "L-27",
+      "page_label_normalized": "L-27",
       "company_name": "Shriram Life Insurance Company Limited",
       "section": "Investments - Unit Linked Business",
       "text_blocks": [
@@ -421,6 +463,7 @@
     {
       "page_number": 42,
       "page_label": "L-27",
+      "page_label_normalized": "L-27",
       "company_name": "Shriram Life Insurance Company Limited",
       "section": "Investments - Unit Linked Business",
       "text_blocks": [
@@ -431,6 +474,7 @@
     {
       "page_number": 43,
       "page_label": "L-27",
+      "page_label_normalized": "L-27",
       "company_name": "Shriram Life Insurance Company Limited",
       "section": "Investments - Unit Linked Business",
       "text_blocks": [
@@ -441,6 +485,7 @@
     {
       "page_number": 44,
       "page_label": "L-28",
+      "page_label_normalized": "L-28",
       "company_name": "Shriram Life Insurance Company Limited",
       "section": "Statement of NAV of Segregated Funds",
       "text_blocks": [
@@ -451,6 +496,7 @@
     {
       "page_number": 45,
       "page_label": "L-29",
+      "page_label_normalized": "L-29",
       "company_name": null,
       "section": "Details regarding Debt securities",
       "text_blocks": [
@@ -461,6 +507,7 @@
     {
       "page_number": 46,
       "page_label": "L-29",
+      "page_label_normalized": "L-29",
       "company_name": null,
       "section": "Details regarding Debt securities",
       "text_blocks": [
@@ -471,6 +518,7 @@
     {
       "page_number": 47,
       "page_label": "L-29",
+      "page_label_normalized": "L-29",
       "company_name": null,
       "section": "Details regarding Debt securities",
       "text_blocks": [
@@ -481,6 +529,7 @@
     {
       "page_number": 48,
       "page_label": "L-30",
+      "page_label_normalized": "L-30",
       "company_name": "Shriram Capital Pvt Ltd",
       "section": "Related Party Transanctions",
       "text_blocks": [
@@ -491,6 +540,7 @@
     {
       "page_number": 49,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": null,
       "section": "unknown",
       "text_blocks": [
@@ -501,6 +551,7 @@
     {
       "page_number": 50,
       "page_label": "L-31",
+      "page_label_normalized": "L-31",
       "company_name": null,
       "section": "Board of Directors & Key Management Persons",
       "text_blocks": [
@@ -511,6 +562,7 @@
     {
       "page_number": 51,
       "page_label": "L-32",
+      "page_label_normalized": "L-32",
       "company_name": null,
       "section": "Available Solvency Margin and Solvency Ratio",
       "text_blocks": [
@@ -521,6 +573,7 @@
     {
       "page_number": 52,
       "page_label": "L-33",
+      "page_label_normalized": "L-33",
       "company_name": "Shriram Life Insurance Company Limited",
       "section": "NPAs",
       "text_blocks": [
@@ -531,6 +584,7 @@
     {
       "page_number": 53,
       "page_label": "L-33",
+      "page_label_normalized": "L-33",
       "company_name": "Shriram Life Insurance Company Limited",
       "section": "NPAs",
       "text_blocks": [
@@ -541,6 +595,7 @@
     {
       "page_number": 54,
       "page_label": "L-33",
+      "page_label_normalized": "L-33",
       "company_name": "Shriram Life Insurance Company Limited",
       "section": "NPAs",
       "text_blocks": [
@@ -551,6 +606,7 @@
     {
       "page_number": 55,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": "Shriram Life Insurance Co Ltd.",
       "section": "unknown",
       "text_blocks": [
@@ -561,6 +617,7 @@
     {
       "page_number": 56,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": "Shriram Life Insurance Co Ltd.",
       "section": "unknown",
       "text_blocks": [
@@ -571,6 +628,7 @@
     {
       "page_number": 57,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": "Shriram Life Insurance Co Ltd.",
       "section": "unknown",
       "text_blocks": [
@@ -581,6 +639,7 @@
     {
       "page_number": 58,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": "Shriram Life Insurance Co Ltd.",
       "section": "unknown",
       "text_blocks": [
@@ -591,6 +650,7 @@
     {
       "page_number": 59,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": "Shriram Life Insurance Co Ltd.",
       "section": "unknown",
       "text_blocks": [
@@ -601,6 +661,7 @@
     {
       "page_number": 60,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": "Shriram Life Insurance Co Ltd.",
       "section": "unknown",
       "text_blocks": [
@@ -611,6 +672,7 @@
     {
       "page_number": 61,
       "page_label": "L-35",
+      "page_label_normalized": "L-35",
       "company_name": "Shriram Life Insurance Co Ltd.",
       "section": "Statement of Down Graded Investments",
       "text_blocks": [
@@ -621,6 +683,7 @@
     {
       "page_number": 62,
       "page_label": "L-35",
+      "page_label_normalized": "L-35",
       "company_name": "Shriram Life Insurance Co Ltd.",
       "section": "Statement of Down Graded Investments",
       "text_blocks": [
@@ -631,6 +694,7 @@
     {
       "page_number": 63,
       "page_label": "L-35",
+      "page_label_normalized": "L-35",
       "company_name": "Shriram Life Insurance Co Ltd.",
       "section": "Statement of Down Graded Investments",
       "text_blocks": [
@@ -641,6 +705,7 @@
     {
       "page_number": 64,
       "page_label": "L-36",
+      "page_label_normalized": "L-36",
       "company_name": null,
       "section": "Premium and number of lives covered by policy type",
       "text_blocks": [
@@ -651,6 +716,7 @@
     {
       "page_number": 65,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": null,
       "section": "unknown",
       "text_blocks": [
@@ -661,8 +727,9 @@
     {
       "page_number": 66,
       "page_label": "L-37-BUSINESS",
+      "page_label_normalized": "L-37",
       "company_name": null,
-      "section": "unknown",
+      "section": "Business Acquisition through Different Channels - Group",
       "text_blocks": [
         "FORM L-37-BUSINESS ACQUISITION THROUGH DIFFERENT CHANNELS (GROUP)\nName of the Insurer: SHRIRAM LIFE INSURANCE COMPANY LIMITED Date: December 31, 2025\nBusiness Acquisition through Different Channels (Group) Quarter End: December 2025\nFor the Quarter - Current Year For the Quarter - Previous Year Up to the Quarter - Current Year Up to the Quarter - Previous Year\nSl.No.\nNo. of Premium (Rs. No. of Premium No. of No. of Lives Premium No. of Lives Premium (Rs.\nChannels No. of Lives Covered No. of Lives Covered No. of Schemes\nSchemes in Lakhs) Schemes (Rs. in Lakhs) Schemes Covered (Rs. in Lakhs) Covered in Lakhs)\n1 Individual agents - - - - - - - - - - - -\n2 Corporate Agents-Banks - 279 2 2 2 2 09 16 2 935 6 6 5 532 4 0\n3 Corporate Agents -Others 3 11,76,653 13,359 - 12,91,222 1 4,262 4 28,10,374 34,759 4 34,38,151 38,311\n4 Brokers 9 2,08,975 2,208 14 1,39,026 3 ,442 3 5 3,71,754 5,414 50 4,24,911 10,242\n5 Micro Agents - - - - - - - - - - - -\n6 Direct Business 1 46,729 842 32 28,91,193 1 5,829 8 4,66,720 5,677 39 30,33,099 22,255\n7 IMF - - - - - - - - - - - -\n8 Others (Please Specify) - - - - - - - - - - - -\nTotal 13 14,32,636 16,431 48 43,21,650 33,548 49 36,49,783 45,915 98 68,96,693 70,848\nReferral Arrangements - - - - - - - - - - - -\nVersion:1 Date of upload: February 13,2025 64"
       ],
@@ -671,6 +738,7 @@
     {
       "page_number": 67,
       "page_label": "L-38",
+      "page_label_normalized": "L-38",
       "company_name": null,
       "section": "Business Acquisition through Different Channels - Individuals",
       "text_blocks": [
@@ -681,8 +749,9 @@
     {
       "page_number": 68,
       "page_label": "L-39-DATA",
+      "page_label_normalized": "L-39",
       "company_name": null,
-      "section": "unknown",
+      "section": "Data on Settlement of Claims",
       "text_blocks": [
         "FORM L-39-Data on Settlement of Claims (Individual)\nName of the Insurer: SHRIRAM LIFE INSURANCE COMPANY LIMITED For the Quarter End: December 2025 Date: December 31, 2025\nAgeing of Claims1\nNo. of claims paid Total amount of\nTotal No. of\nSl.No. Types of Claims On or before 1 - 3 3 - 6 6 months - claims paid\n1 month > 1 year claims paid\nmaturity months months 1 year (Rs. in Lakhs)\n1 Maturity Claims 5,659 1,690 300 116 124 198 8 ,087 1 7,062\n2 Survival Benefit2 31,325 2,558 221 84 - - 3 4,188 5,979\n3 Annuities / Pension 6,119 - - - - - 6 ,119 4 41\n4 Surrender3 - 5,834 80 - - - 5 ,914 5 ,643\n5 Other benefits4 - 19 - - - - 1 9 33\nDeath Claims - 1,275 - - - - 1 ,275 4 ,086\n1 The ageing of claims:- in case of the death claim the settlement duration will be computed from the date of receipt of last requirement.\nDate of receipt of the last requirement to be readily available with the Insurer in respect of every claim.\n2 Rider Claims (Critical Illness) and money backs are reported in Survival Benefit.\n3 In case of Surrender, the computation of ageing of data will be from the date of application of surrender to the date of settlemet of the claim.\n4Rider Claims (Accident, income benefit & waiver premium), partial withdrawals and Health Claims are reported in Other Benefits.\nData for \"For the Quarter\" and \"Up to the Quarter\" are to be reported separately.\nFORM L-39-Data on Settlement of Claims (Group)\nAgeing of Claims1\nNo. of claims paid Total amount of\nTotal No. of\nSl.No. Types of Claims On or before 1 - 3 3 - 6 6 months - 1 claims paid\n1 month > 1 year claims paid\nmatuirty months months year (Rs. in Lakhs)\n1 Maturity Claims - - - - - - - -\n2 Survival Benefit - - - - - - - -\n3 Annuities / Pension - - - - - - - -\n4 Surrender - - - - - - - -\n5 Other benefits - - - - - - - -\nDeath Claims - 17,971 44 3 - - 1 8,018 1 6,060\n1 The ageing of claims:- in case of the death claim the settlement duration will be computed from the date of receipt of last requirement.\nData for \"For the Quarter\" and \"Up to the Quarter\" are to be reported separately.\nVersion:1 Date of upload: February 13,2025 66"
       ],
@@ -691,8 +760,9 @@
     {
       "page_number": 69,
       "page_label": "L-39-DATA",
+      "page_label_normalized": "L-39",
       "company_name": null,
-      "section": "unknown",
+      "section": "Data on Settlement of Claims",
       "text_blocks": [
         "FORM L-39-Data on Settlement of Claims (Individual)\nName of the Insurer: SHRIRAM LIFE INSURANCE COMPANY LIMITED Upto to the Quarter End: December 2025Date: December 31, 2025\nAgeing of Claims1\nNo. of claims paid Total amount of\nTotal No. of claims\nSl.No. Types of Claims On or before 1 - 3 3 - 6 6 months - claims paid\n1 month > 1 year paid\nmaturity months months 1 year (Rs. in Lakhs)\n1 Maturity Claims 13,358 4,781 1,246 326 211 257 2 0,179 4 0,627\n2 Survival Benefit2 59,998 15,956 570 167 39 - 7 6,730 13,699\n3 Annuities / Pension 15,760 - - - - - 1 5,760 1 ,126\n4 Surrender3 - 16,870 458 72 3 - 1 7,403 1 6,531\n5 Other benefits4 12 20 - - - - 3 2 51\nDeath Claims 3,743 6 - - - 3 ,749 1 1,757\n1 The ageing of claims:- in case of the death claim the settlement duration will be computed from the date of receipt of last requirement.\nDate of receipt of the last requirement to be readily available with the Insurer in respect of every claim.\n2 Rider Claims (Critical Illness) and money backs are reported in Survival Benefit.\n3 In case of Surrender, the computation of ageing of data will be from the date of application of surrender to the date of settlemet of the claim.\n4Rider Claims (Accident, income benefit & waiver premium), partial withdrawals and Health Claims are reported in Other Benefits.\nData for \"For the Quarter\" and \"Up to the Quarter\" are to be reported separately.\nFORM L-39-Data on Settlement of Claims (Group)\nAgeing of Claims1\nNo. of claims paid Total amount of\nTotal No. of claims\nSl.No. Types of Claims On or before 1 - 3 3 - 6 6 months - 1 claims paid\n1 month > 1 year paid\nmatuirty months months year (Rs. in Lakhs)\n1 Maturity Claims - - - - - - - -\n2 Survival Benefit - - - - - - - -\n3 Annuities / Pension - - - - - - - -\n4 Surrender - - - - - - - -\n5 Other benefits - - - - - - - -\nDeath Claims - 53,347 44 3 - - 5 3,394 4 5,831\n1 The ageing of claims:- in case of the death claim the settlement duration will be computed from the date of receipt of last requirement.\nData for \"For the Quarter\" and \"Up to the Quarter\" are to be reported separately.\nVersion:1 Date of upload: February 13,2025 67"
       ],
@@ -701,6 +771,7 @@
     {
       "page_number": 70,
       "page_label": "L-40",
+      "page_label_normalized": "L-40",
       "company_name": null,
       "section": "Quarterly Claims Data",
       "text_blocks": [
@@ -711,6 +782,7 @@
     {
       "page_number": 71,
       "page_label": "L-40",
+      "page_label_normalized": "L-40",
       "company_name": null,
       "section": "Quarterly Claims Data",
       "text_blocks": [
@@ -721,6 +793,7 @@
     {
       "page_number": 72,
       "page_label": "L-41",
+      "page_label_normalized": "L-41",
       "company_name": null,
       "section": "Grievance Disposal",
       "text_blocks": [
@@ -731,6 +804,7 @@
     {
       "page_number": 73,
       "page_label": "L-42",
+      "page_label_normalized": "L-42",
       "company_name": null,
       "section": "Valuation Basis",
       "text_blocks": [
@@ -741,6 +815,7 @@
     {
       "page_number": 74,
       "page_label": "L-42",
+      "page_label_normalized": "L-42",
       "company_name": null,
       "section": "Valuation Basis",
       "text_blocks": [
@@ -751,6 +826,7 @@
     {
       "page_number": 75,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": null,
       "section": "unknown",
       "text_blocks": [
@@ -761,6 +837,7 @@
     {
       "page_number": 76,
       "page_label": "L-45",
+      "page_label_normalized": "L-45",
       "company_name": null,
       "section": "Office Information",
       "text_blocks": [

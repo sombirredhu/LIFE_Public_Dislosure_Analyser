@@ -27,7 +27,8 @@
     "L-9": [
       "& L9A",
       "& L9A-Shareholding Pattern Schedule",
-      "Pattern of Shareholding"
+      "Pattern of Shareholding",
+      "Shareholding Pattern Schedule"
     ],
     "L-10": [
       "Reserves and Surplus Schedule"
@@ -83,7 +84,8 @@
     "L-25": [
       "(i) & (ii)",
       "(i) & (ii)-Geographical Distribution of Business",
-      "(ii)"
+      "(ii)",
+      "Geographical Distribution of Business"
     ],
     "L-26": [
       "Investment Assets (Life Insurers)",
@@ -160,8 +162,8 @@
   },
   "calculations": {},
   "metadata": {
-    "last_updated": "2026-05-17T04:58:57.952547",
-    "total_page_terms": 59,
+    "last_updated": "2026-05-17T17:01:03.154913",
+    "total_page_terms": 61,
     "total_calculations": 0
   }
 }

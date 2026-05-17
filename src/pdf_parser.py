@@ -43,11 +43,37 @@ def _update_master_page_definitions():
         json.dump(t_to_p, f, indent=2, ensure_ascii=False)
 
 def _load_page_definitions(company_code: str) -> Dict[str, str]:
+    """Load page definitions with fallback to master and default definitions."""
     pd = Path(PROCESSED_OUTPUT_DIR)
+    
+    # Try company-specific definitions first
     for fn in [f"{company_code}_page_definitions.json", "page_definitions.json"]:
         fp = pd / fn
         if fp.exists():
-            with open(fp, "r", encoding="utf-8") as f: return json.load(f)
+            with open(fp, "r", encoding="utf-8") as f: 
+                return json.load(f)
+    
+    # Fallback to master definitions
+    master_fp = pd / "master_page_definitions.json"
+    if master_fp.exists():
+        try:
+            with open(master_fp, "r", encoding="utf-8") as f:
+                master_defs = json.load(f)
+                # Convert list format to simple mapping (take first term)
+                return {lpage: terms[0] if isinstance(terms, list) else terms 
+                       for lpage, terms in master_defs.items()}
+        except Exception as e:
+            logger.warning(f"Failed to load master definitions: {e}")
+    
+    # Final fallback to default definitions
+    default_fp = pd / "default_page_definitions.json"
+    if default_fp.exists():
+        try:
+            with open(default_fp, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception as e:
+            logger.warning(f"Failed to load default definitions: {e}")
+    
     return {}
 
 def get_lpage_from_term(term: str) -> Optional[str]:
@@ -86,12 +112,78 @@ def extract_table_text(table: List[List[Any]]) -> Optional[Dict[str, Any]]:
     raw = "\n".join([" | ".join(hdrs)] + [" | ".join(r) for r in rows])
     return {"headers": hdrs, "rows": rows, "raw_text": raw}
 
+def _normalize_lpage(lpage: str) -> str:
+    """
+    Normalize L-page label by extracting the base L-page number.
+    Examples:
+        L-4-PREMIUM -> L-4
+        L-5-COMMISSION -> L-5
+        L-1-A-RA -> L-1-A-RA (keep as is, it's a standard format)
+        L-14A -> L-14A (keep as is)
+    """
+    if not lpage:
+        return ""
+    
+    # Match patterns like L-4-PREMIUM, L-5-COMMISSION
+    # But preserve L-1-A-RA, L-2-A-PL, L-3-A-BS, L-14A
+    match = re.match(r'(L-\d+[A-Z]?(?:-[A-Z]-[A-Z]{2})?)', lpage.upper())
+    if match:
+        return match.group(1)
+    
+    return lpage.upper()
+
+def _match_section(page_label: str, page_defs: Dict[str, str], index_map: Dict[str, str]) -> str:
+    """
+    Match page label to section with fuzzy matching.
+    Tries exact match first, then normalized prefix match, then base L-page number.
+    """
+    if not page_label:
+        return "unknown"
+    
+    # Try exact match first
+    if page_label in page_defs:
+        return page_defs[page_label]
+    if page_label in index_map:
+        return index_map[page_label]
+    
+    # Try normalized match (e.g., L-4-PREMIUM -> L-4)
+    normalized = _normalize_lpage(page_label)
+    if normalized != page_label:
+        if normalized in page_defs:
+            return page_defs[normalized]
+        if normalized in index_map:
+            return index_map[normalized]
+    
+    # For L-X-A-YZ format (like L-1-A-RA), try base L-X
+    # Extract just L-{number} from patterns like L-1-A-RA, L-2-A-PL
+    base_match = re.match(r'(L-\d+)', page_label.upper())
+    if base_match:
+        base_lpage = base_match.group(1)
+        if base_lpage != page_label and base_lpage != normalized:
+            if base_lpage in page_defs:
+                return page_defs[base_lpage]
+            if base_lpage in index_map:
+                return index_map[base_lpage]
+    
+    return "unknown"
+
 def _process_page(page_num: int, page, page_defs: Dict[str, str], index_map: Dict[str, str]) -> Dict[str, Any]:
     txt = page.extract_text() or ""
     lines = txt.splitlines()
     fl = lines[0] if lines else ""
     lbl = _extract_lpage_from_text(txt) or _detect_page_label(fl) or ""
-    pdata = {"page_number": page_num, "page_label": lbl, "company_name": _extract_company_name_from_text(txt), "section": "unknown", "text_blocks": [], "tables": []}
+    normalized_lbl = _normalize_lpage(lbl) if lbl else ""
+    
+    pdata = {
+        "page_number": page_num, 
+        "page_label": lbl, 
+        "page_label_normalized": normalized_lbl,
+        "company_name": _extract_company_name_from_text(txt), 
+        "section": "unknown", 
+        "text_blocks": [], 
+        "tables": []
+    }
+    
     if txt.count("|") > 5 or txt.count("\t") > 3:
         for t in page.extract_tables() or []:
             td = extract_table_text(t)
@@ -182,12 +274,27 @@ def parse_pdf(pdf_path: str) -> Dict[str, Any]:
             from src.definitions_manager import merge_with_pdf_definitions
             merge_with_pdf_definitions()
         except Exception: pass
+    # Load page definitions (with fallback to master)
     p_defs = _load_page_definitions(meta['company_code'])
+    
+    # Extract company full name from pages (use first non-null occurrence)
+    company_full_name = None
     for pd in p_data:
-        l = pd["page_label"]
-        if l in p_defs: pd["section"] = p_defs[l]
-        elif l in imap: pd["section"] = imap[l]
-    res = {**meta, "total_pages": tp, "page_definitions_found": bool(p_defs or imap), "pages": p_data}
+        if pd.get("company_name"):
+            company_full_name = pd["company_name"]
+            break
+    
+    # Apply section mapping with fuzzy matching
+    for pd in p_data:
+        pd["section"] = _match_section(pd["page_label"], p_defs, imap)
+    
+    res = {
+        **meta, 
+        "company_full_name": company_full_name,
+        "total_pages": tp, 
+        "page_definitions_found": bool(p_defs or imap), 
+        "pages": p_data
+    }
     out = Path(PROCESSED_OUTPUT_DIR) / f"{meta['company_code']}_{meta['quarter']}_{meta['fy']}.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     with open(out, "w", encoding="utf-8") as f: json.dump(res, f, indent=2, ensure_ascii=False)

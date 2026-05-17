@@ -158,13 +158,17 @@ def _chunk_page_wise(
     all_chunks = []
     prefix = f"{base_metadata['company_code']}_{base_metadata['quarter']}_{base_metadata['fy']}"
     
+    # Get company full name from document level
+    company_full_name = parsed_doc.get("company_full_name")
+    
     for page in parsed_doc.get("pages", []):
         page_number = page["page_number"]
         page_label = page.get("page_label", "")
+        page_label_normalized = page.get("page_label_normalized", "")
         section = page.get("section", "unknown")
         
         # Extract company name from page content (if available)
-        company_name_from_page = page.get("company_name")
+        company_name_from_page = page.get("company_name") or company_full_name
         
         # Combine page content
         page_text = _combine_page_content(page)
@@ -183,10 +187,12 @@ def _chunk_page_wise(
             try:
                 sub_chunks = _split_page_into_subchunks(page, base_metadata, max_tokens=7600)
                 
-                # Add company name from page content if available
-                if company_name_from_page:
-                    for chunk in sub_chunks:
+                # Add enhanced metadata to sub-chunks
+                for chunk in sub_chunks:
+                    if company_name_from_page:
                         chunk["metadata"]["company_full_name"] = company_name_from_page
+                    if page_label_normalized:
+                        chunk["metadata"]["page_label_normalized"] = page_label_normalized
                 
                 all_chunks.extend(sub_chunks)
                 logger.info(f"Page {page_number} split into {len(sub_chunks)} sub-chunks")
@@ -206,9 +212,11 @@ def _chunk_page_wise(
             chunk["metadata"]["text_block_count"] = len(page.get("text_blocks", []))
             chunk["metadata"]["is_split"] = False
             
-            # Add company name from page content if available
+            # Add enhanced metadata
             if company_name_from_page:
                 chunk["metadata"]["company_full_name"] = company_name_from_page
+            if page_label_normalized:
+                chunk["metadata"]["page_label_normalized"] = page_label_normalized
             
             all_chunks.append(chunk)
     

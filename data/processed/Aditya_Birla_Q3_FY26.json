@@ -5,12 +5,14 @@
   "fy": "FY26",
   "period_label": "Q3 FY2025-26",
   "source_file": "Aditya_Birla_Q3_FY26.pdf",
+  "company_full_name": "Aditya Birla Sun Life Insurance Company Limited",
   "total_pages": 85,
   "page_definitions_found": true,
   "pages": [
     {
       "page_number": 1,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
       "section": "unknown",
       "text_blocks": [
@@ -21,6 +23,7 @@
     {
       "page_number": 2,
       "page_label": "L-1-A-RA",
+      "page_label_normalized": "L-1-A-RA",
       "company_name": "RA Aditya Birla Sun Life Insurance Company Limited",
       "section": "Revenue Account",
       "text_blocks": [
@@ -31,6 +34,7 @@
     {
       "page_number": 3,
       "page_label": "L-1-A-RA",
+      "page_label_normalized": "L-1-A-RA",
       "company_name": "RA Aditya Birla Sun Life Insurance Company Limited",
       "section": "Revenue Account",
       "text_blocks": [
@@ -41,6 +45,7 @@
     {
       "page_number": 4,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": null,
       "section": "unknown",
       "text_blocks": [
@@ -51,6 +56,7 @@
     {
       "page_number": 5,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": null,
       "section": "unknown",
       "text_blocks": [
@@ -61,6 +67,7 @@
     {
       "page_number": 6,
       "page_label": "L-2-A-PL",
+      "page_label_normalized": "L-2-A-PL",
       "company_name": "PL Aditya Birla Sun Life Insurance Company Limited",
       "section": "Profit & Loss Account",
       "text_blocks": [
@@ -71,6 +78,7 @@
     {
       "page_number": 7,
       "page_label": "L-3",
+      "page_label_normalized": "L-3",
       "company_name": "BS Aditya Birla Sun Life Insurance Company Limited",
       "section": "unknown",
       "text_blocks": [
@@ -81,6 +89,7 @@
     {
       "page_number": 8,
       "page_label": "L-4",
+      "page_label_normalized": "L-4",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
       "section": "Premium Schedule",
       "text_blocks": [
@@ -91,6 +100,7 @@
     {
       "page_number": 9,
       "page_label": "L-5",
+      "page_label_normalized": "L-5",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
       "section": "Commission Schedule",
       "text_blocks": [
@@ -101,8 +111,9 @@
     {
       "page_number": 10,
       "page_label": "L-6-OPERATING",
+      "page_label_normalized": "L-6",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
-      "section": "unknown",
+      "section": "Operating Expenses Schedule",
       "text_blocks": [
         "Aditya Birla Sun Life Insurance Company Limited\nRegistration Number: 109 dated 31st January 2001\nFORM L-6-OPERATING EXPENSES SCHEDULE\nOPERATING EXPENSES RELATED TO INSURANCE BUSINESS\n(Amounts in lakhs of Indian Rupees)\nQuarter ended Nine Months ended Quarter ended Nine Months ended\nParticulars 31st December, 2025 31st December, 2025 31st December, 2024 31st December, 2024\n1 Employees' remuneration and welfare benefits 46,398 129,127 38,857 107,968\n2 Travel, conveyance and vehicle running expenses 856 2,565 898 2,530\n3 Training expenses 1,250 3,545 1,023 4,030\n4 Rents, rates and taxes 2,545 7,608 2,138 6,058\n5 Repairs 966 3,353 969 2,514\n6 Printing and stationery 54 202 102 311\n7 Communication expenses 296 974 226 806\n8 Legal and professional charges 1,451 4,954 1,212 4,109\n9 Medical fees 575 1,637 420 1,251\n10 Auditor's fees, expenses etc. -\n(a) as auditor 22 99 35 105\n(b) as adviser or in any other capacity, in respect of -\ni) Taxation matters - - - -\nii) Insurance matters - - - -\niii) Management services; and - - - -\n(c) in any other capacity (for certification) 0 5 (0) 5\n11 Advertisement and publicity 160 2,788 (1,046) 3,465\n12 Interest and Bank Charges 123 394 162 621\n13 Depreciation 1,848 5,354 1,226 3,700\n14 Brand/Trade Mark usage fee/charges - - - -\n15 Business Development and Sales Promotion Expenses 1,052 2,635 1,152 1,825\n16 Stamp duty on policies 1,271 4,062 1,161 4,672\n17 Information Technology Expenses 3,485 11,038 3,276 9,663\n18 Goods and Services Tax (GST) 1,250 1,387 64 222\n19 Others: a) Agents recruitment, seminar and other expenses 17 119 35 61\nb) Recruitment and seminar expenses 390 897 364 1,236\nc) Loss/(Profit) on sale of assets (6) (5) (22) 18\nd) Electricity expenses 299 999 316 970\ne) Miscellaneous expenses 120 267 232 476\nTotal 64,422 184,004 52,800 156,616\nIn India 64,422 184,004 52,800 156,616\nOutside India - - - -\nVersion:1 Date of upload: 12 February 2026"
       ],
@@ -111,8 +122,9 @@
     {
       "page_number": 11,
       "page_label": "L-6A",
+      "page_label_normalized": "L-6A",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
-      "section": "unknown",
+      "section": "Operating Expenses Schedule",
       "text_blocks": [
         "Aditya Birla Sun Life Insurance Company Limited\nRegistration Number: 109 dated 31st January 2001\nForm L-6A- Operating Expenses Other Than Those Directly Related To Insurance Business\n(Amounts in lakhs of Indian Rupees)\nQuarter ended Nine Months ended Quarter ended Nine Months ended\nParticulars 31st December, 2025 31st December, 2025 31st December, 2024 31st December, 2024\n1 Employees' remuneration, welfare benefits and other manpower costs 605 1,683 592 1,997\n2 Legal and professional charges 9 405 101 201\n3 Auditors Fees (Reporting Pack) 7 22 7 21\n4 Interest and bank charges 73 88 24 93\n5 Interest on non convertible debenture (NCD) 2,985 8,621 2,593 6,301\n6 Corporate social responsibility expenses - 50 - 50\n7 Others: Miscellaneous expenses 745 2,245 523 1,828\n8 Goods & Service tax expenses 97 97 - -\nTotal 4 ,521 1 3,211 3 ,840 1 0,491\nVersion:1 Date of upload: 12 February 2026"
       ],
@@ -121,8 +133,9 @@
     {
       "page_number": 12,
       "page_label": "L-7-BENEFITS",
+      "page_label_normalized": "L-7",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
-      "section": "unknown",
+      "section": "Benefits Paid Schedule",
       "text_blocks": [
         "Aditya Birla Sun Life Insurance Company Limited\nRegistration Number: 109 dated 31st January 2001\nFORM L-7-BENEFITS PAID SCHEDULE\nBENEFITS PAID [NET]\n(Amounts in lakhs of Indian Rupees)\nQuarter ended Nine Months ended Quarter ended Nine Months ended\nParticulars 31st December, 2025 31st December, 2025 31st December, 2024 31st December, 2024\n1 Insurance Claims\n(a) Claims by Death 3 0,665 100,932 3 1,956 9 2,923\n(b) Claims by Maturity 1 3,150 30,129 9 ,508 2 8,730\n(c) Annuities / Pension payment 2 ,072 6,022 1 ,688 4 ,359\n(d) Periodical Benefits 2 ,142 5,703 1 ,866 1 2,681\n(e) Health 1 87 472 2 0 1 42\n(f) Surrender 2 72,798 730,831 1 59,410 5 53,790\n(g) Other benefits - -\n(i) Riders 5 08 1,666 1 78 9 05\n(ii) Survival and Others 3 1,095 79,332 2 0,349 3 8,506\nTotal 3 52,616 955,087 2 24,975 732,036\nBenefits paid (Gross)\n1. In India 352,616 955,087 224,975 7 32,036\n2. Outside India - - -\nTotal 352,616 955,087 224,975 732,036\n2 (Amount ceded in reinsurance):\n(a) Claims by Death ( 11,492) (39,560) ( 14,905) ( 39,760)\n(b) Claims by Maturity - - -\n(c) Annuities / Pension payment - - - -\n(d) Periodical Benefits - - - -\n(e) Health ( 16) (141) - ( 24)\n(f) Other benefits - - - -\n3 Amount accepted in reinsurance:\n(a) Claims by Death - - - -\n(b) Claims by Maturity - - - -\n(c) Annuities / Pension Payment - - - -\n(d) Periodical Benefits - - - -\n(e) Health - - - -\n(f) Other benefits - - - -\nTotal 3 41,108 915,386 2 10,070 692,252\nBenefits paid (Net)\n1. In India 341,108 915,386 210,070 6 92,252\n2. Outside India - - -\nTotal 341,108 915,386 210,070 692,252\nNote:\na) Claims incurred shall comprise claims paid, specific claims settlement costs wherever applicable and change in the outstanding provision for claims at the year-end.\nb) Fees and expenses connected with claims shall be included in claims.\nc) Legal and other fees and expenses shall also form part of the claims cost, wherever applicable.\nVersion:1 Date of upload: 12 February 2026"
       ],
@@ -131,8 +144,9 @@
     {
       "page_number": 13,
       "page_label": "L-8-SHARE",
+      "page_label_normalized": "L-8",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
-      "section": "unknown",
+      "section": "Share Capital Schedule",
       "text_blocks": [
         "Aditya Birla Sun Life Insurance Company Limited\nRegistration Number: 109 dated 31st January 2001\nForm L-8-Share Capital Schedule\nSHARE CAPITAL\n(Amounts in lakhs of Indian Rupees)\nAs at As at\nParticulars\n31st December, 2025 31st December, 2024\n1 Authorised Capital\n3,75,00,00,000 Equity Shares of Rs.10/- each 3 75,000 375,000\n2 Issued Capital\n2,09,31,23,100 Equity Shares of Rs. 10/- each 2 09,312 201,959\n(Previous Year : 2,01,95,93,700 Equity Shares) of Rs. 10/- each fully paid up\n3 Subscribed Capital\n2,09,31,23,100 Equity Shares of Rs. 10/- each 2 09,312 201,959\n(Previous Year : 2,01,95,93,700 Equity Shares) of Rs. 10/- each fully paid up\n4 Called-up Capital\n2,09,31,23,100 Equity Shares of Rs. 10/- each 2 09,312 201,959\nLess : Calls unpaid - -\nAdd : Shares forfeited (Amount originally paid up) - -\nLess : Par value of Equity Shares bought back - -\nLess : Preliminary Expenses\n(Expenses including commission or brokerage on underwriting or\nsubscription on shares) - -\nTotal 2 09,312 2 01,959\nOut of the total equity shares issued, 1,06,74,92,781 equity shares (31st December, 2024 - 1,02,99,92,787 equity shares) of Rs.10 each are held by the holding company,\nAditya Birla Capital Limited.\nCompany has outstanding ESOP of Rs. 1,589 as on December'25 (Rs. 860 as on December'24)\nVersion:1 Date of upload: 12 February 2026"
       ],
@@ -141,8 +155,9 @@
     {
       "page_number": 14,
       "page_label": "L-9-PATTERN",
+      "page_label_normalized": "L-9",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
-      "section": "unknown",
+      "section": "& L9A",
       "text_blocks": [
         "Aditya Birla Sun Life Insurance Company Limited\nRegistration Number: 109 dated 31st January 2001\nFORM L-9-PATTERN OF SHAREHOLDING SCHEDULE\nPATTERN OF SHAREHOLDING\nAs at As at\nShareholder\n31st December, 2025 31st December, 2024\nNumber of % of Number of % of\nShares Holding Shares Holding\nPromoters:\nIndian (Aditya Birla Capital Limited)* 1,067,492,781 51% 1 ,029,992,787 51%\nForeign (Sun Life Financial (India) Insurance Investments Inc.) 1,025,630,319 49% 9 89,600,913 49%\nOthers - - - -\nTotal 2,093,123,100 100% 2 ,019,593,700 100%\n* Includes 5 shares held by nominee of Aditya Birla Capital Limited\nVersion:1 Date of upload: 12 February 2026"
       ],
@@ -151,6 +166,7 @@
     {
       "page_number": 15,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": null,
       "section": "unknown",
       "text_blocks": [
@@ -161,6 +177,7 @@
     {
       "page_number": 16,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": null,
       "section": "unknown",
       "text_blocks": [
@@ -171,6 +188,7 @@
     {
       "page_number": 17,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": "Surya Kiran Investments PTE Limited",
       "section": "unknown",
       "text_blocks": [
@@ -181,6 +199,7 @@
     {
       "page_number": 18,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": null,
       "section": "unknown",
       "text_blocks": [
@@ -191,8 +210,9 @@
     {
       "page_number": 19,
       "page_label": "L-10-RESERVES",
+      "page_label_normalized": "L-10",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
-      "section": "unknown",
+      "section": "Reserves and Surplus Schedule",
       "text_blocks": [
         "Aditya Birla Sun Life Insurance Company Limited\nRegistration Number: 109 dated 31st January 2001\nForm L-10-Reserves and Surplus Schedule\nRESERVES AND SURPLUS\n(Amounts in lakhs of Indian Rupees)\nAs at As at As at As at\nParticulars 31st December, 2025 31st December, 2025 31st December, 2024 31st December, 2024\n1 Capital Reserve - -\n2 Capital Redemption Reserve 6 ,829 6 ,829\n3 Share Premium\nOpening balance 1 00,262 7 2,470\nAdd: Additions during the year 67,647 2 7,791\nLess: Deductions during the year - 1 67,909 - 1 00,262\n4 Revaluation Reserve - -\n5 General reserves 4 ,061 4 ,061\n6 Catastrophe Reserve - -\n7 Other Reserves :\na) Debenture Redemption Reserve\nOpening balance 1 3,000 7 ,500\nAdd: Additions during the year 2 ,000 5 ,500\nLess: Deductions during the year - 1 5,000 - 1 3,000\nb) Realised Hedge Reserves non linked policyholder\nOpening balance 2 3,667 8 ,734\nAdd: Additions during the year 7 ,442 9 ,746\nLess: Deductions during the year 1 ,543 2 9,566 8 20 1 7,660\n8 Balance of profit in Profit and Loss Account\nOpening balance 5 1,798 4 7,340\nAdd: Additions during the year 9 ,604 5 34\nLess: Deductions during the year - 6 1,402 - 4 7,874\nTotal 284,767 189,686\nVersion:1 Date of upload: 12 February 2026"
       ],
@@ -201,8 +221,9 @@
     {
       "page_number": 20,
       "page_label": "L-11-BORROWINGS",
+      "page_label_normalized": "L-11",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
-      "section": "unknown",
+      "section": "Borrowings Schedule",
       "text_blocks": [
         "Aditya Birla Sun Life Insurance Company Limited\nRegistration Number: 109 dated 31st January 2001\nForm L-11-Borrowings Schedule\nBORROWINGS\n(Amounts in lakhs of Indian Rupees)\nAs at As at\nParticulars 31st December, 2025 31st December, 2024\n1 In the form of Debentures/Bonds* 1 50,000 1 30,000\n2 From Banks - -\n3 From Financial Institutions - -\n4 From Others - -\nTotal 150,000 130,000\n*Amounts due within 12 months from the date of Balance Sheet: Nil\n*Unsecured, subordinated, non convertible debentures issued as per IRDAI (Other Forms of Capital) Regulations, 2022\nDISCLOSURE FOR SECURED BORROWINGS#\nSl.No. Source / Instrument Amount Borrowed Amount of Security Nature of Security\n1\n2\n3\n4\n5\n# No Secured Borrowings\nVersion:1 Date of upload: 12 February 2026"
       ],
@@ -211,6 +232,7 @@
     {
       "page_number": 21,
       "page_label": "L-12",
+      "page_label_normalized": "L-12",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
       "section": "Investments (Shareholders) Schedule",
       "text_blocks": [
@@ -221,8 +243,9 @@
     {
       "page_number": 22,
       "page_label": "L-13-INVESTMENTS",
+      "page_label_normalized": "L-13",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
-      "section": "unknown",
+      "section": "Investments (Policyholders) Schedule",
       "text_blocks": [
         "Aditya Birla Sun Life Insurance Company Limited\nRegistration Number: 109 dated 31st January 2001\nForm L-13-Investments Policyholders Schedule\nINVESTMENTS-POLICYHOLDERS\n(Amounts in lakhs of Indian Rupees)\nAs at As at\nParticulars 31st December, 2025 31st December, 2024\nLONG TERM INVESTMENTS\n1 Government securities and Government guaranteed bonds including Treasury Bills 3 ,984,911 3 ,450,042\n2 Other Approved Securities 1 8,543 2 1,332\n3 (a) Shares\n(aa) Equity 3 36,477 2 61,755\n(bb) Preference - -\n(b) Mutual Funds - -\n(c) Derivative Instruments - -\n(d) Debentures / Bonds 7 24,828 7 15,196\n(e) Other Securities (Fixed Deposits) 3 ,000 4 ,000\n(f) Subsidiaries - -\n(g) Investment Properties-Real Estate 4 7,441 3 5,627\n4 Investment in Infrastructure and Social Sector 6 79,497 6 63,983\n5 Other than Approved Investments 1 46,260 1 11,235\nTotal (A) 5 ,940,957 5 ,263,170\nSHORT TERM INVESTMENTS\n1 Government securities and Government guaranteed bonds including Treasury Bills 3 ,065 1 1,439\n2 Other Approved Securities\n- Fixed Deposits - -\n- Others 2 99 -\n3 (a) Shares\n(aa) Equity - -\n(bb) Preference - -\n(b) Mutual funds 5 ,000 -\n(c) Derivative Instruments - -\n(d) Debentures / Bonds 4 0,455 2 2,027\n(e) Other Securities\n- Fixed Deposits 3 0,996 2 ,500\n- Others 1 56,030 5 4,943\n(f) Subsidiaries - -\n(g) Investment Properties-Real Estate 2 ,000 -\n4 Investment in Infrastructure and Social Sector 1 8,375 2 1,388\n5 Other than Approved Investments 4 00 1 ,499\nTotal (B) 2 56,620 1 13,796\nTOTAL (A) + (B) 6 ,197,577 5 ,376,966\nNotes:\n1Aggregate amount of Company's investments and the market value:\na) Aggregate amount of Company's investment other than listed Equity Securities & Mutual Funds 5,668,123 4 ,977,331\nb) Market Value of above investment 5,705,210 5 ,135,238\n2Investment in holding company at cost 3 9,479 4 3\n3Investment in subsidiaries company at cost - -\n4Investment made out of catastrophe reserve - -\n5Debt Securities are held to maturity and reduction in market values represent market conditions and not a\n- -\npermanent dimunition in the value of investments,if any.\n6Historical cost of equity and equity related securities included above:\na. Mutual Funds* 7 ,614 2 ,614\nb. Equity Stocks 371,689 3 12,667\nc. Additional Tier 1 Bonds 2 7,453 2 4,953\nd. Infrastructure Investment Trusts 6,886 5 ,911\ne. Alternate Investment Funds 3 0,809 1 7,850\nf. Real Estate Investment Properties 3 2,525 2 5,703\n7The value of equity shares lent by the Company under securities lending and borrowing scheme (SLB) and\noutstanding 2 ,262 -\n* Mutual Fund details are covered under Other than approved Investment and Mutual Funds\nAmounts for the previous quarter & period have been reclassified / regrouped wherever necessary.\nVersion:1 Date of upload: 12 February 2026"
       ],
@@ -231,6 +254,7 @@
     {
       "page_number": 23,
       "page_label": "L-14",
+      "page_label_normalized": "L-14",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
       "section": "Investments - Assets Held to Cover Linked Liabilities Schedule",
       "text_blocks": [
@@ -241,6 +265,7 @@
     {
       "page_number": 24,
       "page_label": "L-14A",
+      "page_label_normalized": "L-14A",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
       "section": "Aggregate value of Investments other than Equity Shares and Mutual Fund",
       "text_blocks": [
@@ -251,6 +276,7 @@
     {
       "page_number": 25,
       "page_label": "L-15",
+      "page_label_normalized": "L-15",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
       "section": "Loans Schedule",
       "text_blocks": [
@@ -261,6 +287,7 @@
     {
       "page_number": 26,
       "page_label": "L-16",
+      "page_label_normalized": "L-16",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
       "section": "Fixed Assets Schedule",
       "text_blocks": [
@@ -271,6 +298,7 @@
     {
       "page_number": 27,
       "page_label": "L-17",
+      "page_label_normalized": "L-17",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
       "section": "Cash and Bank Balance Schedule",
       "text_blocks": [
@@ -281,8 +309,9 @@
     {
       "page_number": 28,
       "page_label": "L-18-ADVANCES",
+      "page_label_normalized": "L-18",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
-      "section": "unknown",
+      "section": "Advances & Other Assets Schedule",
       "text_blocks": [
         "Aditya Birla Sun Life Insurance Company Limited\nRegistration Number: 109 dated 31st January 2001\nForm L-18-Advances and Other Assets Schedule\nADVANCES AND OTHER ASSETS\n(Amounts in lakhs of Indian Rupees)\nAs at As at As at As at\nParticulars 31st December, 2025 31st December, 2025 31st December, 2024 31st December, 2024\nADVANCES\n1 Reserve deposits with ceding companies - -\n2 Application money for investments - -\n3 Prepayments 3,166 3 ,988\n4 Advances to Directors / Officers - -\nAdvance tax paid and taxes deducted at source (Net of provision for\n5 516 5 22\nTax)\n6 Others:\na) Advance to Suppliers/Contractors 3,215 3 ,593\nb) Gratuity and Advances to Employees 11,939 9 ,151\nc) Other Advances 757 1 ,024\nTotal (A) 19,593 18,278\nOTHER ASSETS\n1 Income accrued on investments 103,827 9 1,098\n2 Outstanding Premiums 41,827 3 8,336\n3 Agents' Balances (gross) 964 4 09\nLess: Provision for doubtful debts (244) 720 ( 143) 2 66\n4 Foreign Agencies Balances - -\nDue from other entities carrying on insurance business (including\n5 3,229 5 ,869\nreinsures)\nLess: Provision for doubtful debts - 3,229 - 5 ,869\n6 Due from Subsidiaries/ holding company 566 4 0\n7 Unclaimed Fund 2,377 6 ,387\nIncome accrued on unclaimed fund during the period 284 2,661 5 76 6 ,963\nDeposit with Reserve Bank of India\n8 - -\n[pursuant to section 7 of Insurance Act,1938]\n9 Others:\na) Deposits 15,711 1 1,775\nb) Outstanding Trades 10,006 1 1,680\nc) Insurance Policies (Leave Encashment) 5,359 4 ,988\nd) Derivative Asset 10,423 4 3,966\ne) MTM Margin Receivable - FRA 52,387 6 88\nf) Goods and Services tax unutilised credits 3,008 2 6\ng) Investments held for terminated cases 4,108 -\nTotal (B) 253,832 215,695\nTotal (A+B) 273,425 233,973\nAmounts for the previous quarter & period have been reclassified / regrouped wherever necessary.\nVersion:1 Date of upload: 12 February 2026"
       ],
@@ -291,6 +320,7 @@
     {
       "page_number": 29,
       "page_label": "L-19",
+      "page_label_normalized": "L-19",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
       "section": "Current Liabilities Schedule",
       "text_blocks": [
@@ -301,6 +331,7 @@
     {
       "page_number": 30,
       "page_label": "L-20",
+      "page_label_normalized": "L-20",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
       "section": "Provisions Schedule",
       "text_blocks": [
@@ -311,6 +342,7 @@
     {
       "page_number": 31,
       "page_label": "L-21",
+      "page_label_normalized": "L-21",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
       "section": "Misc Expenditure Schedule",
       "text_blocks": [
@@ -321,6 +353,7 @@
     {
       "page_number": 32,
       "page_label": "L-22",
+      "page_label_normalized": "L-22",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
       "section": "Analytical Ratios",
       "text_blocks": [
@@ -331,6 +364,7 @@
     {
       "page_number": 33,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": null,
       "section": "unknown",
       "text_blocks": [
@@ -341,6 +375,7 @@
     {
       "page_number": 34,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": null,
       "section": "unknown",
       "text_blocks": [
@@ -351,6 +386,7 @@
     {
       "page_number": 35,
       "page_label": "L-23",
+      "page_label_normalized": "L-23",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
       "section": "Receipts & Payment Schedule",
       "text_blocks": [
@@ -361,6 +397,7 @@
     {
       "page_number": 36,
       "page_label": "L-24",
+      "page_label_normalized": "L-24",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
       "section": "Valuation of Net Liablities",
       "text_blocks": [
@@ -371,6 +408,7 @@
     {
       "page_number": 37,
       "page_label": "L-25",
+      "page_label_normalized": "L-25",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
       "section": "(i) & (ii)",
       "text_blocks": [
@@ -381,6 +419,7 @@
     {
       "page_number": 38,
       "page_label": "L-25",
+      "page_label_normalized": "L-25",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
       "section": "(i) & (ii)",
       "text_blocks": [
@@ -391,6 +430,7 @@
     {
       "page_number": 39,
       "page_label": "L-25",
+      "page_label_normalized": "L-25",
       "company_name": "Aditya Birla Sun Life Insurance Company Ltd",
       "section": "(i) & (ii)",
       "text_blocks": [
@@ -401,6 +441,7 @@
     {
       "page_number": 40,
       "page_label": "L-25",
+      "page_label_normalized": "L-25",
       "company_name": "Aditya Birla Sun Life Insurance Co Ltd",
       "section": "(i) & (ii)",
       "text_blocks": [
@@ -411,8 +452,9 @@
     {
       "page_number": 41,
       "page_label": "L-26-INVESTMENT",
+      "page_label_normalized": "L-26",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
-      "section": "unknown",
+      "section": "Investment Assets (Life Insurers)",
       "text_blocks": [
         "FORM L-26-INVESTMENT ASSETS(LIFE INSURERS)-3A\nAditya Birla Sun Life Insurance Company Limited\nRegistration Number: 109 dated 31st January 2001 PART - A\nStatement as on: 31st December, 2025\nStatement of Investment Assets (Life Insurers)\n(Business within India) 100\nPeriodicity of Submission: Quarterly (Amounts in lakhs of Indian Rupees)\nAmount\nSection I Reconciliation of Investment Assets\nNo Particulars Sch Amount Total Investment Assets (as per Balance Sheet) 11,004,787.03\n1 Investments (Shareholders) 8 615,933.71 Balance Sheet Value of:\nInvestments (Policyholders) 8A 6,197,577.38 A. Life Fund 5 ,350,335.58\nInvestments (Linked Liabilities) 8B 4 ,191,275.94 B. Pension & General Annuity and Group Business (includes group non linked AUM of INR 12,64,469 lakhs) 1 ,463,175.51\n2 Loans 9 83,667.53 C. Unit Linked Funds (includes group linked AUM of INR 14,16,029 lakhs) 4 ,191,275.94\n3 Fixed Assets 10 22,392.17 1 1,004,787.03\n4 Current Assets -\na. Cash & Bank Balance 11 35,025.99\nb. Advances & Other Assets 12 273,426.96\n5 Current Liabilities -\na. Current Liabilities 13 293,641.42\nb. Provisions 14 34,201.87\nc. Misc. Exp not Written Off 15 -\nd. Debit Balance of P&L A/c -\nApplication of Funds as per Balance Sheet (A) 11,091,456.40\nLess: Other Assets SCH\n1 Loans (if any) 9 83,667.53\n2 Fixed Assets (if any) 10 22,392.17\n3 Cash & Bank Balance (if any) 11 35,025.99\n4 Advances & Other Assets (if any) 12 273,426.96\n5 Current Liabilities 13 293,641.42\n6 Provisions 14 34,201.87\n7 Misc. Exp not Written Off 15 -\n8 Investments held outside India -\n9 Debit Balance of P&L A/c -\nTOTAL (B) 8 6,669.36\nInvestment Assets (A-B) 1 1,004,787.03\nSection II\nNON - LINKED BUSINESS\nA. LIFE FUND % as per Reg Balance SH FRSM+ UL-Non Unit Res P P A H R NON PAR B ( o S o H k + V P a H lu ) e Actual % FVC Amount Total Fund Market Value\n(a) (b) (c) (d) (e) (f) = (g) = [(f) - (h) (i)=(f+h) (j)\n[a+b+c+d+e] (a)]%\n1 Central Govt. Sec Not Less than 25% - 1 21,746.00 1 ,606,654.11 4 84,378.37 1 ,082,270.87 3 ,295,049.34 62.15% - 3 ,295,049.34 3 ,287,275.43\nCentralGovtSec,StateGovtSecorOtherApprovedSecurities(incl(i)\n2 above) Not Less than 50% - 1 59,974.19 1 ,654,106.56 5 37,078.96 1 ,114,235.69 3 ,465,395.39 65.36% - 3 ,465,395.39 3 ,458,949.85\n3 Investment subject to Exposure Norms - - - - - - - - -\na. Infrastructure/ Social/ Housing Sector - - - - - - - - -\n1. Approved Investments Not Less than 15% - 2 63,397.73 2 04,744.74 2 26,672.61 1 37,919.71 8 32,734.79 15.82% 1 ,471.05 8 34,205.84 8 49,980.12\n2. Other Investments - 4 ,596.58 1 ,414.65 6 ,916.51 9 52.93 1 3,880.68 0.15% 3 ,157.50 1 7,038.18 1 7,309.19\nb. i) Approved Investments Not exceeding 35% 1 1,300.00 1 55,674.14 2 27,565.34 2 97,944.96 1 53,292.08 8 45,776.52 15.95% 3 3,464.70 8 79,241.22 8 98,123.63\nii) Other Investments - 1 9,324.53 2 0,678.56 9 0,355.02 1 3,929.45 1 44,287.57 2.72% 1 0,167.39 1 54,454.96 1 55,926.14\nTOTAL LIFE FUND 100% 1 1,300.00 602,967.17 2 ,108,509.85 1,158,968.06 1,420,329.86 5 ,302,074.95 9978.69% 48,260.64 5,350,335.59 5,380,288.93\nSection II HBousing and Infrastructure Reconciliation\nSH PH Book Value Actual % FVC Amount Total Fund Market Value\nA. LIFE FUND % as per Reg Balance FRSM UL-Non Unit Res PAR NON PAR (SH+PH)\n(a) (b) (c) (d) (e) (f) = (g) = [(f) - (h) (i)=(a+f+h) (j)\n[a+b+c+d+e] (a)]%\n1 3 a.(ii) + 3 b.(ii) above Not exceeding 15% - 2 3,921.12 2 2,093.21 9 7,271.53 1 4,882.38 1 58,168.25 2.98% 1 3,324.89 1 71,493.14 1 73,235.33\n2 Total Housing & Infrastructure From 1, 2 & 3 Not Less than 15% - 2 67,994.31 2 06,159.39 2 33,589.12 1 38,872.64 8 46,615.47 15.97% 4 ,628.55 8 51,244.02 8 67,289.31\nTOTAL - 291,915.43 228,252.60 330,860.65 153,755.02 1 ,004,783.72 18.95% 17,953.44 1,022,737.16 1,040,524.64\nPH\nB. PENSION & GENERAL ANNUITY AND GROUP BUSINESS % as per Reg PAR NON PAR Book Value Actual % FVC Amount Total Fund* Market Value\n(a) (b) (c)= (a+b) (d) (e) (f)=(c+e) (g)\n1 Central Govt. Sec Not Less than 20% - 574,700.25 5 74,700.25 39.44% - 574,700.25 5 76,475.95\nCentralGovtSec,StateGovtSecorOtherApprovedSecurities(incl(i)\n2 above) Not Less than 40% - 701,397.59 7 01,397.59 48.13% - 701,397.59 7 04,409.38\n3 Balance in Approved investment Not Exceeding 60% - 755,892.47 7 55,892.47 51.87% 5 ,885.45 761,777.92 7 75,976.28\nTOTAL PENSION, GENERAL ANNUITY FUND 100% - 1,457,290.06 1 ,457,290.06 100.00% 5,885.45 1,463,175.51 1 ,480,385.66\nLINKED BUSINESS\nC. LINKED FUNDS % as per Reg PH Total Fund* Actual %\nPAR NON PAR\n(a) (b) (c)= (a+b) (d)\n1 Approved Investments Not Less than 75% - 3,858,579.63 3 ,858,579.63 92.06%\n2 Other Investments Not More than 25% - 332,696.31 3 32,696.31 7.94%\nTOTAL LINKED INSURANCE FUND 100% - 4,191,275.94 4 ,191,275.94 100.00%\nNote:\na) + FRSM refers to 'Funds Representing Solvency Margin'\nb) Other Investments is as permitted as per Sec 27A (2) of Insurance Act, 1938 as amended from time to time\nc) Pattern of Investment is applicable to both Shareholders funds representing solvency margin and policyholders funds.\nd) Exposure Norms apply to Funds held beyond Solvency Margin, held in a separate Custody Account Version:1 Date of upload: 12 February 2026\nd) Category of Investment (COI) shall be as per Guidelines, as amended from time to time."
       ],
@@ -421,8 +463,9 @@
     {
       "page_number": 42,
       "page_label": "L-27-UNIT",
+      "page_label_normalized": "L-27",
       "company_name": "Unit Linked Insurance Business Aditya Birla Sun Life Insurance Company Limited",
-      "section": "unknown",
+      "section": "Investments - Unit Linked Business",
       "text_blocks": [
         "FORM L-27-UNIT LINKED BUSINESS-3A\nFORM 3A\nUnit Linked Insurance Business\nAditya Birla Sun Life Insurance Company Limited\nRegistration Number: 109 dated 31st\nJanuary 2001\nLink to Item 'C' of FORM 3A (Part A)\nPeriodicity of Submission: Quarterly\nStatement as on: 31st December, 2025\nRs. Lakhs\nULGF00112/06/01BSLGGROULGF00212/06/01BSLG ULGF00312/06/01BSLG ULGF00416/07/02BSLGULGF00530/05/03BSLULGF00630/05/03BSULGF00824/08/04BSLULGF01026/11/07BSL\nWTH109-Group Growth SECURE109-Group STABLE109-Group FIXINT109-Group Fixed IGRBOND109-Group LIGRGILT109-Group IGRMMKT109-Group IGGRADV109-Group\nPARTICULARS\nFund Secure Fund Stable Fund Interest Fund Bond Fund Gilt Fund Money Market Fund Growth Advantage\nFund\nOpening Balance (Market Value) 7 5,250.36 7 96,228.31 1 31,873.60 3 08,270.90 3 2,763.31 9 ,082.52 1 2,670.05 1 5,167.11\nAdd: Inflow during the Quarter 9,204.96 136,048.08 17,065.52 10,001.43 433.01 4.98 3,191.73 947.75\nIncrease / (Decrease) Value of Inv [Net] 2 ,436.57 1 5,900.32 3 ,470.67 3 ,963.52 4 89.57 1 16.96 1 48.06 5 34.05\nLess: Outflow during the Quarter ( 1,872.53) ( 17,170.70) ( 2,094.57) ( 16,508.99) ( 1,767.57) ( 874.78) ( 5,870.20) ( 290.78)\nTOTAL INVESTIBLE FUNDS (MKT VALUE) 8 5,019.36 9 31,006.01 1 50,315.22 3 05,726.86 3 1,918.32 8 ,329.68 1 0,139.64 1 6,358.13\nULGF00112/06/01BSLGGROULGF00212/06/01BSLG ULGF00312/06/01BSLG ULGF00416/07/02BSLGULGF00530/05/03BSLULGF00630/05/03BSULGF00824/08/04BSLULGF01026/11/07BSL\nWTH109-Group Growth SECURE109-Group STABLE109-Group FIXINT109-Group Fixed IGRBOND109-Group LIGRGILT109-Group IGRMMKT109-Group IGGRADV109-Group\nINVESTMENT OF UNIT FUND Fund Secure Fund Stable Fund Interest Fund Bond Fund Gilt Fund Money Market Fund Growth Advantage\nActual Inv. % Actual Actual Inv. % Actual Actual Inv. % Actual Actual Inv. % Actual Actual Inv. % Actual Actual Inv. % Actual Actual Inv. % Actual Actual Inv. % Actual\nApproved Investments (>=75%)\nCentral Govt Securities 2 5,225.77 29.67% 4 15,761.85 44.66% 5 4,463.81 36.23% 2 04,852.77 67.01% - 0.00% 8 ,101.14 97.26% - 0.00% 4 ,739.45 28.97%\nState Governement Securities - 0.00% 2 0,344.56 2.19% 2 ,510.84 1.67% 7 ,570.68 2.48% - 0.00% - 0.00% - 0.00% - 0.00%\nOther Approved Securities - 0.00% 3 2.74 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00%\nCorporate Bonds 6 ,761.57 7.95% 1 18,570.57 12.74% 1 2,995.75 8.65% 5 8,105.24 19.01% 1 2,230.72 38.32% - 0.00% 3 ,915.47 38.62% 1 85.23 1.13%\nInfrastructure Bonds 2 ,873.64 3.38% 1 29,759.96 13.94% 2 1,957.72 14.61% 1 3,539.13 4.43% 1 7,088.71 53.54% - 0.00% 1 ,806.22 17.81% - 0.00%\nEquity 3 7,554.71 44.17% 1 62,057.72 17.41% 4 6,826.74 31.15% - 0.00% - 0.00% - 0.00% - 0.00% 8 ,742.82 53.45%\nMoney Market Investments 7 ,283.69 8.57% 5 7,816.88 6.21% 3 ,782.00 2.52% 1 2,830.00 4.20% 1 ,590.00 4.98% 1 19.00 1.43% 4 ,233.60 41.75% 1 ,588.00 9.71%\nMutual funds - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00%\nDeposit with Banks - 0.00% 1 ,500.00 0.16% - 0.00% 1 ,000.00 0.33% - 0.00% - 0.00% - 0.00% - 0.00%\nSub Total (A) 7 9,699.38 93.74% 9 05,844.28 97.30% 1 42,536.86 94.83% 2 97,897.82 97.44% 3 0,909.43 96.84% 8 ,220.14 98.69% 9 ,955.29 98.18% 1 5,255.50 93.26%\nCurrent Assets:\nAccrued Interest 8 05.04 0.95% 1 7,149.07 1.84% 2 ,437.56 1.62% 6 ,793.89 2.22% 1 ,008.31 3.16% 1 09.07 1.31% 1 83.88 1.81% 7 4.78 0.46%\nDividend Recievable - - - - - - - - - - - - - - - -\nBank Balance 2 .02 0.00% 1 4.90 0.00% 3 .25 0.00% 5 .85 0.00% 0 .62 0.00% 1 .06 0.01% 0 .46 0.00% 0 .91 0.01%\nReceivable for Sale of Investments - - - - - - - - - - - - - - - -\nOther Current Assets (for Investments) 1 8.99 0.02% ( 0.00) -0.00% ( 0.00) -0.00% 1 .33 0.00% - - - - - - 0 .00 0.00%\nLess: Current Liabilities\nPayable for Investments - - ( 11,528.28) -1.24% - - - - - - - - - - - -\nFund Mgmt Charges Payable - - - - - - - - - - - - - - - -\nOther Current Liabilities (for Investment s ) - - ( 44.72) -0.00% ( 5.57) -0.00% ( 13.51) -0.00% ( 0.04) -0.00% ( 0.59) -0.01% ( 0.00) -0.00% - -\nSub Total (B) 8 26.05 0.97% 5 ,590.97 0.60% 2 ,435.24 1.62% 6 ,787.56 2.22% 1 ,008.89 3.16% 1 09.53 1.31% 1 84.35 1.82% 7 5.69 0.46%\nOther Investments (<=25%)\nCorporate Bonds - - - - - - 1 ,041.49 0.34% - - - - - - - -\nInfrastructure Bonds - - - - - - - - - - - - - - - -\nEquity 4 ,493.91 5.29% 1 9,570.78 2.10% 5 ,343.12 3.55% - - - - - - - - 1 ,026.94 6.28%\nMutual funds - - - - - - - - - - - - - - - -\nOthers - - - - - - - - - - - - - - - -\nSub Total (C) 4 ,493.91 5.29% 1 9,570.78 2.10% 5 ,343.12 3.55% 1 ,041.49 0.34% - - - - - - 1 ,026.94 6.28%\nTotal (A + B + C) 8 5,019.35 100.00% 9 31,006.03 100.00% 1 50,315.21 100.00% 3 05,726.87 100.00% 3 1,918.32 100.00% 8 ,329.67 100.00% 1 0,139.63 100.00% 1 6,358.13 100.00%\nFund Carried Forward (as per LB 2) 8 5,019.35 - 9 31,006.03 - 1 50,315.21 - 3 05,726.87 - 3 1,918.32 - 8 ,329.67 - 1 0,139.63 - 1 6,358.13 -\nNote:\n1. The aggregate of all the above Segregated Unit-Funds reconciles with item C of FORM 3A (Part A), for both Par & Non Par Business\n2. Other Investments' are as permitted under Sec 27A(2) of Insurance Act,1938 as amended from time to time.\n3. Category of Investment (COI) shall be as per Guidelines issued.\nVersion:1 Date of upload: 12 February 2026"
       ],
@@ -431,8 +474,9 @@
     {
       "page_number": 43,
       "page_label": "L-27-UNIT",
+      "page_label_normalized": "L-27",
       "company_name": "Unit Linked Insurance Business Aditya Birla Sun Life Insurance Company Limited",
-      "section": "unknown",
+      "section": "Investments - Unit Linked Business",
       "text_blocks": [
         "FORM L-27-UNIT LINKED BUSINESS-3A\nFORM 3A\nUnit Linked Insurance Business\nAditya Birla Sun Life Insurance Company Limited\nRegistration Number: 109 dated 31st\nJanuary 2001\nPeriodicity of Submission: Quarterly\nStatement as on: 31st December, 2025\nRs. Lakhs\nULGF01322/09/08BS ULGF01425/02/10BS ULGF01728/11/ ULGF01828/11/11BS ULGF01928/11/1 ULGF02128/11/11BS ULGF02228/11/ ULIF00113/03/01BSL ULIF00213/03/01BSLEN\nLGSHTDBT109-Group LGINCADV109-Group 11BSLGFXINT210 LGROWTH2109- 1BSLGRMMKT21 LGSHTDB2109-Group 11BSLGSTABL21 BUILDER109- HANCE109-Individual\nPARTICULARS\nShort Term Debt Income Advantage 9-Group Fixed Group Growth Fund 09-Group Money Short Term Debt 09-Group Stable Individual Builder Enhancer Fund\nFund Fund Interest Fund II II Market Fund II Fund II Fund II Fund\nOpening Balance (Market Value) 1 9,182.82 1 ,845.97 1 74.71 7 ,533.44 4 1.94 4 ,006.88 2 11.33 2 1,141.98 5 38,370.29\nAdd: Inflow during the Quarter 4,251.52 (0.00) - - - 0.00 0.00 440.81 5,364.97\nIncrease / (Decrease) Value of Inv [Net] 1 80.20 2 1.59 1 .30 2 31.29 0 .59 2 5.39 4 .39 4 21.05 1 4,343.43\nLess: Outflow during the Quarter ( 18,344.33) - ( 176.01) ( 7,764.73) ( 0.07) ( 4,032.27) ( 215.71) ( 1,393.83) ( 23,265.90)\nTOTAL INVESTIBLE FUNDS (MKT VALUE) 5 ,270.21 1 ,867.56 - - 4 2.46 - - 2 0,610.01 5 34,812.79\nULGF01322/09/08BS ULGF01425/02/10BS ULGF01728/11/ ULGF01828/11/11BS ULGF01928/11/1 ULGF02128/11/11BS ULGF02228/11/ ULIF00113/03/01BSL ULIF00213/03/01BSLEN\nLGSHTDBT109-Group LGINCADV109-Group 11BSLGFXINT210 LGROWTH2109- 1BSLGRMMKT21 LGSHTDB2109-Group 11BSLGSTABL21 BUILDER109- HANCE109-Individual\nINVESTMENT OF UNIT FUND Short Term Debt Income Advantage 9-Group Fixed Group Growth Fund 09-Group Money Short Term Debt 09-Group Stable Individual Builder Enhancer Fund\nActual Actual Actual\nActual Inv. % Actual Actual Inv. % Actual % Actual Actual Inv. % Actual % Actual Actual Inv. % Actual % Actual Actual Inv. % Actual Actual Inv. % Actual\nInv. Inv. Inv.\nApproved Investments (>=75%)\nCentral Govt Securities 1 ,083.96 20.57% 1 ,389.01 74.38% - 0.00% - 0.00% 2 0.01 47.13% - 0.00% - 0.00% 1 1,319.37 54.92% 2 24,854.09 42.04%\nState Governement Securities - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% 5 ,368.73 1.00%\nOther Approved Securities - 0.00% 2 5.06 1.34% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% 1 04.76 0.02%\nCorporate Bonds 2 ,056.99 39.03% 2 55.28 13.67% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% 8 44.56 4.10% 5 2,206.31 9.76%\nInfrastructure Bonds 1 ,954.35 37.08% 1 04.27 5.58% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% 1 ,938.50 9.41% 5 9,108.23 11.05%\nEquity - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% 3 ,849.20 18.68% 1 50,766.97 28.19%\nMoney Market Investments 3 2.00 0.61% 6 6.00 3.53% - 0.00% - 0.00% 2 1.00 49.47% - 0.00% - 0.00% 1 ,041.16 5.05% 1 3,926.00 2.60%\nMutual funds - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00%\nDeposit with Banks - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% 2 ,500.00 0.47%\nSub Total (A) 5 ,127.30 97.29% 1 ,839.62 98.50% - 0.00% - 0.00% 4 1.01 96.60% - 0.00% - 0.00% 1 8,992.79 92.15% 5 08,835.09 95.14%\nCurrent Assets:\nAccrued Interest 1 41.75 2.69% 2 7.75 1.49% - - - - 0 .25 0.58% - - - - 3 09.07 1.50% 7 ,415.51 1.39%\nDividend Recievable - - - - - - - - - - - - - - - - - -\nBank Balance 1 .16 0.02% 0 .18 0.01% - - - - 1 .20 2.82% - - 0 .00 - 1 .27 0.01% 8 .65 0.00%\nReceivable for Sale of Investments - - - - - - - - - - - - - - - - - -\nOther Current Assets (for Investments) - - - - - - - - - - - - ( 0.00) - 2 0.25 0.10% 0 .03 0.00%\nLess: Current Liabilities\nPayable for Investments - - - - - - - - - - - - - - - - - -\nFund Mgmt Charges Payable - - - - - - - - - - - - - - - - - -\nOther Current Liabilities (for Investment s ) - - - - - - - - - - - - - - - - ( 502.51) -0.09%\nSub Total (B) 1 42.91 2.71% 2 7.93 1.50% - - - - 1 .45 3.40% - - - - 3 30.59 1.60% 6 ,921.68 1.29%\nOther Investments (<=25%)\nCorporate Bonds - - - - - - - - - - - - - - 1 ,053.76 5.11% 3 ,694.63 0.69%\nInfrastructure Bonds - - - - - - - - - - - - - - - - - -\nEquity - - - - - - - - - - - - - - 2 32.85 1.13% 1 5,361.40 2.87%\nMutual funds - - - - - - - - - - - - - - - - - -\nOthers - - - - - - - - - - - - - - - - - -\nSub Total (C) - - - - - - - - - - - - - - 1 ,286.62 6.24% 1 9,056.02 3.56%\nTotal (A + B + C) 5 ,270.21 100.00% 1 ,867.55 100.00% - 0.00% 0 .00 100.00% 4 2.46 100.00% - 0.00% - 0.00% 2 0,610.00 100.00% 5 34,812.80 100.00%\nFund Carried Forward (as per LB 2) 5 ,270.21 - 1 ,867.55 - - - - - 4 2.46 - - - - - 2 0,610.00 - 5 34,812.80 -\nNote:\n1. The aggregate of all the above Segregated Unit-Funds reconciles with item C of FORM 3A (Part A), for both Par & Non Par Business\n2. Other Investments' are as permitted under Sec 27A(2) of Insurance Act,1938 as amended from time to time.\n3. Category of Investment (COI) shall be as per Guidelines issued.\nVersion:1 Date of upload: 12 February 2026"
       ],
@@ -441,8 +485,9 @@
     {
       "page_number": 44,
       "page_label": "L-27-UNIT",
+      "page_label_normalized": "L-27",
       "company_name": "Unit Linked Insurance Business Aditya Birla Sun Life Insurance Company Limited",
-      "section": "unknown",
+      "section": "Investments - Unit Linked Business",
       "text_blocks": [
         "FORM L-27-UNIT LINKED BUSINESS-3A\nFORM 3A\nUnit Linked Insurance Business\nAditya Birla Sun Life Insurance Company Limited\nRegistration Number: 109 dated 31st\nJanuary 2001\n-\nPeriodicity of Submission: Quarterly\nStatement as on: 31st December, 2025\nRs. Lakhs\nULIF00313/03/01BSL ULIF00404/03/03BSL ULIF00504/03/03BSL ULIF00604/03/03 ULIF00704/02/04BSL ULIF00826/06/04BSLII ULIF00931/05/05BSLULIF01008/07/05BSLI ULIF01101/06/07BSLII\nPROTECT109- IENRICH109-IPP IGROWTH109-IPP BSLNOURISH109- CREATOR109- MAGNI109-Individual BALANCE109- ASSURE109- NMAXI109-Individual\nPARTICULARS\nIndividual Protector Enrich Fund Growth Fund IPP Nourish Fund Individual Creator Magnifier Fund Individual Balancer Individual Assure Maximiser Fund\nFund Fund Fund Fund\nOpening Balance (Market Value) 2 7,771.96 8 ,996.05 1 ,616.60 5 52.38 4 7,799.60 1 23,519.38 1 ,921.34 2 6,854.44 2 99,739.32\nAdd: Inflow during the Quarter 1,025.58 26.24 1.86 0.87 1,072.34 3,294.33 21.21 4,013.96 23,286.05\nIncrease / (Decrease) Value of Inv [Net] 4 52.12 1 92.54 3 2.20 7 .56 1 ,678.64 7 ,021.27 4 0.36 3 20.62 1 6,420.41\nLess: Outflow during the Quarter ( 2,687.78) ( 516.49) ( 69.77) ( 32.72) ( 2,816.73) ( 5,898.46) ( 190.58) ( 4,141.38) ( 24,243.19)\nTOTAL INVESTIBLE FUNDS (MKT VALUE) 2 6,561.88 8 ,698.34 1 ,580.89 5 28.09 4 7,733.85 1 27,936.52 1 ,792.33 2 7,047.64 3 15,202.59\nULIF00313/03/01BSL ULIF00404/03/03BSL ULIF00504/03/03BSL ULIF00604/03/03 ULIF00704/02/04BSL ULIF00826/06/04BSLII ULIF00931/05/05BSLULIF01008/07/05BSLI ULIF01101/06/07BSLII\nPROTECT109- IENRICH109-IPP IGROWTH109-IPP BSLNOURISH109- CREATOR109- MAGNI109-Individual BALANCE109- ASSURE109- NMAXI109-Individual\nINVESTMENT OF UNIT FUND Individual Protector Enrich Fund Growth Fund IPP Nourish Fund Individual Creator Magnifier Fund Individual Balancer Individual Assure Maximiser Fund\nActual\nActual Inv. % Actual Actual Inv. % Actual Actual Inv. % Actual % Actual Actual Inv. % Actual Actual Inv. % Actual Actual Inv. % Actual Actual Inv. % Actual Actual Inv. % Actual\nInv.\nApproved Investments (>=75%)\nCentral Govt Securities 1 5,635.38 58.86% 4 ,792.64 55.10% 7 39.37 46.77% 3 09.06 58.52% 1 7,057.09 35.73% 1 ,705.72 1.33% 1 ,063.64 59.34% 1 5,015.58 55.52% - 0.00%\nState Governement Securities - 0.00% - 0.00% 2 54.61 16.11% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00%\nOther Approved Securities - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00%\nCorporate Bonds 3 ,367.13 12.68% 4 90.73 5.64% 2 39.06 15.12% 6 0.90 11.53% 1 ,344.21 2.82% 5 ,775.68 4.51% 5 2.12 2.91% 6 ,803.01 25.15% - 0.00%\nInfrastructure Bonds 2 ,872.38 10.81% - 0.00% - 0.00% 6 2.29 11.80% 1 ,713.12 3.59% 3 ,911.46 3.06% - 0.00% 3 ,544.02 13.10% - 0.00%\nEquity 2 ,513.00 9.46% 2 ,884.04 33.16% 3 02.46 19.13% 5 2.17 9.88% 2 2,635.85 47.42% 1 08,192.97 84.57% 4 34.90 24.26% - 0.00% 2 73,612.88 86.81%\nMoney Market Investments 5 48.00 2.06% 3 00.00 3.45% 2 4.00 1.52% 3 3.00 6.25% 2 ,401.47 5.03% 1 ,124.16 0.88% 2 64.00 14.73% 9 92.00 3.67% 8 24.00 0.26%\nMutual funds - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00%\nDeposit with Banks - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00%\nSub Total (A) 2 4,935.89 93.88% 8 ,467.41 97.35% 1 ,559.50 98.65% 5 17.42 97.98% 4 5,151.74 94.59% 1 20,709.99 94.35% 1 ,814.66 101.25% 2 6,354.61 97.44% 2 74,436.88 87.07%\nCurrent Assets:\nAccrued Interest 4 72.37 1.78% 1 18.60 1.36% 2 4.49 1.55% 8 .79 1.66% 3 72.82 0.78% 2 99.91 0.23% 1 9.03 1.06% 6 71.64 2.48% - -\nDividend Recievable - - - - - - - - - - 2 .49 0.00% - - - - - -\nBank Balance 1 .35 0.01% 0 .90 0.01% 0 .64 0.04% 1 .17 0.22% 0 .88 0.00% 2 .14 0.00% 0 .56 0.03% 1 .00 0.00% 3 .79 0.00%\nReceivable for Sale of Investments - - - - - - - - - - - - - - - - - -\nOther Current Assets (for Investments) ( 0.00) -0.00% 0 .00 0.00% ( 0.00) -0.00% ( 0.00) -0.00% ( 0.00) -0.00% 0 .00 0.00% ( 0.00) -0.00% 2 0.39 0.08% 1 ,005.42 0.32%\nLess: Current Liabilities\nPayable for Investments - - - - - - - - - - - - ( 53.01) -2.96% - - - -\nFund Mgmt Charges Payable - - - - - - - - - - - - - - - - - -\nOther Current Liabilities (for Investment s ) ( 18.19) -0.07% ( 49.88) -0.57% ( 13.59) -0.86% - - ( 98.81) -0.21% ( 130.48) -0.10% ( 3.79) -0.21% - - ( 0.31) -0.00%\nSub Total (B) 4 55.53 1.72% 6 9.62 0.80% 1 1.54 0.73% 9 .96 1.89% 2 74.89 0.58% 1 74.06 0.14% ( 37.21) -2.08% 6 93.03 2.56% 1 ,008.90 0.32%\nOther Investments (<=25%)\nCorporate Bonds 1 ,053.76 3.97% - - - - - - 1 ,066.36 2.23% - - - - - - - -\nInfrastructure Bonds - - - - - - - - - - - - - - - - - -\nEquity 1 16.69 0.44% 1 61.32 1.85% 9 .85 0.62% 0 .71 0.13% 1 ,240.87 2.60% 7 ,052.48 5.51% 1 4.89 0.83% - - 3 9,756.82 12.61%\nMutual funds - - - - - - - - - - - - - - - - - -\nOthers - - - - - - - - - - - - - - - - - -\nSub Total (C) 1 ,170.45 4.41% 1 61.32 1.85% 9 .85 0.62% 0 .71 0.13% 2 ,307.23 4.83% 7 ,052.48 5.51% 1 4.89 0.83% - - 3 9,756.82 12.61%\nTotal (A + B + C) 2 6,561.87 100.00% 8 ,698.35 100.00% 1 ,580.89 100.00% 5 28.09 100.00% 4 7,733.85 100.00% 1 27,936.53 100.00% 1 ,792.34 100.00% 2 7,047.64 100.00% 3 15,202.60 100.00%\nFund Carried Forward (as per LB 2) 2 6,561.87 - 8 ,698.35 - 1 ,580.89 - 5 28.09 - 4 7,733.85 - 1 27,936.53 - 1 ,792.34 - 2 7,047.64 - 3 15,202.60 -\nNote:\n1. The aggregate of all the above Segregated Unit-Funds reconciles with item C of FORM 3A (Part A), for both Par & Non Par Business\n2. Other Investments' are as permitted under Sec 27A(2) of Insurance Act,1938 as amended from time to time.\n3. Category of Investment (COI) shall be as per Guidelines issued.\nVersion:1 Date of upload: 12 February 2026"
       ],
@@ -451,8 +496,9 @@
     {
       "page_number": 45,
       "page_label": "L-27-UNIT",
+      "page_label_normalized": "L-27",
       "company_name": "Unit Linked Insurance Business Aditya Birla Sun Life Insurance Company Limited",
-      "section": "unknown",
+      "section": "Investments - Unit Linked Business",
       "text_blocks": [
         "FORM L-27-UNIT LINKED BUSINESS-3A\nFORM 3A\nUnit Linked Insurance Business\nAditya Birla Sun Life Insurance Company Limited\nRegistration Number: 109 dated 31st\nJanuary 2001\nPeriodicity of Submission: Quarterly\nStatement as on: 31st December, 2025\nRs. Lakhs\nULIF01217/10/07BSLIN ULIF01507/08/08BSLII ULIF01723/06/09BSLSU ULIF01911/12/0 ULIF02203/02/1 ULIF02301/07/1 ULIF02408/09/1 ULIF02510/02/1 ULIF02610/02/1 ULIF02707/10/11BSLIP\nMULTI109-Individual NCADV109-Individual PER20109-Individual 9BSLITITAN1109-0BSLPLATPR110 0BSLIDISCPF109- 0BSLPLATADV101BSLFSIT5P1109-1BSLFSITSP1109- UREEQ109-Individual\nPARTICULARS\nMultiplier Fund Income Advantage Super 20 Fund Titanium Plus I 9-Platinum DISCONTINUED 9-PLATINUM Foresight 5P Foresight SP Pure Equity Fund\nFund Premier Fund I POLICY FUND ADVANTAGE Fund - I Fund - I\nOpening Balance (Market Value) 4 62,952.00 1 01,733.73 2 09,868.88 0 .45 3 .35 0 .00 1 .05 0 .00 0 .00 2 93,843.38\nAdd: Inflow during the Quarter 51,602.25 9,667.08 19,082.01 - 1.33 0.69 0.25 - - 31,982.05\nIncrease / (Decrease) Value of Inv [Net] 3 0,626.94 1 ,353.74 1 3,770.03 0 .00 0 .03 - 0 .01 - - 3 ,720.08\nLess: Outflow during the Quarter ( 43,430.24) ( 9,808.16) ( 21,769.84) - ( 1.33) ( 0.69) ( 0.25) - - ( 25,429.28)\nTOTAL INVESTIBLE FUNDS (MKT VALUE) 5 01,750.95 1 02,946.39 2 20,951.08 0 .45 3 .38 0 .00 1 .05 0 .00 0 .00 3 04,116.23\nULIF01217/10/07BSLIN ULIF01507/08/08BSLII ULIF01723/06/09BSLSU ULIF01911/12/0 ULIF02203/02/1 ULIF02301/07/1 ULIF02408/09/1 ULIF02510/02/1 ULIF02610/02/1 ULIF02707/10/11BSLIP\nMULTI109-Individual NCADV109-Individual PER20109-Individual 9BSLITITAN1109-0BSLPLATPR110 0BSLIDISCPF109- 0BSLPLATADV101BSLFSIT5P1109-1BSLFSITSP1109- UREEQ109-Individual\nINVESTMENT OF UNIT FUND Multiplier Fund Income Advantage Super 20 Fund Titanium Plus I 9-Platinum DISCONTINUED 9-PLATINUM Foresight 5P Foresight SP Pure Equity Fund\nActual Actual Actual Actual Actual Actual\nActual Inv. % Actual Actual Inv. % Actual Actual Inv. % Actual % Actual % Actual % Actual % Actual % Actual % Actual Actual Inv. % Actual\nInv. Inv. Inv. Inv. Inv. Inv.\nApproved Investments (>=75%)\nCentral Govt Securities - 0.00% 7 0,179.35 68.17% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00%\nState Governement Securities - 0.00% 2 55.19 0.25% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00%\nOther Approved Securities - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00%\nCorporate Bonds - 0.00% 2 1,419.15 20.81% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00%\nInfrastructure Bonds - 0.00% 5 ,751.64 5.59% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00%\nEquity 3 79,912.39 75.72% - 0.00% 1 96,916.91 89.12% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% 2 29,905.16 75.60%\nMoney Market Investments 3 ,557.00 0.71% 2 ,895.00 2.81% 8 00.00 0.36% 0 .25 55.43% 3 .00 88.75% - 0.00% 0 .75 71.26% - 0.00% - 0.00% 7 56.00 0.25%\nMutual funds - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00%\nDeposit with Banks - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00%\nSub Total (A) 3 83,469.39 76.43% 1 00,500.33 97.62% 1 97,716.91 89.48% 0 .25 55.43% 3 .00 88.75% - 0.00% 0 .75 71.26% - 0.00% - 0.00% 2 30,661.16 75.85%\nCurrent Assets:\nAccrued Interest - - 2 ,146.08 2.08% - - - - - - - - - - - - - - - -\nDividend Recievable - - - - - - - - - - - - - - - - - - - -\nBank Balance 6 .30 0.00% 1 .62 0.00% 3 .50 0.00% 0 .20 44.57% 0 .38 11.25% - - 0 .30 28.74% - - - - 4 .07 0.00%\nReceivable for Sale of Investments 3 ,022.58 0.60% - - - - - - - - - - - - - - - - - -\nOther Current Assets (for Investments) 1 ,969.35 0.39% 2 98.36 0.29% 1 84.97 0.08% - - - - - - - - - - - - 1 ,812.03 0.60%\nLess: Current Liabilities\nPayable for Investments ( 2,666.00) -0.53% - - - - - - - - - - - - - - - - - -\nFund Mgmt Charges Payable - - - - - - - - - - - - - - - - - - - -\nOther Current Liabilities (for Investment s ) ( 0.83) -0.00% - - - - - - - - - - - - - - - - - -\nSub Total (B) 2 ,331.40 0.46% 2 ,446.06 2.38% 1 88.47 0.09% 0 .20 44.57% 0 .38 11.25% - - 0 .30 28.74% 0 .00 - 0 .00 - 1 ,816.10 0.60%\nOther Investments (<=25%)\nCorporate Bonds - - - - - - - - - - - - - - - - - - - -\nInfrastructure Bonds - - - - - - - - - - - - - - - - - - - -\nEquity 1 15,950.17 23.11% - - 2 3,045.70 10.43% - - - - - - - - - - - - 7 1,638.98 23.56%\nMutual funds - - - - - - - - - - - - - - - - - - - -\nOthers - - - - - - - - - - - - - - - - - - - -\nSub Total (C) 1 15,950.17 23.11% - - 2 3,045.70 10.43% - - - - - - - - - - - - 7 1,638.98 23.56%\nTotal (A + B + C) 5 01,750.95 100.00% 1 02,946.40 100.00% 2 20,951.08 100.00% 0 .45 100.00% 3 .38 100.00% - 0.00% 1 .05 100.00% 0 .00 100.00% 0 .00 100.00% 3 04,116.24 100.00%\nFund Carried Forward (as per LB 2) 5 01,750.95 - 1 02,946.40 - 2 20,951.08 - 0 .45 - 3 .38 - 0 .00 - 1 .05 - 0 .00 - 0 .00 - 3 04,116.24 -\nNote:\n1. The aggregate of all the above Segregated Unit-Funds reconciles with item C of FORM 3A (Part A), for both Par & Non Par Business\n2. Other Investments' are as permitted under Sec 27A(2) of Insurance Act,1938 as amended from time to time.\n3. Category of Investment (COI) shall be as per Guidelines issued.\nVersion:1 Date of upload: 12 February 2026"
       ],
@@ -461,8 +507,9 @@
     {
       "page_number": 46,
       "page_label": "L-27-UNIT",
+      "page_label_normalized": "L-27",
       "company_name": "Unit Linked Insurance Business Aditya Birla Sun Life Insurance Company Limited",
-      "section": "unknown",
+      "section": "Investments - Unit Linked Business",
       "text_blocks": [
         "FORM L-27-UNIT LINKED BUSINESS-3A\nFORM 3A\nUnit Linked Insurance Business\nAditya Birla Sun Life Insurance Company Limited\nRegistration Number: 109 dated 31st\nJanuary 2001\nPeriodicity of Submission: Quarterly\nStatement as on: 31st December, 2025\nRs. Lakhs\nULIF02807/10/11BSL ULIF03127/08/13BSL ULIF03027/08/13 ULIF03205/07/13BSLIL ULIF03305/07/13BSLIULIF02907/10/11BSLIULIF03530/10/14BSLIULIF03430/10/14BSLI ULIF03722/06/18ABS\nLIQPLUS109- IINADGT109-BSLI BSLIMAXGT109- DIS109-BSLI LINKED PNDIS109-BSLI VALUEM109- CNFIDX109-BSLI ASTALC109-BSLI LIMUMNC109-\nPARTICULARS\nIndividual Liquid Plus INCOME BSLI MAXIMISER DISCONTINUED POLICY PENSION Individual Value CAPPED NIFTY INDEX ASSET ALLOCATION Individual MNC Fund\nFund ADVANTAGE GUARANTEED FUND DISCONTINUED Momentum Fund FUND FUND\nOpening Balance (Market Value) 2 0,663.90 4 ,944.91 7 75.99 1 51,261.82 1 4,763.29 6 4,623.68 2 1,919.05 2 6,460.26 3 7,395.34\nAdd: Inflow during the Quarter 13,923.78 779.81 15.20 48,465.14 4,924.12 2,827.24 2,355.57 1,770.77 2,030.05\nIncrease / (Decrease) Value of Inv [Net] 2 79.73 5 8.41 4 2.96 2 ,015.54 2 10.54 2 ,874.02 1 ,373.97 1 ,183.91 7 6.59\nLess: Outflow during the Quarter ( 13,570.66) ( 1,263.30) ( 69.26) ( 50,801.38) ( 5,673.20) ( 3,887.54) ( 3,458.70) ( 3,413.88) ( 4,011.87)\nTOTAL INVESTIBLE FUNDS (MKT VALUE) 2 1,296.75 4 ,519.83 7 64.89 1 50,941.12 1 4,224.75 6 6,437.40 2 2,189.89 2 6,001.06 3 5,490.11\nULIF02807/10/11BSL ULIF03127/08/13BSL ULIF03027/08/13 ULIF03205/07/13BSLIL ULIF03305/07/13BSLIULIF02907/10/11BSLIULIF03530/10/14BSLIULIF03430/10/14BSLI ULIF03722/06/18ABS\nLIQPLUS109- IINADGT109-BSLI BSLIMAXGT109- DIS109-BSLI LINKED PNDIS109-BSLI VALUEM109- CNFIDX109-BSLI ASTALC109-BSLI LIMUMNC109-\nINVESTMENT OF UNIT FUND Individual Liquid Plus INCOME BSLI MAXIMISER DISCONTINUED POLICY PENSION Individual Value CAPPED NIFTY INDEX ASSET ALLOCATION Individual MNC Fund\nActual\nActual Inv. % Actual Actual Inv. % Actual % Actual Actual Inv. % Actual Actual Inv. % Actual Actual Inv. % Actual Actual Inv. % Actual Actual Inv. % Actual Actual Inv. % Actual\nInv.\nApproved Investments (>=75%)\nCentral Govt Securities - 0.00% 2 ,880.66 63.73% - 0.00% 1 5.01 0.01% - 0.00% - 0.00% - 0.00% 4 ,431.32 17.04% - 0.00%\nState Governement Securities - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00%\nOther Approved Securities - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00%\nCorporate Bonds 1 0,298.66 48.36% 1 ,231.55 27.25% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% 2 06.79 0.80% - 0.00%\nInfrastructure Bonds 4 ,212.26 19.78% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00%\nEquity - 0.00% - 0.00% 7 03.43 91.97% - 0.00% - 0.00% 5 9,511.29 89.57% 2 1,568.18 97.20% 2 0,013.34 76.97% 3 2,600.91 91.86%\nMoney Market Investments 5 ,285.10 24.82% 3 35.00 7.41% 2 2.00 2.88% 1 54,179.38 102.15% 1 4,910.03 104.82% 2 91.00 0.44% 8 8.00 0.40% 6 2.00 0.24% 3 98.00 1.12%\nMutual funds - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00%\nDeposit with Banks 5 00.00 2.35% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00%\nSub Total (A) 2 0,296.02 95.30% 4 ,447.21 98.39% 7 25.43 94.84% 1 54,194.39 102.16% 1 4,910.03 104.82% 5 9,802.29 90.01% 2 1,656.18 97.59% 2 4,713.45 95.05% 3 2,998.91 92.98%\nCurrent Assets:\nAccrued Interest 5 29.88 2.49% 9 1.32 2.02% - - 0 .54 0.00% - - - - - - 4 3.48 0.17% - -\nDividend Recievable - - - - - - - - - - - - - - - - - -\nBank Balance 1 .27 0.01% 0 .90 0.02% 0 .29 0.04% 1 .43 0.00% 0 .66 0.00% 0 .96 0.00% 0 .65 0.00% 1 .00 0.00% 1 .45 0.00%\nReceivable for Sale of Investments - - - - - - - - - - 3 97.28 0.60% - - 8 91.80 3.43% - -\nOther Current Assets (for Investments) 4 69.58 2.20% - - ( 0.00) -0.00% - - - - 0 .00 0.00% - - 1 64.87 0.63% - -\nLess: Current Liabilities\nPayable for Investments - - - - - - - - - - ( 506.03) -0.76% ( 38.73) -0.17% ( 0.01) -0.00% - -\nFund Mgmt Charges Payable - - - - - - - - - - - - - - - - - -\nOther Current Liabilities (for Investment s ) - - ( 19.60) -0.43% ( 3.24) -0.42% ( 3,255.24) -2.16% ( 685.95) -4.82% ( 32.57) -0.05% ( 63.79) -0.29% ( 410.44) -1.58% ( 81.21) -0.23%\nSub Total (B) 1 ,000.73 4.70% 7 2.62 1.61% ( 2.95) -0.39% ( 3,253.27) -2.16% ( 685.29) -4.82% ( 140.36) -0.21% ( 101.87) -0.46% 6 90.70 2.66% ( 79.76) -0.22%\nOther Investments (<=25%)\nCorporate Bonds - - - - - - - - - - - - - - - - - -\nInfrastructure Bonds - - - - - - - - - - - - - - - - - -\nEquity - - - - 4 2.41 5.54% - - - - 6 ,775.47 10.20% 6 35.59 2.86% 5 96.93 2.30% 2 ,570.96 7.24%\nMutual funds - - - - - - - - - - - - - - - - - -\nOthers - - - - - - - - - - - - - - - - - -\nSub Total (C) - - - - 4 2.41 5.54% - - - - 6 ,775.47 10.20% 6 35.59 2.86% 5 96.93 2.30% 2 ,570.96 7.24%\nTotal (A + B + C) 2 1,296.75 100.00% 4 ,519.83 100.00% 7 64.88 100.00% 1 50,941.12 100.00% 1 4,224.74 100.00% 6 6,437.39 100.00% 2 2,189.90 100.00% 2 6,001.07 100.00% 3 5,490.11 100.00%\nFund Carried Forward (as per LB 2) 2 1,296.75 - 4 ,519.83 - 7 64.88 - 1 50,941.12 - 1 4,224.74 - 6 6,437.39 - 2 2,189.90 - 2 6,001.07 - 3 5,490.11 -\nNote:\n1. The aggregate of all the above Segregated Unit-Funds reconciles with item C of FORM 3A (Part A), for both Par & Non Par Business\n2. Other Investments' are as permitted under Sec 27A(2) of Insurance Act,1938 as amended from time to time.\n3. Category of Investment (COI) shall be as per Guidelines issued.\nVersion:1 Date of upload: 12 February 2026"
       ],
@@ -471,8 +518,9 @@
     {
       "page_number": 47,
       "page_label": "L-27-UNIT",
+      "page_label_normalized": "L-27",
       "company_name": "Unit Linked Insurance Business Aditya Birla Sun Life Insurance Company Limited",
-      "section": "unknown",
+      "section": "Investments - Unit Linked Business",
       "text_blocks": [
         "FORM L-27-UNIT LINKED BUSINESS-3A\nFORM 3A\nUnit Linked Insurance Business\nAditya Birla Sun Life Insurance Company Limited\nRegistration Number: 109 dated 31st\nJanuary 2001\nPeriodicity of Submission: Quarterly\nStatement as on: 31st December, 2025\nRs. Lakhs\nULIF03910/11/23ABS ULIF03810/11/23AB ULIF04015/06/24ABS ULIF04101/10/24AB ULGF02311/07/25BS ULIF04206/11/25AB Total of All Funds\nLSMALCP109-Small SLESGFND109-ESG LIALPHA109-Nifty SLMOMNTM109- LCAPPRTC109-Group SLDIVYLD109-ABSLI\nPARTICULARS\nCap Fund Fund Alpha 50 Index Fund Nifty Midcap150 Capital Protection Dividend Yield Fund\nMomentum 50 Index Fund\nOpening Balance (Market Value) 1 1,958.98 1 ,913.51 2 4,347.55 5 ,819.08 1 ,725.98 - 3 ,969,562.77\nAdd: Inflow during the Quarter 2,632.60 464.56 8,170.94 1,953.77 700.00 6,071.85 4 29,118.28\nIncrease / (Decrease) Value of Inv [Net] 5 48.45 1 12.30 5 01.00 2 69.42 2 3.44 2 1.54 1 27,517.28\nLess: Outflow during the Quarter ( 1,024.17) ( 236.96) ( 3,793.23) ( 666.19) ( 0.00) ( 372.28) ( 334,922.51)\nTOTAL INVESTIBLE FUNDS (MKT VALUE) 1 4,115.86 2 ,253.41 2 9,226.26 7 ,376.08 2 ,449.42 5 ,721.11 4 ,191,275.82\nULIF03910/11/23ABS ULIF03810/11/23AB ULIF04015/06/24ABS ULIF04101/10/24AB ULGF02311/07/25BS ULIF04206/11/25AB Total of All Funds\nLSMALCP109-Small SLESGFND109-ESG LIALPHA109-Nifty SLMOMNTM109- LCAPPRTC109-Group SLDIVYLD109-ABSLI\nINVESTMENT OF UNIT FUND Cap Fund Fund Alpha 50 Index Fund Nifty Midcap150 Capital Protection Dividend Yield Fund\nActual Inv. % Actual Actual Inv. % Actual Actual Inv. % Actual Actual Inv. % Actual Actual Inv. % Actual Actual Inv. % Actual Actual Inv. % Actual\nApproved Investments (>=75%)\nCentral Govt Securities - 0.00% - 0.00% - 0.00% - 0.00% 2 ,229.62 91.03% - 0.00% 1 ,087,865.67 25.96%\nState Governement Securities - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% 3 6,304.61 0.87%\nOther Approved Securities - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% 1 62.56 0.00%\nCorporate Bonds - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% 3 19,416.69 7.62%\nInfrastructure Bonds - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% 2 72,197.90 6.49%\nEquity 1 0,337.82 73.24% 1 ,782.32 79.09% 2 5,206.12 86.24% 5 ,651.80 76.62% - 0.00% 4 ,363.30 76.27% 1 ,808,899.41 43.16%\nMoney Market Investments 2 08.00 1.47% 6 6.00 2.93% 1 2.00 0.04% 1 58.00 2.14% 1 72.76 7.05% 2 49.00 4.35% 2 95,288.21 7.05%\nMutual funds - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00%\nDeposit with Banks - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% - 0.00% 5 ,500.00 0.13%\nSub Total (A) 1 0,545.82 74.71% 1 ,848.32 82.02% 2 5,218.12 86.29% 5 ,809.80 78.77% 2 ,402.38 98.08% 4 ,612.30 80.62% 3 ,825,635.05 91.28%\nCurrent Assets:\nAccrued Interest - - - - - - - - 4 6.43 1.90% - - 4 1,301.29 0.99%\nDividend Recievable - - 0 .14 0.01% - - - - - - - - 2 .63 0.00%\nBank Balance 0 .81 0.01% 1 .19 0.05% 1 .37 0.00% 1 .12 0.02% 0 .60 0.02% 0 .98 0.02% 8 5.01 0.00%\nReceivable for Sale of Investments - - - - 1 77.58 0.61% 1 78.45 2.42% - - - - 4 ,667.69 0.11%\nOther Current Assets (for Investments) 2 81.48 1.99% 4 1.39 1.84% 3 78.40 1.29% 1 2.74 0.17% - - 6 64.78 11.62% 7 ,344.36 0.18%\nLess: Current Liabilities\nPayable for Investments - - - - ( 114.09) -0.39% - - - - ( 115.40) -2.02% ( 15,021.55) -0.36%\nFund Mgmt Charges Payable - - - - - - - - - - - - - 0.00%\nOther Current Liabilities (for Investment s ) - - - - - - - - - - - - ( 5,434.84) -0.13%\nSub Total (B) 2 82.29 2.00% 4 2.72 1.90% 4 43.26 1.52% 1 92.31 2.61% 4 7.03 1.92% 5 50.36 9.62% 3 2,944.59 0.79%\nOther Investments (<=25%)\nCorporate Bonds - - - - - - - - - - - - 7 ,910.00 0.19%\nInfrastructure Bonds - - - - - - - - - - - - - 0.00%\nEquity 3 ,287.74 23.29% 3 62.36 16.08% 3 ,565.00 12.20% 1 ,373.96 18.63% - - 5 58.44 9.76% 3 24,786.31 7.75%\nMutual funds - - - - - - - - - - - - - 0.00%\nOthers - - - - - - - - - - - - - 0.00%\nSub Total (C) 3 ,287.74 23.29% 3 62.36 16.08% 3 ,565.00 12.20% 1 ,373.96 18.63% - - 5 58.44 9.76% 3 32,696.31 7.94%\nTotal (A + B + C) 1 4,115.85 100.00% 2 ,253.40 100.00% 2 9,226.38 100.00% 7 ,376.07 100.00% 2 ,449.41 100.00% 5 ,721.10 100.00% 4 ,191,275.95 100.00%\nFund Carried Forward (as per LB 2) 1 4,115.85 - 2 ,253.40 - 2 9,226.38 - 7 ,376.07 - 2 ,449.41 - 5 ,721.10 - 4 ,191,275.95\nNote:\n1. The aggregate of all the above Segregated Unit-Funds reconciles with item C of FORM 3A (Part A), for both Par & Non Par Business\n2. Other Investments' are as permitted under Sec 27A(2) of Insurance Act,1938 as amended from time to time.\n3. Category of Investment (COI) shall be as per Guidelines issued.\nVersion:1 Date of upload: 12 February 2026"
       ],
@@ -481,6 +529,7 @@
     {
       "page_number": 48,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": "Statement of NAV of Segregated Funds Aditya Birla Sun Life Insurance Company Limited",
       "section": "unknown",
       "text_blocks": [
@@ -491,6 +540,7 @@
     {
       "page_number": 49,
       "page_label": "L-29",
+      "page_label_normalized": "L-29",
       "company_name": "Detail regarding debt securities Aditya Birla Sun Life Insurance Company Limited",
       "section": "Details regarding Debt securities",
       "text_blocks": [
@@ -501,6 +551,7 @@
     {
       "page_number": 50,
       "page_label": "L-29",
+      "page_label_normalized": "L-29",
       "company_name": "Detail regarding debt securities Aditya Birla Sun Life Insurance Company Limited",
       "section": "Details regarding Debt securities",
       "text_blocks": [
@@ -511,6 +562,7 @@
     {
       "page_number": 51,
       "page_label": "L-30",
+      "page_label_normalized": "L-30",
       "company_name": "Name of related parties where control exists Ultimate Holding company Grasim Industries Limited Holding Company Aditya Birla Capital Limited",
       "section": "Related Party Transanctions",
       "text_blocks": [
@@ -521,6 +573,7 @@
     {
       "page_number": 52,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
       "section": "unknown",
       "text_blocks": [
@@ -531,6 +584,7 @@
     {
       "page_number": 53,
       "page_label": "L-31",
+      "page_label_normalized": "L-31",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
       "section": "Board of Directors & Key Management Persons",
       "text_blocks": [
@@ -541,6 +595,7 @@
     {
       "page_number": 54,
       "page_label": "L-32",
+      "page_label_normalized": "L-32",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
       "section": "Available Solvency Margin and Solvency Ratio",
       "text_blocks": [
@@ -551,8 +606,9 @@
     {
       "page_number": 55,
       "page_label": "L-33-NPAS",
+      "page_label_normalized": "L-33",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
-      "section": "unknown",
+      "section": "NPAs",
       "text_blocks": [
         "FORM L-33-NPAs Name of the Fund Life\nDETAILS OF NON-PERFORMING ASSETS As on: 31st December, 2025\nAditya Birla Sun Life Insurance Company Limited\nRegistration Number: 109 dated 31st January 2001 (Rs. Lakhs)\nBonds / Debentures Loans Other Debt instruments All Other Assets TOTAL\nNO PARTICULARS Prev. FY ( As on 31 Prev. FY ( As on Prev. FY ( As on Prev. FY ( As on 31 Prev. FY ( As on 31\nYTD ( As on date) YTD ( As on date) YTD ( As on date) YTD ( As on date) YTD ( As on date)\nMar 2025) 31 Mar 2025) 31 Mar 2025) Mar 2025) Mar 2025)\n1 Investments Assets (As per Form 5) 1,263,475.76 1 ,171,742.83 - - - - 4,038,599.18 3 ,497,775.01 5,302,074.94 4 ,669,517.84\n2 Gross NPA\n3 % of Gross NPA on Investment Assets (2/1)\n4 Provision made on NPA NIL\n5 Provision as a % of NPA (4/2)\n6 Provision on Standard Assets\n7 Net Investment Assets (1-4) 1,263,475.76 1 ,171,742.83 - - - - 4,038,599.18 3 ,497,775.01 5,302,074.94 4 ,669,517.84\n8 Net NPA (2-4)\n9 % of Net NPA to Net Investment Assets (8/7) NIL\n10 Write off made during the period\nNote:\na) The above statement, is prepared 'fund-wise' Viz. Life Fund, Pension & Group Fund, ULIP Fund and at Assets Under Management level also.\nb) Gross NPA is investments classified as NPA, before any provisions\nc) Provision made on the 'Standard Assets' is as per Circular issued, as amended from time to time.\nd) Net Investment assets is net of 'provisions'\ne) Net NPA is gross NPAs less provisions\nf) Write off as approved by the Board\nVersion:1 Date of upload: 12 February 2026"
       ],
@@ -561,8 +617,9 @@
     {
       "page_number": 56,
       "page_label": "L-33-NPAS",
+      "page_label_normalized": "L-33",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
-      "section": "unknown",
+      "section": "NPAs",
       "text_blocks": [
         "FORM L-33-NPAs Name of the Fund Pension & General Annuity\nDETAILS OF NON-PERFORMING ASSETS As on: 31st December, 2025\nAditya Birla Sun Life Insurance Company Limited\nRegistration Number: 109 dated 31st January 2001 (Rs. Lakhs)\nBonds / Debentures Loans Other Debt instruments All Other Assets TOTAL\nNO PARTICULARS Prev. FY ( As on 31 Prev. FY ( As on Prev. FY ( As on 31 Prev. FY ( As on 31 Prev. FY ( As on 31\nYTD ( As on date) YTD ( As on date) YTD ( As on date) YTD ( As on date) YTD ( As on date)\nMar 2025) 31 Mar 2025) Mar 2025) Mar 2025) Mar 2025)\n1 Investments Assets (As per Form 5) 631,343.18 6 20,926.48 - - 1 6,305.68 1 7,857.02 809,641.20 8 48,456.26 1 ,457,290.06 1,487,239.75\n2 Gross NPA\n3 % of Gross NPA on Investment Assets (2/1)\n4 Provision made on NPA NIL\n5 Provision as a % of NPA (4/2)\n6 Provision on Standard Assets\n7 Net Investment Assets (1-4) 631,343.18 6 20,926.48 - - 1 6,305.68 1 7,857.02 809,641.20 8 48,456.26 1 ,457,290.06 1,487,239.75\n8 Net NPA (2-4)\n9 % of Net NPA to Net Investment Assets (8/7) NIL\n10 Write off made during the period\nNote:\na) The above statement, is prepared 'fund-wise' Viz. Life Fund, Pension & Group Fund, ULIP Fund and at Assets Under Management level also.\nb) Gross NPA is investments classified as NPA, before any provisions\nc) Provision made on the 'Standard Assets' is as per Circular issued, as amended from time to time.\nd) Net Investment assets is net of 'provisions'\ne) Net NPA is gross NPAs less provisions\nf) Write off as approved by the Board\nVersion:1 Date of upload: 12 February 2026"
       ],
@@ -571,8 +628,9 @@
     {
       "page_number": 57,
       "page_label": "L-33-NPAS",
+      "page_label_normalized": "L-33",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
-      "section": "unknown",
+      "section": "NPAs",
       "text_blocks": [
         "FORM L-33-NPAs Name of the Fund Linked\nDETAILS OF NON-PERFORMING ASSETS As on: 31st December, 2025\nAditya Birla Sun Life Insurance Company Limited\nRegistration Number: 109 dated 31st January 2001 (Rs. Lakhs)\nBonds / Debentures Loans Other Debt instruments All Other Assets TOTAL\nNO PARTICULARS Prev. FY ( As on 31 Prev. FY ( As on 31 Prev. FY ( As on 31 Mar Prev. FY ( As on 31 Mar Prev. FY ( As on 31\nYTD ( As on date) YTD ( As on date) YTD ( As on date) YTD ( As on date) YTD ( As on date)\nMar 2025) Mar 2025) 2025) 2025) Mar 2025)\n1 Investments Assets (As per Form 5) 5 99,524.59 6 23,573.68 - - 31,725.65 18,201.60 3,560,025.70 3,144,624.07 4 ,191,275.94 3,786,399.36\n2 Gross NPA\n3 % of Gross NPA on Investment Assets (2/1)\n4 Provision made on NPA NIL\n5 Provision as a % of NPA (4/2)\n6 Provision on Standard Assets\n7 Net Investment Assets (1-4) 5 99,524.59 6 23,573.68 - - 31,725.65 18,201.60 3,560,025.70 3,144,624.07 4 ,191,275.94 3,786,399.36\n8 Net NPA (2-4)\n9 % of Net NPA to Net Investment Assets (8/7) NIL\n10 Write off made during the period\nNote:\na) The above statement, is prepared 'fund-wise' Viz. Life Fund, Pension & Group Fund, ULIP Fund and at Assets Under Management level also.\nb) Gross NPA is investments classified as NPA, before any provisions\nc) Provision made on the 'Standard Assets' is as per Circular issued, as amended from time to time.\nd) Net Investment assets is net of 'provisions'\ne) Net NPA is gross NPAs less provisions\nf) Write off as approved by the Board\nVersion:1 Date of upload: 12 February 2026"
       ],
@@ -581,6 +639,7 @@
     {
       "page_number": 58,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": "Statement of Investment and Income on Investment Aditya Birla Sun Life Insurance Company Limited",
       "section": "unknown",
       "text_blocks": [
@@ -591,6 +650,7 @@
     {
       "page_number": 59,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": "Statement of Investment and Income on Investment Aditya Birla Sun Life Insurance Company Limited",
       "section": "unknown",
       "text_blocks": [
@@ -601,6 +661,7 @@
     {
       "page_number": 60,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": "Statement of Investment and Income on Investment Aditya Birla Sun Life Insurance Company Limited",
       "section": "unknown",
       "text_blocks": [
@@ -611,6 +672,7 @@
     {
       "page_number": 61,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": "Statement of Investment and Income on Investment Aditya Birla Sun Life Insurance Company Limited",
       "section": "unknown",
       "text_blocks": [
@@ -621,6 +683,7 @@
     {
       "page_number": 62,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": "Statement of Investment and Income on Investment Aditya Birla Sun Life Insurance Company Limited",
       "section": "unknown",
       "text_blocks": [
@@ -631,6 +694,7 @@
     {
       "page_number": 63,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": "Statement of Investment and Income on Investment Aditya Birla Sun Life Insurance Company Limited",
       "section": "unknown",
       "text_blocks": [
@@ -641,6 +705,7 @@
     {
       "page_number": 64,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": "Statement of Investment and Income on Investment Aditya Birla Sun Life Insurance Company Limited",
       "section": "unknown",
       "text_blocks": [
@@ -651,6 +716,7 @@
     {
       "page_number": 65,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": "Statement of Investment and Income on Investment Aditya Birla Sun Life Insurance Company Limited",
       "section": "unknown",
       "text_blocks": [
@@ -661,6 +727,7 @@
     {
       "page_number": 66,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": "Statement of Investment and Income on Investment Aditya Birla Sun Life Insurance Company Limited",
       "section": "unknown",
       "text_blocks": [
@@ -671,6 +738,7 @@
     {
       "page_number": 67,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": "Statement of Investment and Income on Investment Aditya Birla Sun Life Insurance Company Limited",
       "section": "unknown",
       "text_blocks": [
@@ -681,6 +749,7 @@
     {
       "page_number": 68,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": "Statement of Investment and Income on Investment Aditya Birla Sun Life Insurance Company Limited",
       "section": "unknown",
       "text_blocks": [
@@ -691,6 +760,7 @@
     {
       "page_number": 69,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": "Statement of Investment and Income on Investment Aditya Birla Sun Life Insurance Company Limited",
       "section": "unknown",
       "text_blocks": [
@@ -701,6 +771,7 @@
     {
       "page_number": 70,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": "A Aditya Birla Sun Life Insurance Company Limited",
       "section": "unknown",
       "text_blocks": [
@@ -711,6 +782,7 @@
     {
       "page_number": 71,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": "A Aditya Birla Sun Life Insurance Company Limited",
       "section": "unknown",
       "text_blocks": [
@@ -721,6 +793,7 @@
     {
       "page_number": 72,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": "A Aditya Birla Sun Life Insurance Company Limited",
       "section": "unknown",
       "text_blocks": [
@@ -731,6 +804,7 @@
     {
       "page_number": 73,
       "page_label": "L-36",
+      "page_label_normalized": "L-36",
       "company_name": "Premium and number of lives covered by policy type Aditya Birla Sun Life Insurance Company Limited",
       "section": "Premium and number of lives covered by policy type",
       "text_blocks": [
@@ -741,6 +815,7 @@
     {
       "page_number": 74,
       "page_label": "L-36",
+      "page_label_normalized": "L-36",
       "company_name": "Premium and number of lives covered by policy type Aditya Birla Sun Life Insurance Company Limited",
       "section": "Premium and number of lives covered by policy type",
       "text_blocks": [
@@ -751,6 +826,7 @@
     {
       "page_number": 75,
       "page_label": "L-36",
+      "page_label_normalized": "L-36",
       "company_name": "Premium and number of lives covered by policy type Aditya Birla Sun Life Insurance Company Limited",
       "section": "Premium and number of lives covered by policy type",
       "text_blocks": [
@@ -761,8 +837,9 @@
     {
       "page_number": 76,
       "page_label": "L-37-BUSINESS",
+      "page_label_normalized": "L-37",
       "company_name": "Aditya Birla Sun Life Insurance Co Ltd",
-      "section": "unknown",
+      "section": "Business Acquisition through Different Channels - Group",
       "text_blocks": [
         "FORM L-37-BUSINESS ACQUISITION THROUGH DIFFERENT CHANNELS (GROUP)\nName of the Insurer: Aditya Birla Sun Life Insurance Co Ltd Date: 31st Dec 2025\nBusiness Acquisition through Different Channels (Group) Quarter End: Dec 2025\nFor the Quarter - Current Year For the Quarter - Previous Year Up to the Quarter - Current Year Up to the Quarter - Previous Year\nSl.No.\nNo. of Lives Premium No. of Lives Premium No. of No. of Lives Premium No. of Lives Premium\nNo. of Schemes No. of Schemes No. of Schemes\nCovered (Rs. Lakhs) Covered (Rs. Lakhs) Schemes Covered (Rs. Lakhs) Covered (Rs. Lakhs)\nChannels\n1 Individual agents 1 7,615 1,568 6 6,033 1,456 11 31,732 22,206 19 31,731 4,838\n2 Corporate Agents-Banks 4 638,717 8,039 3 158,811 3,001 14 1,462,508 20,219 16 720,442 12,399\n3 Corporate Agents -Others 3 737,473 21,828 - 108,682 8,974 13 1,321,128 50,106 18 520,183 26,962\n4 Brokers 31 141,923 6,259 45 138,960 3,581 104 431,178 16,454 178 694,610 58,610\n5 Micro Agents - - - - - - - - - - - -\n6 Direct Business 19 273,944 174,851 60 565,400 103,174 69 758,271 325,842 117 1,531,030 300,779\n7 IMF - - - - - - - - - - - -\n8 Others (Please Specify) - - - - - - - - - - - -\nTotal 58 1,799,672 212,545 114 977,886 120,186 211 4,004,817 434,827 348 3,497,996 403,588\nReferral Arrangements\nVersion:1 Date of upload: 12 February 2026"
       ],
@@ -771,6 +848,7 @@
     {
       "page_number": 77,
       "page_label": "L-38",
+      "page_label_normalized": "L-38",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
       "section": "Business Acquisition through Different Channels - Individuals",
       "text_blocks": [
@@ -781,8 +859,9 @@
     {
       "page_number": 78,
       "page_label": "L-39-DATA",
+      "page_label_normalized": "L-39",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
-      "section": "unknown",
+      "section": "Data on Settlement of Claims",
       "text_blocks": [
         "FORM L-39-Data on Settlement of Claims (Individual)\nAditya Birla Sun Life Insurance Company Limited Quarter End: For Q3 Date: 31st December, 2025\nRegistration Number : 109 dated 31st January 2001\nAgeing of Claims1\nNo. of claims paid\nTotal No. of Total amount of claims\nSl.No. Types of Claims On or before 6 months -\n1 month 1 - 3 months 3 - 6 months > 1 year claims paid paid (Rs. In Lakhs)\nmatuirty 1 year\n1 Maturity Claims 2,904 2,000 2 4 9 6 4,925 12,042\n2 Survival Benefit2 237,914 56,202 1,030 1,041 1,829 785 298,801 35,876\n3 Annuities / Pension 19,858 1,212 136 148 390 395 22,139 1,894\n4 Surrender3 1,115 24,958 188 3 - - 26,264 105,957\n5 Other benefits4 4,198 4,402 48 4 2 1 8,655 24,951\nDeath Claims - 1,492 - - - - 1,492 15,880\n1 The ageing of claims:- in case of the death claim the settlement duration will be computed from the date of receipt of last requirement.\nDate of receipt of the last requirement to be readily available with the Insurer in respect of every claim.\n2 Rider Claims (Critical Illness) and money backs are reported in Survival Benefit.\n3 In case of Surrender, the computation of ageing of data will be from the date of application of surrender to the date of settlemet of the claim.\n4Rider Claims (Accident, income benefit & waiver premium), partial withdrawals and Health Claims are reported in Other Benefits.\nData for \"For the Quarter\" and \"Up to the Quarter\" are to be reported separately.\nFORM L-39-Data on Settlement of Claims (Group)\nAgeing of Claims1\nNo. of claims paid\nTotal No. of Total amount of claims\nSl.No. Types of Claims On or before 6 months -\n1 month 1 - 3 months 3 - 6 months > 1 year claims paid paid (Rs. In Lakhs)\nmatuirty 1 year\n1 Maturity Claims - - - - - - - -\n2 Survival Benefit - - - - - - - -\n3 Annuities / Pension - - - - - - - -\n4 Surrender - 18,639 - - - - 18,639 796\n5 Other benefits - 1,357 - - - - 1,357 147,999\nDeath Claims - 6,125 - - - - 6,125 15,911\n1 The ageing of claims:- in case of the death claim the settlement duration will be computed from the date of receipt of last requirement.\nData for \"For the Quarter\" and \"Up to the Quarter\" are to be reported separately.\nVersion:1 Date of upload: 12 February 2026"
       ],
@@ -791,8 +870,9 @@
     {
       "page_number": 79,
       "page_label": "L-39-DATA",
+      "page_label_normalized": "L-39",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
-      "section": "unknown",
+      "section": "Data on Settlement of Claims",
       "text_blocks": [
         "FORM L-39-Data on Settlement of Claims (Individual)\nAditya Birla Sun Life Insurance Company Limited Quarter End: Upto Q3 Date: 31st December, 2025\nRegistration Number : 109 dated 31st January 2001\nAgeing of Claims1\nNo. of claims paid Total amount of\nTotal No. of\nSl.No. Types of Claims On or before 6 months - 1 claims paid (Rs.\n1 month 1 - 3 months 3 - 6 months > 1 year claims paid\nmatuirty year In Lakhs)\n1 Maturity Claims 7,812 4,946 41 30 22 13 12,864 28,340\n2 Survival Benefit2 550,424 182,039 3,947 2,638 3,352 1,319 743,719 90,199\nAnnuities / Pension 50,465 8,113 1,759 1,069 1,393 873 63,672 5,759\n3\n4 Surrender3 3,000 70,084 256 14 1 - 73,355 263,389\n5 Other benefits4 11,123 14,851 94 27 16 15 26,126 70,705\nDeath Claims - 4,757 - - - - 4,757 46,298\n1 The ageing of claims:- in case of the death claim the settlement duration will be computed from the date of receipt of last requirement.\nDate of receipt of the last requirement to be readily available with the Insurer in respect of every claim.\n2 Rider Claims (Critical Illness) and money backs are reported in Survival Benefit.\n3 In case of Surrender, the computation of ageing of data will be from the date of application of surrender to the date of settlemet of the claim.\n4Rider Claims (Accident, income benefit & waiver premium), partial withdrawals and Health Claims are reported in Other Benefits.\nData for \"For the Quarter\" and \"Up to the Quarter\" are to be reported separately.\nFORM L-39-Data on Settlement of Claims (Group)\nAgeing of Claims1\nNo. of claims paid Total amount of\nTotal No. of\nSl.No. Types of Claims On or before 6 months - 1 claims paid (Rs.\n1 month 1 - 3 months 3 - 6 months > 1 year claims paid\nmatuirty year In Lakhs)\n1 Maturity Claims - - - - - - - 0\n2 Survival Benefit - - - - - - - 0\nAnnuities / Pension - - - - - - - 0\n3\n4 Surrender - 61,481 - - - - 61,481 2470.018331\n5 Other benefits - 3,917 - - - - 3,917 399014.846\nDeath Claims - 21,334 - - - - 21,334 52,305\n1 The ageing of claims:- in case of the death claim the settlement duration will be computed from the date of receipt of last requirement.\nData for \"For the Quarter\" and \"Up to the Quarter\" are to be reported separately.\nVersion:1 Date of upload: 12 February 2026"
       ],
@@ -801,6 +881,7 @@
     {
       "page_number": 80,
       "page_label": "L-40",
+      "page_label_normalized": "L-40",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
       "section": "Quarterly Claims Data",
       "text_blocks": [
@@ -811,6 +892,7 @@
     {
       "page_number": 81,
       "page_label": "L-40",
+      "page_label_normalized": "L-40",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
       "section": "Quarterly Claims Data",
       "text_blocks": [
@@ -821,6 +903,7 @@
     {
       "page_number": 82,
       "page_label": "L-41",
+      "page_label_normalized": "L-41",
       "company_name": "GRIEVANCE DISPOSAL Aditya Birla Sun Life Insurance Company Limited",
       "section": "Grievance Disposal",
       "text_blocks": [
@@ -831,6 +914,7 @@
     {
       "page_number": 83,
       "page_label": "L-42",
+      "page_label_normalized": "L-42",
       "company_name": "Aditya Birla Sun Life Insurance Company Limited",
       "section": "Valuation Basis",
       "text_blocks": [
@@ -841,6 +925,7 @@
     {
       "page_number": 84,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": "Voting Activity Disclosure under Stewardship Code Aditya Birla Sun Life Insurance Company Limited",
       "section": "unknown",
       "text_blocks": [
@@ -851,6 +936,7 @@
     {
       "page_number": 85,
       "page_label": "L-45",
+      "page_label_normalized": "L-45",
       "company_name": "Offices and Other Information Aditya Birla Sun Life Insurance Company Limited",
       "section": "Office Information",
       "text_blocks": [

@@ -5,12 +5,14 @@
   "fy": "FY26",
   "period_label": "Q3 FY2025-26",
   "source_file": "TataAIA_Q3_FY26.pdf",
+  "company_full_name": "Tata Sons Private Limited",
   "total_pages": 69,
   "page_definitions_found": true,
   "pages": [
     {
       "page_number": 1,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": null,
       "section": "unknown",
       "text_blocks": [
@@ -21,6 +23,7 @@
     {
       "page_number": 2,
       "page_label": "L-1-A-RA",
+      "page_label_normalized": "L-1-A-RA",
       "company_name": null,
       "section": "Revenue Account",
       "text_blocks": [
@@ -31,6 +34,7 @@
     {
       "page_number": 3,
       "page_label": "L-1-A-RA",
+      "page_label_normalized": "L-1-A-RA",
       "company_name": null,
       "section": "Revenue Account",
       "text_blocks": [
@@ -41,6 +45,7 @@
     {
       "page_number": 4,
       "page_label": "L-1-A-RA",
+      "page_label_normalized": "L-1-A-RA",
       "company_name": null,
       "section": "Revenue Account",
       "text_blocks": [
@@ -51,6 +56,7 @@
     {
       "page_number": 5,
       "page_label": "L-1-A-RA",
+      "page_label_normalized": "L-1-A-RA",
       "company_name": null,
       "section": "Revenue Account",
       "text_blocks": [
@@ -61,6 +67,7 @@
     {
       "page_number": 6,
       "page_label": "L-1-A-RA",
+      "page_label_normalized": "L-1-A-RA",
       "company_name": null,
       "section": "Revenue Account",
       "text_blocks": [
@@ -71,6 +78,7 @@
     {
       "page_number": 7,
       "page_label": "L-2-A-PL",
+      "page_label_normalized": "L-2-A-PL",
       "company_name": null,
       "section": "Profit & Loss Account",
       "text_blocks": [
@@ -81,6 +89,7 @@
     {
       "page_number": 8,
       "page_label": "L-3-A-BS",
+      "page_label_normalized": "L-3-A-BS",
       "company_name": null,
       "section": "Balance Sheet",
       "text_blocks": [
@@ -91,8 +100,9 @@
     {
       "page_number": 9,
       "page_label": "L-4-PREMIUM",
+      "page_label_normalized": "L-4",
       "company_name": null,
-      "section": "unknown",
+      "section": "Premium Schedule",
       "text_blocks": [
         "TATA AIA LIFE INSURANCE COMPANY LIMITED\nSCHEDULES FORMING PART OF FINANCIAL STATEMENTS\nFORM L-4-PREMIUM SCHEDULE\n(₹ Lakh)\nFOR THE QUARTER ENDED UP TO THE QUARTER ENDED FOR THE QUARTER ENDED UP TO THE QUARTER ENDED\nPARTICULARS\nDECEMBER 31,2025 DECEMBER 31,2025 DECEMBER 31,2024 DECEMBER 31,2024\nFirst year Premiums 2,54,380 6,95,650 2,17,152 6,03,631\nRenewal Premiums 6,38,536 16,50,967 5,22,973 13,16,608\nSingle Premiums 35,658 93,117 30,751 89,896\nTOTAL PREMIUM 9,28,574 24,39,734 7,70,876 2 0,10,135\nPremium Income from Business written :\nIn India 9,28,574 24,39,733 7,70,876 20,10,135\nOutside India - 1 - -\nTOTAL PREMIUM 9,28,574 24,39,734 7,70,876 20,10,135\nVersion 0.1 7 Date of upload: 13th Feb 2026"
       ],
@@ -101,6 +111,7 @@
     {
       "page_number": 10,
       "page_label": "L-5",
+      "page_label_normalized": "L-5",
       "company_name": null,
       "section": "Commission Schedule",
       "text_blocks": [
@@ -111,8 +122,9 @@
     {
       "page_number": 11,
       "page_label": "L-6-OPERATING",
+      "page_label_normalized": "L-6",
       "company_name": null,
-      "section": "unknown",
+      "section": "Operating Expenses Schedule",
       "text_blocks": [
         "TATA AIA LIFE INSURANCE COMPANY LIMITED\nSCHEDULES FORMING PART OF FINANCIAL STATEMENTS\nFORM L-6-OPERATING EXPENSES SCHEDULE\n(₹ Lakh)\nFOR THE QUARTER ENDED UP TO THE QUARTER ENDED FOR THE QUARTER ENDED UP TO THE QUARTER ENDED\nPARTICULARS\nDECEMBER 31,2025 DECEMBER 31,2025 DECEMBER 31,2024 DECEMBER 31,2024\nEmployees’ remuneration & welfare benefits 50,377 1,32,819 43,457 1,21,678\nTravel, conveyance and vehicle running expenses 2,249 5,400 2,594 5,923\nTraining expenses 690 1,841 2,570 5 ,622\nRents, rates and taxes 1,618 5,000 1,646 4,580\nRepairs 1,237 3,744 1,235 3,529\nPrinting & stationery 116 527 202 595\nCommunication expenses 700 2,318 957 2,456\nLegal & professional charges 25,795 59,950 22,444 62,237\nMedical fees 1,643 4,527 1,839 5,264\nAuditors' fees, expenses etc\na) as auditor 25 83 28 83\nb) as advisor or in any other capacity, in respect of\n(i) Taxation matters - - - -\n(ii) Insurance matters - - - -\n(iii) Management services; and - - - -\nc) in any other capacity - 1 1 1\nd) out of pocket expenses - 3 - 2\nAdvertisement and publicity 3,273 9,145 966 14,295\nInterest & Bank Charges 669 1,816 514 2,170\nDepreciation 3,456 9,821 2,767 7,717\nBrand/Trade Mark usage fee/charges - - - -\nBusiness Development and Sales Promotion Expenses 1,133 3,398 2,320 5,690\nStamp duty on policies 4,133 11,783 3,856 11,367\nInformation Technology Expenses 5,644 16,395 5,759 17,991\nGoods and Services Tax (GST) 25,712 33,820 150 327\nOthers\n(a) Directors' sitting fees 20 56 19 65\n(b) Directors' remuneration 23 68 23 98\n(c) Office and miscellaneous expenses 575 1,715 492 1,646\n(d) Exchange fluctuation loss (Net) 10 10 36 41\nTOTAL 1,29,098 3,04,240 93,875 2,73,377\nOPERATING EXPENSES RELATED TO INSURANCE BUSINESS:\nIn India 1,29,083 3,04,097 93,737 2,72,910\nOutside India 15 143 139 467\nTOTAL 1,29,098 3,04,240 93,875 2,73,377\nVersion 0.1 9 Date of upload: 13th Feb 2026"
       ],
@@ -121,8 +133,9 @@
     {
       "page_number": 12,
       "page_label": "L-7-BENEFITS",
+      "page_label_normalized": "L-7",
       "company_name": null,
-      "section": "unknown",
+      "section": "Benefits Paid Schedule",
       "text_blocks": [
         "TATA AIA LIFE INSURANCE COMPANY LIMITED\nSCHEDULES FORMING PART OF FINANCIAL STATEMENTS\nFORM L-7-BENEFITS PAID SCHEDULE\n(₹ Lakh)\nFOR THE QUARTER ENDED UP TO THE QUARTER ENDED FOR THE QUARTER ENDED UP TO THE QUARTER ENDED\nPARTICULARS\nDECEMBER 31,2025 DECEMBER 31,2025 DECEMBER 31,2024 DECEMBER 31,2024\nInsurance Claims:\n(a) Claims by Death 39,418 1,40,961 38,600 1,08,830\n(b) Claims by Maturity 49,756 1,03,927 21,977 6 4,428\n(c) Annuities/Pension payment 4,158 12,457 3,677 10,835\n(d) Survival Benefit 45,545 1,16,399 35,575 87,981\n(e) Surrenders 1,44,091 3,69,777 99,045 3,35,633\n1\n(f) Claims by Health (40) 67 64 163\n(g) Periodical benefits 16,428 40,551 14,262 37,126\n(h) Interest on Unclaimed amount 178 290 113 564\n(i) Experience Refund - - - -\n(j) Superannuation and Gratuity payment 4,327 12,684 4,102 16,837\nBenefits Paid (Gross)\nIn India 3,03,861 7,97,113 2,17,415 6,62,397\nOutside India - - - -\nAmount ceded in Reinsurance:\n(a) Claims by Death (16,437) (54,499) (13,723) (44,916)\n(b) Claims by Maturity - - - -\n(c) Annuities/Pension payment - - - -\n2 (d) Survival Benefit - - - -\n(e) Surrender - - - -\n(f) Claims by Health - - - -\n(g) Periodical benefits - - - -\nAmount accepted in Reinsurance:\n(a) Claims by Death - - - -\n(b) Claims by Maturity - - - -\n(c) Annuities/Pension payment - - - -\n3 (d) Survival Benefit - - - -\n(e) Surrender - - - -\n(f) Claims by Health - - - -\n(g) Periodical benefits - - - -\nTOTAL 2,87,424 7,42,614 2,03,692 6,17,481\nBENEFITS PAID (Net)\n1In India 2,87,424 7,42,614 2,03,692 6,17,481\n2Outside India - - - -\nTOTAL 2,87,424 7,42,614 2,03,692 6,17,481\nVersion 0.1 10 Date of upload: 13th Feb 2026"
       ],
@@ -131,8 +144,9 @@
     {
       "page_number": 13,
       "page_label": "L-8-SHARE",
+      "page_label_normalized": "L-8",
       "company_name": null,
-      "section": "unknown",
+      "section": "Share Capital Schedule",
       "text_blocks": [
         "TATA AIA LIFE INSURANCE COMPANY LIMITED\nSCHEDULES FORMING PART OF FINANCIAL STATEMENTS\nFORM L-8-SHARE CAPITAL SCHEDULE\n(₹ Lakh)\nPARTICULARS AS AT DECEMBER 31,2025 AS AT DECEMBER 31,2024\n1Authorised Capital\n8,200,000,000 (Previous year: 5,000,000,000) Equity Shares of `₹ ' 10/- each 8,20,000 5,00,000\n2Issued Capital\n6,233,500,000 (Previous year: 4,533,500,000) Equity Shares of `₹ ' 10/- each 6,23,350 4,53,350\n3Subscribed Capital\n6,233,500,000 (Previous year: 4,533,500,000) Equity Shares of `₹ ' 10/- each 6,23,350 4,53,350\n4Called-up Capital\n6,233,500,000 (Previous year: 4,533,500,000) Equity Shares of `₹ ' 10/- each 6,23,350 4,53,350\nLess : Calls unpaid - -\nAdd : Shares forfeited (Amount originally paid up) - -\nLess : Par value of Equity Shares bought back - -\nLess : Preliminary Expenses - -\nTOTAL 6,23,350 4,53,350\nVersion 0.1 11 Date of upload: 13th Feb 2026"
       ],
@@ -141,8 +155,9 @@
     {
       "page_number": 14,
       "page_label": "L-9-PATTERN",
+      "page_label_normalized": "L-9",
       "company_name": "Tata Sons Private Limited",
-      "section": "unknown",
+      "section": "& L9A",
       "text_blocks": [
         "TATA AIA LIFE INSURANCE COMPANY LIMITED\nSCHEDULES FORMING PART OF FINANCIAL STATEMENTS\nFORM L-9-PATTERN OF SHAREHOLDING SCHEDULE\n[As certified by the Management]\nAS AT DECEMBER 31,2025 AS AT DECEMBER 31,2024\nSHAREHOLDER\nNUMBER OF SHARES\nNUMBER OF SHARES ('000)% OF HOLDING % OF HOLDING\n('000)\nPromoters\n· Indian - Tata Sons Private Limited and its Nominees 31,79,085 51 23,12,085 51\n· Foreign- AIA International Limited 30,54,415 49 22,21,415 49\nOthers - - - -\nTOTAL 62,33,500 100 45,33,500 100\nVersion 0.1 12 Date of upload: 13th Feb 2026"
       ],
@@ -151,8 +166,9 @@
     {
       "page_number": 15,
       "page_label": "L-9A-SHAREHOLDING",
+      "page_label_normalized": "L-9A",
       "company_name": null,
-      "section": "unknown",
+      "section": "& L9A",
       "text_blocks": [
         "FORM L-9A-SHAREHOLDING PATTERN\nDETAILS OF EQUITY HOLDINGS OF INSURERS\nPART A:\nNo. of % of Paid up equity Shares pledged or otherwise\nSl.No. Category Investors No. of shares held shareholdings (Rs. in lakhs) encumbered Shares under Lock in Period\nAs a As a\nNumber of\npercentage of Number of percentage of\n(I) (II) (III) (IV) (V) shares\nTotal shares shares (VIII) Total Shares\n(VI)\nheld (VII) = held (IX)=\nA Promoters & Promoters Group\nA.1 Indian Promoters\nIndividuals/ HUF\ni) (Names of major shareholders): NIL NIL NIL NIL NIL NIL NIL\nii) Bodies Corporate:\n(i) Tata Sons Private Limited 1 3 ,17,90,84,400 51% 3,17,908.44 NIL NIL 8 6,70,00,000 27.27%\nTata Sons Private Limited Jointly with Nikhil Kumar 100 0 0 .01 NIL NIL NIL NIL\nTata Sons Private Limited Jointly with Eruch Kapadia 100 0 0 .01 NIL NIL NIL NIL\nTata Sons Private Limited Jointly with Girish Valecha 100 0 0 .01 NIL NIL NIL NIL\nTata Sons Private Limited Jointly with Zenobia Bhathena 100 0 0 .01 NIL NIL NIL NIL\nTata Sons Private Limited Jointly with Modan Saha 100 0 0 .01 NIL NIL NIL NIL\nTata Sons Private Limited Jointly with Prachi Raje 100 0 0 .01 NIL NIL NIL NIL\niii) Financial Institutions/Banks NIL NIL NIL NIL NIL NIL NIL\nCentral Government/State\niv) NIL NIL NIL NIL NIL NIL NIL\nGovernment(s)/President of India\nv) Persons acting in Concert (Please specify ) NIL NIL NIL NIL NIL NIL NIL\nvi) Any other (Please specify) NIL NIL NIL NIL NIL NIL NIL\nA.2 Foreign Promoters\ni) Individuals (Names of the shareholders): NIL NIL NIL NIL NIL NIL NIL\nii) Bodies Corporate:\ni) AIA International Limited 1 3,05,44,15,000 49% 3,05,441.50 NIL NIL 8 3,30,00,000 27.27%\niii) Any other ( Please specify ) NIL NIL NIL NIL NIL NIL NIL\nB Non promoters\nB.1 Public Shareholders\n1.1) Institutions NIL NIL NIL NIL NIL NIL NIL\ni) Mutual Funds 0 0 0 0 0 0 0\nii) Foreign Portfiolio Investors 0 0 0 0 0 0 0\niii) Financial Institutions / Banks 0 0 0 0 0 0 0\niv) Insurance companies 0 0 0 0 0 0 0\nv) FII belonging to foreign promoter 0 0 0 0 0 0 0\nvi) FII belonging to foreign promoter of Indian promoter 0 0 0 0 0 0 0\nvii) Provident Fund / Pension Fund 0 0 0 0 0 0 0\nviii) Alternative Investment Fund 0 0 0 0 0 0 0\nix) Any other ( Please specify) 0 0 0 0 0 0 0\nCentral Government/State\n1.2) NIL NIL NIL NIL NIL NIL NIL\nGovernment(s)/President of India\n1.3) Non- Institutions NIL NIL NIL NIL NIL NIL NIL\ni) Individual Share Capital upto Rs. 2 Lacs 0 0 0 0 0 0 0\nii) Individual Share Capital in excess of Rs. 2 Lacs 0 0 0 0 0 0 0\niii) NBFCs registered with RBI 0 0 0 0 0 0 0\niv) Others: 0 0 0 0 0 0 0\n-Trusts 0 0 0 0 0 0 0\n-Non Resident Indian (NRI) 0 0 0 0 0 0 0\n-Clearing Members 0 0 0 0 0 0 0\n-Non Resident Indian Non Repatriable 0 0 0 0 0 0 0\n-Bodies Corporate 0 0 0 0 0 0 0\n-IEPF 0 0 0 0 0 0 0\nv) Any Other (Please Specify) 0 0 0 0 0 0 0\n0 0 0 0 0 0 0\nB.2 Non Public Shareholders NIL NIL NIL NIL NIL NIL NIL\n2.1) Custodian/DR Holder 0 0 0 0 0 0 0\n2.2) Employee Benefit Trust 0 0 0 0 0 0 0\n2.3) Any Other (Please Specify) 0 0 0 0 0 0 0\nTotal 2 6,23,35,00,000 100% 6,23,350 - 0% 1,70,00,00,000 27.27%\nFootnotes\n(i): All holdings, above 1% of the paid up equity, have to be separately disclosed.\n(ii): Indian Promoters - As defined under Regulation 2(1)(g) of the Insurance Regulatory and Development Authority (Registration of Indian Insurance Companies) Regulations, 2000.\n(iii): Where a company is listed, the column \" Shares pledged or otherwise encumbered \" shall not be applicable to \" Non promoters\" category.\nVersion 0.1 13 Date of upload: 13th Feb 2026"
       ],
@@ -161,6 +177,7 @@
     {
       "page_number": 16,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": "Tata Sons Private Limited",
       "section": "unknown",
       "text_blocks": [
@@ -171,8 +188,9 @@
     {
       "page_number": 17,
       "page_label": "L-10-RESERVES",
+      "page_label_normalized": "L-10",
       "company_name": null,
-      "section": "unknown",
+      "section": "Reserves and Surplus Schedule",
       "text_blocks": [
         "TATA AIA LIFE INSURANCE COMPANY LIMITED\nSCHEDULES FORMING PART OF FINANCIAL STATEMENTS\nFORM L-10-RESERVES AND SURPLUS SCHEDULE\n(₹ Lakh)\nPARTICULARS AS AT DECEMBER 31,2025 AS AT DECEMBER 31,2024\n1 Capital Reserve - -\n2 Capital Redemption Reserve - -\n3 Share Premium - -\nRevaluation Reserve\nOpening Balance 5,866 5,866\n4\nAdd: Additions during the year\nLess: Adjustment during the year\nGeneral Reserves - -\nLess: Debit balance in Profit and Loss Account, if any - -\n5\nLess: Amount utilized for Buy-back - -\nLess: Amount utilized for issue of Bonus shares - -\n6 Catastrophe Reserve - -\nOther Reserves\nDebenture Redemption Reserve\n7 Opening Balance 9,760 9,760\nAdd: Additions during the year - -\nLess: Adjustment during the year - -\n8 Balance of profit in Profit and Loss Account 89,967 80,503\nTOTAL 1,05,593 96,129\nVersion 0.1 15 Date of upload: 13th Feb 2026"
       ],
@@ -181,8 +199,9 @@
     {
       "page_number": 18,
       "page_label": "L-11-BORROWINGS",
+      "page_label_normalized": "L-11",
       "company_name": null,
-      "section": "unknown",
+      "section": "Borrowings Schedule",
       "text_blocks": [
         "TATA AIA LIFE INSURANCE COMPANY LIMITED\nSCHEDULES FORMING PART OF FINANCIAL STATEMENTS\nFORM L-11-BORROWINGS SCHEDULE\n(₹ Lakh)\nAS AT DECEMBER AS AT DECEMBER\nPARTICULARS\n31,2025 31,2024\n1 Debentures/Bonds 97,600 97,600\n2 Banks - -\n3 Financial Institutions - -\n4 Others - -\nTOTAL 97,600 97,600\nDISCLOSURE FOR SECURED BORROWINGS\n(₹ Lakh)\nSl.No. Source / Instrument Amount Borrowed Amount of Security Nature of Security\n1 NA NA NA NA\n2 NA NA NA NA\n3 NA NA NA NA\n4 NA NA NA NA\n5 NA NA NA NA\nVersion 0.1 16 Date of upload: 13th Feb 2026"
       ],
@@ -191,8 +210,9 @@
     {
       "page_number": 19,
       "page_label": "L-12-INVESTMENTS",
+      "page_label_normalized": "L-12",
       "company_name": null,
-      "section": "unknown",
+      "section": "Investments (Shareholders) Schedule",
       "text_blocks": [
         "TATA AIA LIFE INSURANCE COMPANY LIMITED\nSCHEDULES FORMING PART OF FINANCIAL STATEMENTS\nFORM L-12-INVESTMENTS SHAREHOLDERS' SCHEDULE\n(₹ Lakh)\nPARTICULARS AS AT DECEMBER 31,2025 AS AT DECEMBER 31,2024\nLONG TERM INVESTMENTS\nGovernment Securities and Government guaranteed bonds\n1 5,75,396 4,25,867\nincluding Treasury Bills\n2 Other Approved Securities - -\nOther Investments\n(a) Shares\n(aa) Equity - -\n(bb) Preference - -\n(b) Mutual Funds - -\n3\n(c) Derivative Instruments - -\n(d) Debentures/Bonds - -\n(e) Other Securities - -\n(f) Subsidiaries - -\n(g) Investment Properties-Real Estate - -\n4 Investments in Infrastructure and Social Sector 1,33,118 1,06,568\nOther than Approved Investments\n5 i) Equity 660 1\nii) Others - -\nSHORT TERM INVESTMENTS\nGovernment Securities and Government guaranteed bonds\n1 47 6,267\nincluding Treasury Bills\n2 Other Approved Securities - -\nOther Investments\n(a) Shares\n(aa) Equity - -\n(bb) Preference - -\n(b) Mutual Funds - -\n(c) Derivative Instruments - -\n3 (d) Debentures/Bonds - -\n(e) Other Securities\n(aa) Certificate of Deposit/Commercial Paper 14,799 -\n(bb) Fixed Deposit - -\n(cc) Reverse Repo 623 1,264\n(f) Subsidiaries - -\n(g) Investment Properties-Real Estate - -\n4 Investments in Infrastructure and Social Sector 500 1,501\n5 Other Investments (Equity) - -\nTOTAL 7,25,143 5,41,468\nVersion 0.1 17 Date of upload: 13th Feb 2026"
       ],
@@ -201,8 +221,9 @@
     {
       "page_number": 20,
       "page_label": "L-13-INVESTMENTS",
+      "page_label_normalized": "L-13",
       "company_name": null,
-      "section": "unknown",
+      "section": "Investments (Policyholders) Schedule",
       "text_blocks": [
         "TATA AIA LIFE INSURANCE COMPANY LIMITED\nSCHEDULES FORMING PART OF FINANCIAL STATEMENTS\nFORM L-13-INVESTMENTS POLICYHOLDERS' SCHEDULE\n(₹ Lakh)\nPARTICULARS AS AT DECEMBER 31,2025 AS AT DECEMBER 31,2024\nLONG TERM INVESTMENTS\nGovernment Securities and Government guaranteed bonds\n1 66,85,607 50,15,094\nincluding Treasury Bills\n2 Other Approved Securities 2,984 7,875\nOther Investments:\n(a) Shares\n(aa) Equity 7,05,783 5,62,783\n(bb) Preference - -\n(b) Mutual Funds - -\n3\n(c) Derivative Instruments - -\n(d) Debentures/Bonds 1,05,819 88,247\n(e) Other Securities (Fixed Deposits) - -\n(f) Subsidiaries - -\n(g) Investment Properties-Real Estate 13,880 13,880\n4 Investments in Infrastructure and Social Sector 9,32,734 12,44,790\nOther than Approved Investments\ni) Equity 1,92,039 1,36,318\n5\nii) Debentures/Bonds - -\niii) Alternate Investment Fund 10,012 10,425\nSHORT TERM INVESTMENTS\nGovernment Securities and Government guaranteed bonds\n1 4,185 44,998\nincluding Treasury Bills\n2 Other Approved Securities 2,914 1,575\nOther Investments\n(a) Shares\n(aa) Equity - -\n(bb) Preference - -\n(b) Mutual Funds - -\n(c) Derivative Instruments - -\n3 (d) Debentures/Bonds 4,501 2,499\n(e) Other Securities\n(aa) Certificate of Deposit/Commercial Paper 30,746 39,155\n(bb) Fixed Deposit 8,000 3,000\n(cc) Reverse Repo 1,10,322 98,218\n(f) Subsidiaries - -\n(g) Investment Properties-Real Estate - -\n4 Investments in Infrastructure and Social Sector 21,761 48,024\n5 Other than approved Investments - -\nTOTAL 88,31,287 73,16,881\nVersion 0.1 18 Date of upload: 13th Feb 2026"
       ],
@@ -211,8 +232,9 @@
     {
       "page_number": 21,
       "page_label": "L-14-ASSETS",
+      "page_label_normalized": "L-14",
       "company_name": null,
-      "section": "unknown",
+      "section": "Investments - Assets Held to Cover Linked Liabilities Schedule",
       "text_blocks": [
         "TATA AIA LIFE INSURANCE COMPANY LIMITED\nSCHEDULES FORMING PART OF FINANCIAL STATEMENTS\nFORM L-14-ASSETS HELD TO COVER LINKED LIABILITIES SCHEDULE\n(₹ Lakh)\nPARTICULARS AS AT DECEMBER 31,2025 AS AT DECEMBER 31,2024\nLONG TERM INVESTMENTS\nGovernment Securities and Government guaranteed bonds\n1 1,68,381 1,55,336\nincluding Treasury Bills\n2 Other Approved Securities - 30\nApproved Investments\n(a) Shares\n(aa) Equity 32,93,362 26,56,862\n(bb) Preference - -\n(b) Mutual Funds - -\n3\n(c) Derivative Instruments - -\n(d) Debentures/Bonds 15,404 13,197\n(e) Other Securities (Fixed deposits) - -\n(f) Subsidiaries - -\n(g) Investment Properties-Real Estate - -\n4 Investments in Infrastructure and Social Sector 2,74,020 2,30,823\nOther than Approved Investments\n(a) Equity 6,77,609 5,97,502\n5\n(b) Units in Equity Fund - -\n(c) Units in Income Fund - -\nSHORT TERM INVESTMENTS\nGovernment Securities and Government guaranteed bonds\n1 2,26,781 2,18,261\nincluding Treasury Bills\n2 Other Approved Securities 30 125\nApproved Investments\n(a) Shares\n(aa) Equity - -\n(bb) Preference 68 -\n(b) Mutual Funds - -\n(c) Derivative Instruments - -\n3 (d) Debentures/Bonds - -\n(e) Other Securities\n(aa) Certificate of Deposit/Commercial Paper 49,676 42,917\n(bb) Fixed Deposit 2,000 4,520\n(cc) Reverse Repo 2,07,751 1,32,686\n(f) Subsidiaries - -\n(g) Investment Properties-Real Estate - -\n4 Investments in Infrastructure and Social Sector 18,888 12,219\nOther than Approved Investments\n5 (a) Mutual Funds - -\n(b) Units in Liquid Fund - 2,317\n- -\nNET CURRENT ASSETS 37,684 37,608\nTOTAL 49,71,654 41,04,403\nVersion 0.1 19 Date of upload: 13th Feb 2026"
       ],
@@ -221,8 +243,9 @@
     {
       "page_number": 22,
       "page_label": "L-14A-AGGREGATE",
+      "page_label_normalized": "L-14A",
       "company_name": null,
-      "section": "unknown",
+      "section": "Aggregate value of Investments other than Equity Shares and Mutual Fund",
       "text_blocks": [
         "TATA AIA LIFE INSURANCE COMPANY LIMITED\nSCHEDULES FORMING PART OF FINANCIAL STATEMENTS\nFORM L-14A-AGGREGATE VALUE OF INVESTMENTS OTHER THAN LISTED EQUITY SECURITIES AND DERIVATIVE INSTRUMENTS\n(₹ Lakh)\nAssets held to cover Linked\nShareholders Policyholders Total\nLiabilities\nParticulars\nAs at 31st Dec As at 31st Dec As at 31st Dec As at 31st Dec As at 31st Dec As at 31st Dec As at 31st Dec\nAs at 31st Dec 2024\n2025 2024 2025 2024 2025 2024 2025\nLong Term\nInvestments:\nBook Value 675,062 532,436 7,652,615 6,301,416 288,536 241,929 8,616,213 7,075,782\nMarket Value 661,746 545,659 7,529,191 6,546,118 309,149 258,283 8,500,087 7,350,061\nShort Term\nInvestments:\nBook Value 15,968 9,032 182,428 237,467 542,811 450,611 741,208 697,110\nMarket Value 15,972 9,048 182,570 237,472 542,878 450,652 741,421 697,173\nNote: Market Value in respect of Shareholders and Policyholders investments should be arrived as per the guidelines prescribed for linked business investments under\nIRDAI (Actuarial, Finance and Investment Functions of Insurers) Regulations, 2024\nVersion 0.1 20 Date of upload: 13th Feb 2026"
       ],
@@ -231,8 +254,9 @@
     {
       "page_number": 23,
       "page_label": "L-15-LOANS",
+      "page_label_normalized": "L-15",
       "company_name": null,
-      "section": "unknown",
+      "section": "Loans Schedule",
       "text_blocks": [
         "TATA AIA LIFE INSURANCE COMPANY LIMITED\nSCHEDULES FORMING PART OF FINANCIAL STATEMENTS\nFORM L-15-LOANS SCHEDULE\n(₹ Lakh)\nPARTICULARS AS AT DECEMBER 31,2025 AS AT DECEMBER 31,2024\nSECURITY-WISE CLASSIFICATION\nSecured\n(a) On Mortgage of Property\n1 (aa) In India - -\n(bb) Outside India - -\n(b) On Shares, Bonds, Government Securities, etc. - -\n(c) Loans against policies 80,555 67,260\n(d) Others - -\nUnsecured - -\nTOTAL 80,555 67,260\nBORROWER-WISE CLASSIFICATION\n(a) Central and State Governments - -\n(b) Banks and Financial Institutions - -\n2 (c) Subsidiaries - -\n(d) Companies - -\n(e) Loans against policies 80,555 67,260\n(f) Others - -\nTOTAL 80,555 67,260\nPERFORMANCE-WISE CLASSIFICATION\n(a) Loans classified as standard\n(aa) In India 80,555 67,260\n3 (bb) Outside India - -\n(b) Non-standard loans less provisions\n(aa) In India - -\n(bb) Outside India - -\nTOTAL 80,555 67,260\nMATURITY-WISE CLASSIFICATION\n4 (a) Short Term 4,626 3,524\n(b) Long Term 75,929 63,736\nTOTAL 80,555 67,260\nProvisions against Non-performing Loans\nNon-Performing Loans Loan Amount (Rs. Lakhs) Provision (Rs. Lakhs)\nSub-standard NA NA\nDoubtful NA NA\nLoss NA NA\nTotal NA NA\nVersion 0.1 21 Date of upload: 13th Feb 2026"
       ],
@@ -241,6 +265,7 @@
     {
       "page_number": 24,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": null,
       "section": "unknown",
       "text_blocks": [
@@ -251,8 +276,9 @@
     {
       "page_number": 25,
       "page_label": "L-17-CASH",
+      "page_label_normalized": "L-17",
       "company_name": null,
-      "section": "unknown",
+      "section": "Cash and Bank Balance Schedule",
       "text_blocks": [
         "TATA AIA LIFE INSURANCE COMPANY LIMITED\nSCHEDULES FORMING PART OF FINANCIAL STATEMENTS\nFORM L-17-CASH AND BANK BALANCES SCHEDULE\n(₹ Lakh)\nPARTICULARS AS AT DECEMBER 31,2025 AS AT DECEMBER 31,2024\n1Cash (including cheques, drafts and stamps) * 10,824 13,217\n2Bank Balances :\n(a) Deposit Accounts\n(aa) Short-term (due within 12 months of the\n193 107\ndate of Balance Sheet)\n(bb) Others 63 128\n(b) Current Accounts 53,529 49,990\n(c) Others 60 -\n3Money at Call and Short Notice :\n(a) With Banks - -\n(b) With other Institutions - -\n4Others - -\nTOTAL 64,669 63,442\nBalances with non-scheduled banks included in 2 and 3\n- -\nabove\nCASH & BANK BALANCES\n1In India 64,583 63,338\n2Outside India 87 104\nTOTAL 64,669 63,442\n* Cheques and Drafts in hand ₹6,517 lakhs ;(Previous period:₹8,236 lakhs;Previous year: ₹20,522 lakhs).\nIncludes ₹1,976 lakhs;(Previous period:₹2,763 lakhs;Previous year: ₹7,332 lakhs) in respect of Unit Linked Policies.\nVersion 0.1 23 Date of upload: 13th Feb 2026"
       ],
@@ -261,8 +287,9 @@
     {
       "page_number": 26,
       "page_label": "L-18-ADVANCE",
+      "page_label_normalized": "L-18",
       "company_name": null,
-      "section": "unknown",
+      "section": "Advances & Other Assets Schedule",
       "text_blocks": [
         "TATA AIA LIFE INSURANCE COMPANY LIMITED\nSCHEDULES FORMING PART OF FINANCIAL STATEMENTS\nFORM L-18-ADVANCE AND OTHER ASSETS SCHEDULE\n(₹ Lakh)\nPARTICULARS AS AT DECEMBER 31,2025 AS AT DECEMBER 31,2024\nADVANCES\n1Reserve deposits with ceding companies - -\n2Application money for investments - -\n3 Prepayments 3,625 75,585\n4 Advances to Directors/Officers - -\nAdvance tax paid and taxes deducted at source (Net of provision for\n5 31,194 37,194\ntaxation) *\n6 Advance Goods & Service Tax paid/ Service Tax Deposit 28,841 22,537\nOthers: - -\n(a) Advances to suppliers & other recoverables (including capital\n3,049 4,635\nadvances)\n7\nLess: Provision for doubtful advances (366) (327)\n(b) Due from employees 1,102 721\nLess: Provision for doubtful advances (521) (411)\n(c ) GST/Service Tax Deposit 8,453 6,029\nTOTAL (A) 75,377 1,45,963\nOTHER ASSETS\n1 Income accrued on investments 85,338 76,717\n2 Outstanding Premiums 66,487 61,422\nAgents’ Balances 2,492 979\n3\nLess: Provision for doubtful advances (747) (505)\n4 Foreign Agencies Balances - -\nDue from other entities carrying on insurance business (including\n5 21,468 18,674\nreinsurers)\n6 Due from subsidaries/holding Company - -\n7 Investments Held for unclaimed amount of Policyholders 2,812 1,945\n8 Income on unclaimed amount of Policyholders 388 278\n9 Others (to be specified)\n(a) Security Deposits 3,508 3,451\nLess: Provision for doubtful deposits (161) (160)\n(b) Other assets 4,249 2,065\nLess: Provision for doubtful assets (774) (511)\n(c) Due from Unit Linked Fund - Pensions 394 554\n(e) Investments sold awaiting settlement 5,273 -\n(f) Derivative Assets 13,047 1,53,870\n(g) Derivative margin money investment 85,374 8,659\nTOTAL (B) 2,89,148 3,27,438\nTOTAL (A+B) 3,64,525 4,73,401\n* Includes provision for tax of ₹17,699 lakhs ;(Previous Period:₹14,972 lakhs ;Previous year: ₹13,953 lakhs).\nVersion 0.1 24 Date of upload: 13th Feb 2026"
       ],
@@ -271,8 +298,9 @@
     {
       "page_number": 27,
       "page_label": "L-19-CURRENT",
+      "page_label_normalized": "L-19",
       "company_name": null,
-      "section": "unknown",
+      "section": "Current Liabilities Schedule",
       "text_blocks": [
         "TATA AIA LIFE INSURANCE COMPANY LIMITED\nSCHEDULES FORMING PART OF FINANCIAL STATEMENTS\nFORM L-19-CURRENT LIABILITIES SCHEDULE\n(₹ Lakh)\nPARTICULARS AS AT DECEMBER 31,2025 AS AT DECEMBER 31,2024\nAgents’ Balances 62,698 46,345\n1\n2 Balances due to other insurance companies 29,046 18,111\n3 Deposits held on re-insurance ceded - -\n4 Premiums received in advance 15,504 12,015\n5 Unallocated premium 35,952 42,093\n6 Sundry creditors 5,316 3,760\n7 Due to subsidaries/holding company - -\n8 Claims Outstanding 64,889 61,425\n9 Annuities Due 771 (5,126)\n10 Due to Officers/Directors - -\n11 Unclaimed Amount of policyholders 2,812 1,945\n12 Income accrued on Unclaimed amounts 388 278\n13 Interest payable on debentures/bonds 4,964 4,964\n14 Goods and Service Tax liability (Refer Note A.14 of 6,596 18,219\nOthers\n(a) Expenses payable 97,156 84,608\n(b) Due commission 1,239 1,349\n(c) Taxes payable 5,194 5,797\n(d) Provident fund dues payable 1,012 975\n15 (e) Premium refund payable 5,264 3,699\n(f) Due to employees 608 345\n(g) Due to Unit Linked Fund 33,267 32,302\n(h) Investments purchased - to be settled 29,064 1,499\n(i) Security Deposit 499 499\n(j) Derivative liability 1,57,574 6,866\n(k) Derivative margin money 12,473 1,45,023\nTOTAL 5,72,286 4,86,991\nVersion 0.1 25 Date of upload: 13th Feb 2026"
       ],
@@ -281,8 +309,9 @@
     {
       "page_number": 28,
       "page_label": "L-20-PROVISIONS",
+      "page_label_normalized": "L-20",
       "company_name": null,
-      "section": "unknown",
+      "section": "Provisions Schedule",
       "text_blocks": [
         "TATA AIA LIFE INSURANCE COMPANY LIMITED\nSCHEDULES FORMING PART OF FINANCIAL STATEMENTS\nFORM L-20-PROVISIONS SCHEDULE\n(₹ Lakh)\nPARTICULARS AS AT DECEMBER 31,2025 AS AT DECEMBER 31,2024\nFor taxation (less payments and taxes 1,155 -\ndeducted at source) *\nFor Employee Benefits 20,447 16,269\nFor Others - -\nTOTAL 21,602 16,269\n* Includes TDS and advance tax ₹958 lakhs (Previous period Nil, Previous year: ₹1,877 Lakhs).\nVersion 0.1 26 Date of upload: 13th Feb 2026"
       ],
@@ -291,8 +320,9 @@
     {
       "page_number": 29,
       "page_label": "L-21-MISCELLANEOUS",
+      "page_label_normalized": "L-21",
       "company_name": null,
-      "section": "unknown",
+      "section": "Misc Expenditure Schedule",
       "text_blocks": [
         "TATA AIA LIFE INSURANCE COMPANY LIMITED\nSCHEDULES FORMING PART OF FINANCIAL STATEMENTS\nFORM L-21-MISCELLANEOUS EXPENDITURE SCHEDULE\n(To the extent not written off or adjusted)\n(₹ Lakh)\nAS AT DECEMBER 31,2025 AS AT DECEMBER 31,2024\nPARTICULARS\n1 Discount Allowed in issue of shares/ debentures - -\n2 Others - -\nTOTAL - -\nVersion 0.1 27 Date of upload: 13th Feb 2026"
       ],
@@ -301,6 +331,7 @@
     {
       "page_number": 30,
       "page_label": "L-22",
+      "page_label_normalized": "L-22",
       "company_name": null,
       "section": "Analytical Ratios",
       "text_blocks": [
@@ -311,6 +342,7 @@
     {
       "page_number": 31,
       "page_label": "L-22",
+      "page_label_normalized": "L-22",
       "company_name": null,
       "section": "Analytical Ratios",
       "text_blocks": [
@@ -321,6 +353,7 @@
     {
       "page_number": 32,
       "page_label": "L-24",
+      "page_label_normalized": "L-24",
       "company_name": null,
       "section": "Valuation of Net Liablities",
       "text_blocks": [
@@ -331,6 +364,7 @@
     {
       "page_number": 33,
       "page_label": "L-25",
+      "page_label_normalized": "L-25",
       "company_name": null,
       "section": "(ii)",
       "text_blocks": [
@@ -341,6 +375,7 @@
     {
       "page_number": 34,
       "page_label": "L-25",
+      "page_label_normalized": "L-25",
       "company_name": null,
       "section": "(ii)",
       "text_blocks": [
@@ -351,6 +386,7 @@
     {
       "page_number": 35,
       "page_label": "L-25",
+      "page_label_normalized": "L-25",
       "company_name": null,
       "section": "(ii)",
       "text_blocks": [
@@ -361,6 +397,7 @@
     {
       "page_number": 36,
       "page_label": "L-25",
+      "page_label_normalized": "L-25",
       "company_name": null,
       "section": "(ii)",
       "text_blocks": [
@@ -371,8 +408,9 @@
     {
       "page_number": 37,
       "page_label": "L-26-INVESTMENT",
+      "page_label_normalized": "L-26",
       "company_name": null,
-      "section": "unknown",
+      "section": "Investment Assets (Life Insurers) - 3A",
       "text_blocks": [
         "FORM L-26-INVESTMENT ASSETS (LIFE INSURERS) - 3A\n(Read with Regulation 10)\nName of the Insurer: TATA AIA LIFE INSURANCE COMPANY LIMITED\nRegistration Number: 110\nStatement as on: 31 December 2025\nStatement of Investment Assets (Life Insurers)\n(Business within India)\nPeriodicity of Submission: Quarterly\nPART - A (₹ Lakh)\nSection I (` in lakhs) Reconciliation of Investment Assets\nNo PARTICULARS SCH Amount Total Investment Assets (as per Balance Sheet) 14,525,590\n1 Investments (Shareholders) 8 722,650 Balance Sheet Value of:\nInvestments (Policyholders) 8A 8,831,287 A. Life Fund 8 ,881,001\nInvestments (Linked Liabilities) 8B 4,971,653 B. Pention & General Annuity and Group Business 6 72,936\n2 Loans 9 80,555 C. Unit Linked Funds 4 ,971,653\n3 Fixed Assets 10 73,301 14,525,590\n4 Deferred tax assets (net) - -\n5 Current Assets\na. Cash & Bank Balance 11 6 4,600 Ok 0.00\nb. Advances & Other Assets 12 3 66,978\n6 Current Liabilities\na. Current Liabilities 13 5 72,265\nb. Provisions 14 2 1,590\nc. Misc. Exp not Written Off 15 -\nd. Debit Balance of P&L A/c -\nA Sh p e p e li t c a t ( i A o ) n of Funds as per Balance 14,517,168\nLess: Other Assets SCH Amount\n1 Loans (if any) 9 8 0,555\n2 Fixed Assets (if any) 10 7 3,301\n3 Deferred tax assets (net) -\n4 Cash & Bank Balance (if any) 11 6 4,600\n5 Advances & Other Assets (if any) 12 3 66,978\n6 Current Liabilities 13 5 72,265\n7 Provisions 14 2 1,590\n8 Misc. Exp not Written Off 15 -\n9 Investments held outside India -\n10 Debit Balance of P&L A/c -\nTOTAL (B) ( 8,422)\nInvestment Assets (A-B) 1 4,525,590\nSection II\nNon Linked Business (₹ Lakh)\nA. LIFE FUND INVESTMENT ASSETS % as per Reg Ba ( la a n ) ce SH FR ( S b M ) + UL-Non ( c U ) nit Res P ( P A d H R ) NON (e ) PAR [ B a O ( + S O b H ( + K f ) + c V + = A P d L H + U ) e E ] ( g ) A = C [ T ( U f) A - L ( % a)]% FVC A (h m ) ount T ( O i)= TA (a L + F f U + N h D ) MKT / V R A E ( L j A ) U L E ISABLE\n1 Central Govt. Sec Not less than 25% - 5 72,955 2 09,568 1 ,756,188 4 ,147,878 6 ,686,588 77.14% - 6 ,686,588 6 ,546,612\n2 C Se e c n u tr r a it l i e G s o ( v in t c S l e ( c 1 , ) S a ta b t o e v e G ) ovt Sec or Other Approved Not less than 50% - 5 72,955 2 09,568 1 ,757,680 4 ,151,286 6 ,691,488 77.19% - 6 ,691,488 6 ,551,606\n3 Investment subject to Exposure Norms\na Infrastructure/ Social/ Housing Sector\n1. Approved Investments Not less than 15% - 1 34,031 2 2,287 3 21,021 5 33,633 1 ,010,972 11.66% 2 9,928 1 ,040,899 1 ,052,594\n2. Other Investments - - - - - - - - - -\nb (i) Approved Investments - 1 5,418 2 9,832 4 58,865 2 88,808 7 92,923 9.15% 1 52,979 9 45,901 9 50,357\n(ii) \"Other Investment\" not to exceed 15% Not exceeding 35% - 6 60 6 ,060 1 49,055 1 7,353 1 73,128 2.00% 2 9,584 2 02,712 2 02,712\nTOTAL LIFE FUND 100% - 7 23,063 2 67,747 2 ,686,621 4 ,991,080 8 ,668,511 100.00% 2 12,490 8 ,881,001 8 ,757,269\nSection II B\nHousing and Infrastructure Reconciliation\nA. LIFE FUND INVESTMENT ASSETS % as per Reg Ba ( la a n ) ce SH FR ( S b M ) + UL-Non ( c U ) nit Res P ( P A d H R ) NON (e ) PAR [ B a O ( + S O b H ( + K f ) + c V + = A P d L H + U ) e E ] ( g ) A = C [ T ( U f) A - L ( % a)]% FVC A (h m ) ount T ( O i)= TA (a L + F f U + N h D ) MKT / V R A E ( L j A ) U L E ISABLE\n3 a. (ii) + 3 b. (ii) above Not exceeding 15% 6 60 6 ,060 1 49,055 1 7,353 1 73,128 2.00% 2 9,584 2 02,712 2 02,712\nTotal Housing & Infrastructure From 1, 2 & 3 Not Less than 15% 1 48,658 4 2,596 4 98,971 8 05,838 1 ,496,063 17.26% 2 9,928 1 ,525,991 1 ,052,594\nB. PENSION & GENERAL ANNUITY AND GROUP BUSINESS % as per Reg PAR PH NON PAR Book Value Actual % FVC Amount Total Fund Market Value\n(a) (b) (c)= (a+b) (d) (e) (f)=(c+e) (g)\n1 Central Govt. Sec Not less than 20% 32,872 543,287 5 76,158 86.63% - 576,158 5 57,095\n2 C Se e c n u tr r a it l i e G s o ( v in t c S l e ( c i) , S a t b a o t v e e G ) ovt Sec or Other Approved Not less than 40% 33,869 543,287 5 77,156 86.78% - 577,156 5 58,111\n3 Balance in Approved investment Not exceeding 60% 13,571 7 4,347 87,918 13.22% 7,862 9 5,780 96,394\nTOTAL PENSION, GENERAL ANNUITY FUND 100% 4 7,440 6 17,633 6 65,073 100.00% 7 ,862 6 72,936 6 54,505\nLinked Business\nC. LINKED FUNDS PERCENTAGE AS PER REG. PAR PH NON PAR TOTAL FUND ACTUAL %\n(a) (b) (c)= (a+b) (d)\n1 Approved Investments Not less than 75% - 4 ,248,432 4,248,432 85.45%\n2 Other than Approved Investment Not more than 25% - 723,221 7 23,221 14.55%\nTOTAL LINKED INSURANCE FUND 100% - 4 ,971,653 4 ,971,653 100.00%\nRemarks:Company has exposure to INR G-sec in GIFT City Branch Office. It is part of consolidated Schedule 8 (SH Fund). The same has been adjusted above Section I to reconcile with standalone financial statement.\nNote:\n1(+) FRSM refers to 'Funds representing Solvency Margin'\n2Funds beyond Solvency Margin shall have a separate Custody Account.\n3Other Investments are as permitted as per Sec 27A (2) of Insurance Act, 1938 as amended from time to time\n4Pattern of Investment is applicable to both Shareholders funds representing solvency margin and policyholders funds.\n5Exposure Norms apply to funds held beyond solvency margin, held in a separate custody account\n6For NUL Life Fund and NUL Pension Fund : In Book Value column Equity, Mutual Fund, Alternate Investment Funds, Preference Shares are shown at Cost\n7FVC figure is provided for only in respect of shares ( Equity, Mutual Fund, Alternate Investment Funds, Preference Shares )\n8CRISIL bond prices have been used for arriving Market Value of Debt & GSEC Securities.\n9Category of Investment (COI) shall be as per Guidelines, as amended from time to time.\nVersion 0.1 35 Date of upload: 13th Feb 2026"
       ],
@@ -381,6 +419,7 @@
     {
       "page_number": 38,
       "page_label": "L-27",
+      "page_label_normalized": "L-27",
       "company_name": null,
       "section": "Unit Linked Business - 3A",
       "text_blocks": [
@@ -391,6 +430,7 @@
     {
       "page_number": 39,
       "page_label": "L-27",
+      "page_label_normalized": "L-27",
       "company_name": null,
       "section": "Unit Linked Business - 3A",
       "text_blocks": [
@@ -401,6 +441,7 @@
     {
       "page_number": 40,
       "page_label": "L-27",
+      "page_label_normalized": "L-27",
       "company_name": null,
       "section": "Unit Linked Business - 3A",
       "text_blocks": [
@@ -411,6 +452,7 @@
     {
       "page_number": 41,
       "page_label": "L-27",
+      "page_label_normalized": "L-27",
       "company_name": null,
       "section": "Unit Linked Business - 3A",
       "text_blocks": [
@@ -421,6 +463,7 @@
     {
       "page_number": 42,
       "page_label": "L-27",
+      "page_label_normalized": "L-27",
       "company_name": null,
       "section": "Unit Linked Business - 3A",
       "text_blocks": [
@@ -431,6 +474,7 @@
     {
       "page_number": 43,
       "page_label": "L-27",
+      "page_label_normalized": "L-27",
       "company_name": null,
       "section": "Unit Linked Business - 3A",
       "text_blocks": [
@@ -441,6 +485,7 @@
     {
       "page_number": 44,
       "page_label": "L-27",
+      "page_label_normalized": "L-27",
       "company_name": null,
       "section": "Unit Linked Business - 3A",
       "text_blocks": [
@@ -451,6 +496,7 @@
     {
       "page_number": 45,
       "page_label": "L-27",
+      "page_label_normalized": "L-27",
       "company_name": null,
       "section": "Unit Linked Business - 3A",
       "text_blocks": [
@@ -461,6 +507,7 @@
     {
       "page_number": 46,
       "page_label": "L-27",
+      "page_label_normalized": "L-27",
       "company_name": null,
       "section": "Unit Linked Business - 3A",
       "text_blocks": [
@@ -471,6 +518,7 @@
     {
       "page_number": 47,
       "page_label": "L-27",
+      "page_label_normalized": "L-27",
       "company_name": null,
       "section": "Unit Linked Business - 3A",
       "text_blocks": [
@@ -481,6 +529,7 @@
     {
       "page_number": 48,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": null,
       "section": "unknown",
       "text_blocks": [
@@ -491,6 +540,7 @@
     {
       "page_number": 49,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": null,
       "section": "unknown",
       "text_blocks": [
@@ -501,6 +551,7 @@
     {
       "page_number": 50,
       "page_label": "L-29",
+      "page_label_normalized": "L-29",
       "company_name": null,
       "section": "Details regarding Debt securities",
       "text_blocks": [
@@ -511,6 +562,7 @@
     {
       "page_number": 51,
       "page_label": "L-30",
+      "page_label_normalized": "L-30",
       "company_name": "Tata Securities Limited",
       "section": "Related Party Transanctions",
       "text_blocks": [
@@ -521,6 +573,7 @@
     {
       "page_number": 52,
       "page_label": "L-30",
+      "page_label_normalized": "L-30",
       "company_name": "Tata Electronics Private Limited",
       "section": "Related Party Transanctions",
       "text_blocks": [
@@ -531,6 +584,7 @@
     {
       "page_number": 53,
       "page_label": "L-30",
+      "page_label_normalized": "L-30",
       "company_name": null,
       "section": "Related Party Transanctions",
       "text_blocks": [
@@ -541,6 +595,7 @@
     {
       "page_number": 54,
       "page_label": "L-31",
+      "page_label_normalized": "L-31",
       "company_name": null,
       "section": "Board of Directors & Key Management Persons",
       "text_blocks": [
@@ -551,6 +606,7 @@
     {
       "page_number": 55,
       "page_label": "L-32",
+      "page_label_normalized": "L-32",
       "company_name": null,
       "section": "Available Solvency Margin and Solvency Ratio",
       "text_blocks": [
@@ -561,6 +617,7 @@
     {
       "page_number": 56,
       "page_label": "L-33",
+      "page_label_normalized": "L-33",
       "company_name": "TATA AIA Life Insurance Company Limited",
       "section": "NPAs",
       "text_blocks": [
@@ -571,6 +628,7 @@
     {
       "page_number": 57,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": "TATA AIA Life Insurance Company Limited",
       "section": "unknown",
       "text_blocks": [
@@ -581,6 +639,7 @@
     {
       "page_number": 58,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": "TATA AIA Life Insurance Company Limited",
       "section": "unknown",
       "text_blocks": [
@@ -591,6 +650,7 @@
     {
       "page_number": 59,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": "TATA AIA Life Insurance Company Limited",
       "section": "unknown",
       "text_blocks": [
@@ -601,6 +661,7 @@
     {
       "page_number": 60,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": "TATA AIA Life Insurance Company Limited",
       "section": "unknown",
       "text_blocks": [
@@ -611,6 +672,7 @@
     {
       "page_number": 61,
       "page_label": "L-36",
+      "page_label_normalized": "L-36",
       "company_name": null,
       "section": "Premium and number of lives covered by policy type",
       "text_blocks": [
@@ -621,6 +683,7 @@
     {
       "page_number": 62,
       "page_label": "L-37",
+      "page_label_normalized": "L-37",
       "company_name": null,
       "section": "Business Acquisition through Different Channels - Group",
       "text_blocks": [
@@ -631,6 +694,7 @@
     {
       "page_number": 63,
       "page_label": "L-38",
+      "page_label_normalized": "L-38",
       "company_name": null,
       "section": "Business Acquisition through Different Channels - Individuals",
       "text_blocks": [
@@ -641,8 +705,9 @@
     {
       "page_number": 64,
       "page_label": "L-39-DATA",
+      "page_label_normalized": "L-39",
       "company_name": null,
-      "section": "unknown",
+      "section": "Data on Settlement of Claims",
       "text_blocks": [
         "PERIODIC DISCLOSURES\nFORM L-39-Data on Settlement of Claims\nInsurer: TATA AIA LIFE INSURANCE COMPANY LIMITED Date: 31 DECEMBER 2025\nAgeing of Claims - Individual\nNo. of claims paid # - Upto the quarter ended December 31, 2025 Total amount of\nTotal No. of\nSl.No. Types of Claims On or before 6 months - 1 claims paid (` In\n1 month 1 - 3 months 3 - 6 months > 1 year claims paid\nmaturity year Lakhs)\n1 Maturity Claims 15,528 8,142 133 4 - - 23,807 95,598\n2 Survival Benefit 7,59,885 19,994 2,158 1,284 375 - 7,83,696 1,54,847\n3 For Annuities / Pension 37,477 1,018 44 7 6 - 38,552 12,269\n4 For Surrender 21,786 37,819 304 75 3 - 59,987 2,92,996\n5 Other benefits 4,350 17,068 114 1 - - 21,533 71,949\n1 Death Claims* 1,936 4,735 89 1 6 6 6,773 1,03,621\nAgeing of Claims - Individual\n\"No. of claims paid # - For the quarter ended December 31, 2025 Total amount of\nTotal No. of\nSl.No. Types of Claims On m o a r t u b r e it f y ore 1 month 1 - 3 months 3 - 6 months 6 mo y n e t a h r s - 1 > 1 year claims paid claim L s a p k a h i s d ) (` In\n1 Maturity Claims 5,689 3,804 111 4 - - 9,608 45,027\n2 Survival Benefit 2,82,186 6,893 1,432 939 360 - 2,91,810 61,098\n3 For Annuities / Pension 12,499 367 27 6 6 - 12,905 4,088\n4 For Surrender 21,786 199 105 36 1 - 22,127 1,13,294\n5 Other benefits 4,350 2,921 76 1 - - 7,348 27,311\n1 Death Claims* 1,936 245 2 - - - 2,183 32,273\nAgeing of Claims - Group\nNo. of claims paid # - Upto the quarter ended December 31, 2025 Total amount of\nTotal No. of\nSl.No. Types of Claims On m o a r t u b r e it f y ore 1 month 1 - 3 months 3 - 6 months 6 mo y n e t a h r s - 1 > 1 year claims paid claim L s a p k a h i s d ) (` In\n1 Maturity Claims - - - - - - - -\n2 Survival Benefit - - - - - - - -\n3 For Annuities / Pension - 724 - - - - 724 137\n4 For Surrender - 5,576 - - - - 5,576 2,794\n5 Other benefits $ - 3,707 - - - - 3,707 11,806\n1 Death Claims* - 2,582 16 - - - 2,598 28,785\n“The figures for individual and group insurance business are shown separately”\n“*In case of death claims, the ageing of claims are computed from the date of completion of all the documentation”\nAgeing of Claims - Group\n\"No. of claims paid # - For the quarter ended December 31, 2025 Total amount of\nTotal No. of\nTypes of Claims On or before 6 months - 1 claims paid (` In\n1 month 1 - 3 months 3 - 6 months > 1 year claims paid\nmaturity year Lakhs)\n1 Maturity Claims - - - - - - - -\n2 Survival Benefit - - - - - - - -\n3 For Annuities / Pension - 293 - - - - 293 49\n4 For Surrender - 2,153 - - - - 2,153 1,458\n5 Other benefits $ - 1,275 - - - - 1,275 3,810\n1 Death Claims* - 879 - - - - 879 8,062\nThe figures for individual and group insurance business are shown separately\n*the ageing of claims, in case of the death of the claims will be computed from the date of completion of all the documentation.\n# this excludes claims moved to unclaimed amount to policyholders\n$ Other Benefits include Experience Refund Rating (ERR) in case of Group Life policies and gratuity and superannuation benefits paid under Gratuity and Superannuation policies\nrespectively in the event of separation of employees from the Companies\nDeath Claims reported above are in alignment with the Annual Statistics format\nVersion 0.1 62 Date of upload: 13th Feb 2026"
       ],
@@ -651,6 +716,7 @@
     {
       "page_number": 65,
       "page_label": "L-40",
+      "page_label_normalized": "L-40",
       "company_name": null,
       "section": "Quarterly Claims Data",
       "text_blocks": [
@@ -661,6 +727,7 @@
     {
       "page_number": 66,
       "page_label": "L-41",
+      "page_label_normalized": "L-41",
       "company_name": null,
       "section": "Grievance Disposal",
       "text_blocks": [
@@ -671,8 +738,9 @@
     {
       "page_number": 67,
       "page_label": "L-42V",
+      "page_label_normalized": "L-42V",
       "company_name": null,
-      "section": "unknown",
+      "section": "Valuation Basis",
       "text_blocks": [
         "PERIODIC DISCLOSURES\nForm L-42Valuation Basis\nFor the Quarter ending: DECEMBER 31,2025 Date: 31.12.2025\nI.INDIVIDUAL BUSINESS\nRange (Minimum to Maximum) of parameters used for valuation\nType Category of business Interest Rate Mortality Rate Morbidity Rate Fixed Expenses2 Variable Expenses3 Inflation Rate Withdrawal rates4 Future Bonus Rates\n(Assumption)\nAs at 31st Dec, As at 31st Dec, As at 31st Dec, As at 31st Dec, As at 31st Dec, As at 31st Dec, 2024 As at 31st Dec, As at 31st Dec, As at 31st Dec, As at 31st Dec, As at 31st Dec, As at 31st Dec, As at 31st Dec, As at 31st Dec, As at 31st Dec, As at 31st\nNon-Linked -VIP 2025 2024 2025 2024 2025 2025 2024 2025 2024 2025 2024 2025 2024 2025 Dec, 2024\nL G i e fe n eral Annuity - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\nPension - - - - - - - - - - - - - - - -\nHealth - - - - - - - - - - - - - - - -\nNon-Linked -Others\nL G i e fe n eral Annuity 7.1 - 0% 7.2 - 5% 55 2 ( I L U % n 0 iv l 6 d 3 t ( e i 2 . i 8 t m a 2 o s 0 . n 5 2 a 1 M 6 % 5 t 2 A -3 e o % - s . ) r 1 s 2 o t 4 t u a 5 f t a o ) r l % t i b e t h y l d e e o f 2 ( I L U n 1 iv l 8 d 3 6 t ( e i 2 . i 8 0 m a 3 s 0 . . n 5 2 5 a 1 M % 5 0 t 2 A - e o % % - s ) r 1 s o t 4 t u a f t t a o ) o r l t i b e t h y l d e e 8. m 4 r 5 3 C e 6 i 1 I i l t 8 n l o B . e . 2 s T 7 u 2 5 o - 5 9 2 r % r % 3 a . e 5 n o t l c s o o p r e e f e r 31.25% CI B to T - 9 1 3 2 . 5% of R R s. s 2 . 1 2 4 5 - . 8 5 . 6 5 0 to R R s. s 1 . 9 2 4 4 - . 3 4 . 8 1 0 to R 4 e In . n 4 i e 0 t % p i w . a 9 r l a e 1 t e l o m 3 - x e % i 9 p u x 3 e p m . o n e 5 f s n % e s : e . : Re I 4 n n . i e 0 t 4 p i w . % a 8 r l a e 5 e l m t 8 - o x e % i p u x 8 e p m 8 o n e % f s n e s . : e : 6.9 - 5% 6.6 - 9% 0.4% t - o 40% 0.4% to - 14.0% 0% p b r a 1 e o a t o m . t o n s 0 t f s a u i 9 1 u u s c s -% 6 u m r e h e 2 m s i n d . t a 3 a g o , n 2 s d % a s b n 5 u a 2 d o m 0 0 p . n . . 7 p a 2 1 u a 4 l t 5 % i s - t c s % a e % s a c s u b t h t o r o l a o e i e n f s d g\nPar P H e e n a s lt io h n 6.8 - 7% 8.0 - 7% th ( e L U iv l I t ( n e i 2 m d s 0 i a a 1 M t- n 2 e o - ) A r 1 t t s 4 a a s ) l b i u t l y r e e d I 6 L n i 3 v d ( . e i 2 2 a s 0 5 n 1 % M A -2 o - s o r 1 s t f 4 u a t ) r l h i e t e y d 3 1 1 C 2 . I 2 B 5 5 T % - % 9 3 o . t f o 31.25% CI B to T - 9 1 3 2 . 5% of R R s. s 2 . 1 2 4 5 - . 8 5 . 6 5 0 to R R s. s 1 . 9 2 4 4 - . 3 4 . 8 1 0 to 0 p .9 re 1 m 3 - % iu m of 0 p .8 re 5 m 8 - % iu m of 6.9 - 5% 6.6 - 9% 1.0 - 0% 1.0 - 0% 5 a .5 s a b 0 s t u o % ta r n e c -u o h d s f i e n a s s g n u d m 7 a .1 s a b 0 s t u o % ta r n e c -u o h d s f i e n a s s g n u d m\nLinked -VIP\nLife - - - - - - - - - - - - - - - -\nGeneral Annuity - - - - - - - - - - - - - - - -\nPension - - - - - - - - - - - - - - - -\nHealth - - - - - - - - - - - - - - - -\nLinked-Others\nLife - - - - - - - - - - - - - - - -\nGeneral Annuity - - - - - - - - - - - - - - - -\nPension - - - - - - - - - - - - - - - -\nHealth - - - - - - - - - - - - - - - -\nNon-Linked -VIP\nLife - - - - - - - - - - - - - -\nGeneral Annuity - - - - - - - - - - - - - -\nPension - - - - - - - - - - - - - -\nHealth - - - - - - - - - - - - - -\nL G N i e f o e n n e - r L a i l n A k n e n d u i - ty Others 7 7 . . 3 2 5 3 % % 7 7 . . 0 0 9 9 % % 4 ( 0 I M 6 L U n 6 . i 3 o 5 v l A d 0 2 t ( ( I 2 % r o e i n i 2 2. n 3 m t a . 5 f s a n 0 0 . d 5 n % 4 a I l u 1 1 t % i M i v n o 2 t t A i 2 2 y e t i d o % d o a - - s 1 ) o i r 1 1 T s u a f n 5 t f t 4 5 u a a t a n t t 9 a ’ t o ) ) r h l l b s h . b i e t e 5 l l e y e d e % t 4 2 h I 5 5 ( n M e L U % . 6 d i 2 o v l I A 0 i t ( ( % n a r e i 2 n 2 . t m t d 5 n o s 0 a n 0 i % t a 1 a l u 1 I M 1 i o t t n 2 i n 2 5 y e t o d - 6 o a - 9 ) A r 1 1 T i 0 f n t . v 5 t s 4 a 5 1 t a t i a s ’ ) d ) h % l b % s b i u u t e l l y r e a e e o o l d f f r 8 a . m 4 r t 5 3 e C a e 6 i 1 i p I l t s 8 0 n l o B . e p . . 2 s w T 7 0 l u 2 5 i o c 5 h 9 0 r 2 % r a % a 3 e % . b e r 5 n o e l t l c e s o o p r v e e f e e r r 3 t 1 h . e 2 5 t % a 0 b . 0 t le o 0 % C 1 I 2 B 5 T % 93 o . f i 1 n 7 R 2 s o M M p 9 u 6 s 0 f r . . r 0 i i e n n 8 a s t . 1 m o 6 i i i 7 n n m m 7 . 2 c i g R a 9 u u u e 1 F l . n s e m m m o 8 6 . d p / 6 r . a l 3 7 t a o o 0 m o n 8 t n f f . o n . 1 i s R R R 5 c u 7 : R r 0 s s s a 9 o . s R . . l % - . s . p m M la R R s i i c 2 p n i n 0 s s n r R 0 R r s . . i . o g m e 2 : 2 s 8 s 2 - l m . 6 6 e . . u R 0 3 i 5 0 1 2 / n m i 8 s 6 8 u a . % 6 s . 7 . . m n 3 u 0 5 a 5 o . n 0 r . 6 0 n f o 7 F a u t . d o f 8 R o n t a o r s c l t e . o p R R r 0 i I e e I I n e n . n n n n m s 9 i 0 0 0 i i t u e e 0 0 3 t t % i i . . p i i a r u w w . . 5 0 0 a a a 8 8 r l m % 8 8 l l 2 a a e n 0 0 t e 0 0 e E . l l o m . c 3 3 2 x 3 3 x x e e e t % % F % p i 5 p p o % % u x x o e 5 p e e p p m r 5 n % l o o n n e e a t t . s M f f o o s s n n 5 n e . e e % s s i s c : : e e : : r : : o - R R I 2 M e e I I n p n n . p n n i i 2 l c i i a t r e e 0 0 t t % i e r p i i a n w w . . a a o m 8 8 r l s l l 2 - a a e 6 6 : t e i i e E . n l l o m u 9 9 2 x 0 x x s e e m % % % p i . 5 p p u u x x 9 e 0 . e e r p p m 3 n a . o o n n F e e 5 6 s n f f o s s n n % % e c e e r s s e : : e e : . : : 6 6 . . 9 9 5 5 % % 6 6 . . 6 6 9 9 % % 0 0 % % t t o o 5 2 2 1 % % 0 0 % % t t o o 5 1 2 2 % %\nPension 7.23% 7.09% ( I L U n iv l d t ( e i i 2 m a s 0 n a 1 M t A 2 e o - s ) r 1 s t t 4 u a a ) r l b i e t l y d e ( I L U n iv l d t ( e i i 2 m a s 0 n a 1 M t A 2 e o - s ) r 1 s t t 4 u a a ) r l b i e t l y d e 0.0 0 8 . 0 to 0 % 22.5 The m 0 o . r 0 b 0 id % ity rate 17 o p 9 f r . e 8 s m 6 in 2 i g a u 1 l n e m 6 d / . a 7 t 0 o n . n 1 R u 7 s a 9 . l % Rs 18 2 0 2 .8 6 to Rs M Re in 1 n . e 0 1 o w . % f 8 0 a 0 . l t 3 0 o e % 8 x 3 0 p . 3 o 3 e % f n % s e to : Rene 1 0 p w % . r 9 a e 9 l m t o % e i u x 3 p m o % e f nse: 6.95% 6.69% 0% to 12% 0% to 8%\n7.35% 7.09% ( 2 I U L n 7 i l v 6 t d 2 ( i e 2 . m i 3 a 5 s 0 . n a 6 4 1 M t % 2 2 A e o % - ) s r 1 s o t t 4 u a a f t o ) r l b t i e t h l y e d e . th 5 ( e U L 4 i l % v I t ( n i e 2 m d s t 0 o a i a 1 M t n 2 e 2 o - 1 ) A r 1 9 t t s 4 a a % s ) l b i u t l y r e o e . f d e ra ls 4 r p t C e e e 6 e I i s 8 r n 3 B . s w m 1 T 7 u . 5 9 h i 2 r l % 3 a e l 5 e r n % o e c o o r v e r f e t o r m 3 1 s u 1 2 o o b s . 5 m d 2 e a % i 5 e d s fi i % e s p r o d a r f f o o n t C o t d r g h I u e e 1 B o c s 2 t T t p h 5 9 s f r e r % 3 i o a c r s i m n f n o o d g r f Rs. 0 to Rs. 216.7 Rs R . s 2 . 0 2 8 6 . 0 5 . 6 7 to I e n x it p t ia o e l p n R 0 t E r s o e . x e e 8 n p m 4 : 0 e 0 e 4 3 i w . n u % % 0 s m a 8 e l 0 o : 3 f 0 % % 0 p .8 re 6 m 9% iu m of 6.95% 6.69% 0% to 40% 0.875% to 20%\nNon-Par Health applicable where applicable. NOT APPLICABLE\nLinked -VIP\nLife - - - - - - - - - - - - - -\nGeneral Annuity - - - - - - - - - - - - - -\nPension - - - - - - - - - - - - - -\nHealth - - - - - - - - - - - - - -\nLinked-Others\nL G i e fe n eral Annuity 5.8 - 8% 5.5 - 0% t 2 h 2 ( e L U . i 5 v l I t ( % n e i 2 m d s 0 i t a a 1 M o t n 2 - e o 1 - ) A r 1 8 t t s 4 a 6 a s ) l % b i u t l y r e e o d f 3 ( 0 I L U n 2 iv l d . t ( 2 e 3 i i 2 m a 2 8 s 0 n . 8 a 1 M 5 % t A - 2 % e o - s ) r 1 s o t t t 4 u a f o a ) r l b i e t t l y d h e e r 8 T a . m 4 r h t 5 3 e C a e 6 e i 1 i p I l t s 8 n l o B . e p m . 2 s w T 7 l u 2 5 i o o- c 5 h 9 r 2 % r r a % a 3 e . b b e r 5 n i o e l d t l c e s o o p r v e i e t f e e y r r p t 1 T r T s a a r w 2 h h o b e n b t 5 e e m h l s o e g a % c e e e s m m r 1 r i i . i e s 2 b p o o o e f r 5 e r r r f . f a o o b b o % d t p C m - i i d r h d d p I m u e o B i i o l 3 t t i c o t T c y y f 1 p t h a r s 9 t r . e r r b b h 2 i 3 a a c a r i e l 5 d s t t e i n f n e e % i o . t d g s s y r Rs. 18 2 3 2 . - 5 1 1 .1 to Rs. Rs. 22 2 4 8 . - 0 4 . 5 to Rs. R 0 0 e . I 0 n . n 5 8 o i e t % 8 f i w a % p l a t r e l o e t - x e m o 1 p x 6 i e 0 p u . n . e m 5 8 s n % 8 e s % : e . : R 0 e In . n 5 i e t % 0 p i w a . r l 9 a e t 9 e l o m - % x e i 1 p u x 6 e p m o . n e 5 f s n % e s : e . : 6.9 - 5% 6.6 - 9% 0% to - 40% 0% to - 30%\nrates range range from 31.25%\n22.5% to 110% of 22.5% to 110% of from 31.25% to 125% of the Initial expense:\n5.88% 5.50% the L iv I ( n e 2 d s 0 i a 1 M n 2 o - A r 1 t s 4 a s ) li u ty re d the L iv I ( n e 2 d s 0 i a 1 M n 2 o - A r 1 t s 4 a s ) li u ty re d t m o o p 1 r r 2 b e 5 i s d % c it r y ib o t e f a d t b h le e p t s a r o b e m l s e c e r i . ib p e e r . o d C d I m u B c o T t r s 9 b 3 a id n f i o t d y r Rs. 18 2 3 8 .5 0 1 .5 to Rs. Rs. 22 2 4 8 . 0 4 . 5 to Rs. R 0 e . 0 0 n . 8 5 e 8 5 w % % al t t e o o x 0 1 p . . e 9 1 n 9 % s % e: Rene 0 p w . r 9 a e 9 l m % e iu x p m o e f nse: 6.95% 6.69% 0% to 28% 0% to 7.2%\n(Ultimate) table (Ultimate) table i.e. CIBT93 for 125% of the pricing of premium\nPension 8 s a. o 5n m dt e o 1 p 22 r 25 o .% d 5 u p c oe t f s r Twh b he a e s mr i e s o f ar o bp r ip d o liit t cy h a e br r al s et e.\nHealth 5.88% 5.50% t 2 h ( 2 e U L . i 5 l v I t ( % n i e 2 m d s 0 a i t a 1 M o t n 2 e o 1 - ) A r 1 1 t t s 4 a 0 a s ) l % b i u t l y r e e o . d f th 2 ( e 2 U L . i l v I 5 t ( n i e % 2 m d s 0 a i a 1 M t t o n 2 e o - ) 9 A r 1 t t 0 s 4 a a s % ) l b i u t l y r e o e . f d ra m 4 r t 3 e C a e 6 i 1 i p I l s 8 n l B . e p . 2 s w T 7 l u 5 i o c 5 h 9 r % r a % a 3 e b e r n o e l t l c e s o o r v e e f e r m u 3 1 s w s 1 2 o o b e . 5 m h d 2 a d % e i 5 e s f r i i i % e s e s p o d r r f f a a o o t C p o t n d r h I p g u e 1 B o li c e 2 t T c t p h s 5 a 9 s r e % b 3 f i a c r r l s e o i n f n o o m . d g r f Rs. 18 2 3 2 .5 1 1 .1 to Rs. Rs. 22 2 4 8 . 0 4 . 5 to Rs. 0 R . I e 8 n n 8 i e t % i w 8 a l . a o 6 e l f 5 x e 7 p p x % r e p e n e m s n e i s u : e m : Re In n i e t 0 p i w 8 a . r l . 9 a e 6 9 e l m 5 % x e 7 i p u x % e p m o n e f s n e s : e : 6.95% 6.69% 0.80% to 40% 2.4% to 8%\nII.GROUP\nBUSINESS\nRange (Minimum to Maximum) of parameters used for valuation\nType Category of business As at 31st I D n e te c r , e st A R s a a t t e 3 1st Dec, As at 31st M De o c rt , a lity R As a t a e t 31st Dec, As at 31st D M ec o , r bi A d s it y a t R 3 a 1 te st Dec, 2024 As at 31sFti xDeedc ,E xpenAsse sa 2 t 31st Dec, As at 31Vsat rDiaebcl,e ExpAesn saets 3 3 1st Dec, As at 31st D In e f c la , tion A R s a a te t 31st Dec, As at 31Wsti tDhderca, wal rAast east 4 31st Dec, As at F 3 u 1 t s u t r D e e B c o , nus A R s a a te t s 3 1st\n2025 2024 2025 2024 2025 2025 2024 2025 2024 2025 2024 2025 2024 2025 Dec, 2024\nNon-Linked -VIP\nLife - - - - - - - - - - - - - - - -\nGeneral Annuity - - - - - - - - - - - - - - - -\nPension - - - - - - - - - - - - - - - -\nHealth - - - - - - - - - - - - - - - -\nNon-Linked -Others\nLife - - - - - - - - - - - - - - - -\nGeneral Annuity - - - - - - - - - - - - - - - -\nPension - - - - - - - - - - - - - - - -\nPar Health - - - - - - - - - - - - - - - -\nLinked -VIP\nLife - - - - - - - - - - - - - - - -\nGeneral Annuity - - - - - - - - - - - - - - - -\nPension - - - - - - - - - - - - - - - -\nHealth - - - - - - - - - - - - - - - -\nLinked-Others\nLife - - - - - - - - - - - - - - - -\nGeneral Annuity - - - - - - - - - - - - - - - -\nPension - - - - - - - - - - - - - - - -\nHealth - - - - - - - - - - - - - - - -\nNon-Linked -VIP\nLife - - - - - - - - - - - - - -\nGeneral Annuity - - - - - - - - - - - - - -\nPension - - - - - - - - - - - - - -\nHealth - - - - - - - - - - - - - -\nNon-Linked -Others\nMortality rates in Mortality rates in 100% to Group Credit Life: Group Credit\nrange of 17% to range of 22% to 125% of Minimum of Rs. 22 Life: Minimum of\n6 7 .8 .3 0 5 % % to 6.85% to 7.09% I L n 1 iv d 8 e i 3 a s % n M A o o s r f s t u a th r li e e ty d I 3 L n i 2 v d 3 e ia . s 4 n % M A o s o r s t f u a t r l h i e t e y d r r a t e o t in e 1 s s 5 u o % r r a 2 n o % c f e - pre a s m n in d i g u l 0 m e . / 2 a t 2 o n % n R u s o a . l f 5 5 si R n 0 s g . . 2 l e 2 2 / 2 % a n a n o n u f d a l Grou 3 p . 0 te 8 r % m . life is Grou 3 p . 0 te 8 r % m . life is 6.95% 6.69% - -\n(2012-14) (2012-14) mortality per member per premium to Rs.\nLife (Ultimate) table; (Ultimate) table rates year 55 per member\n55% of Indian\nNon-Par G Pe e n n s e io ra n l Annuity 7.2 - 3% 7.0 - 9% 55% M o o A If r n n t I a n dn l u i i vd t i -y t iidaa T unn a t a I’ l b sn l d e i vidual Annui - tant’s Mortality Ta- - ble (2012-15) - - Rs. 179.86 - to Rs. 21R6s.7. 208.56 - to Rs. 260.7 0.0 - 0% 0.0 - 0% 6.9 - 5% 6.6 - 9% - - - - NOT APPLICABLE\nHealth - - - - - - - - - - - - - -\nLinked -VIP\nLife - - - - - - - - - - - - - -\nGeneral Annuity - - - - - - - - - - - - - -\nPension - - - - - - - - - - - - - -\nHealth - - - - - - - - - - - - - -\nLinked-Others\nLife - - - - - - - - - - - - - -\nGeneral Annuity - - - - - - - - - - - - - -\nPension - - - - - - - - - - - - - -\nHealth - - - - - - - - - - - - - -\nHow the policy data needed for valuation is accessed\nTFhoer icnodmivipdaunayl liefem pbluosyinse ssesv, edraatl as yiss teexmtrsa cfoterd it sfr oinmdi veidaucah l obfu tshiene ssyss,t egmrosu pin l iafe c bleuasrinlye dsse,f inceredd mit alifnen ebru sinin oersdse, rp teon rseiomno bvues dinaetsas t haantd i sfo nro at crceoleuvnatinntg t.o T thhee scyaslcteumlatsio anr e(e, .ign .g aednderreasl,s a ocfc puoralitcey haonldd erre lsiainbclee awned dpor ondoutc hea rveep aosrtssu manpdti odnasta v athrayitn cga bny b aer ereal)ie. dT huep odna tfao ri sf inthaennc ivaal lrideaptoerdti nfgo rp aucrpcoursaecsy..\nHow the valuation bases are supplied to the system\nRaw data received from IT is converted to Prophet friendly format using the Data Conversion System (DCS). Prophet is the main valuation software and system that is used to calculate actuarial liabilities.\nValuation Methodology\n1. Participating Business, Non-Participating Business, Annuities – Non-Participating Business, Pension – Par Business\nThe above mentioned lines of business are valued by the prescribed Gross Premium Valuation (GPV) Method.\n2Fa . bo o Ur vInne id t t -ihvL eidin uv kaa ell u dlief eB o uuf ns uii ntn-itleisns )ks ,e fdu nbdu sminaensasg,e tmhee ntot taanl dre ostehrevre c ihsa trhgee ssu. mC hoafr gtweso acsosmupmoende natrse i .aes. upneirt rthees ecrovnet raancdt pnoronv-iusnioitn rse.serve. Unit reserves are set, based on the number of units and the unit prices as at March 31, 2024. The non-unit reserves are set using a prospective method, that requires projection of future cash flows, that allow for items including premiums, death benefits (over and\n3F.o Hr Heaelathlth B Iunssuinraenscse business, the Gross Premium Valuation (GPV) method has been used, except for renewal products where the reserves held are higher of the UPR and GPV reserves.\n4R.i dReirdse ar rBe evnaelufeitds at higher of GPV and Unearned Premium Reserve (UPR).\n5NN .oo Gnn-- rLL oiinn ukk pee dd B uLOos nni e ng e yTs ees arrm r ebnueswinaebslse (gortohuepr tteharmn f(uOndY RbaGsTe)d h bauss bineeesns )v ahlause db eaesn p vearl uUende aarsn peedr P Greromsisu mP rReemsiuemrv eV (aUluPaRtio) np lmuse tPhroedm. iNumon D-Leinfikceiedn cFyu nRde bsaesrveed. business and Non-Linked VIP business has been valued as the sum of Policyholder Account Value and Unearned Premium Reserves (UPR).\n2 Fixed per policy expenses\n3 Premium related expenses\nVersion 0.1 65 Date of upload: 13th Feb 2026"
       ],
@@ -681,6 +749,7 @@
     {
       "page_number": 68,
       "page_label": "",
+      "page_label_normalized": "",
       "company_name": null,
       "section": "unknown",
       "text_blocks": [
@@ -691,6 +760,7 @@
     {
       "page_number": 69,
       "page_label": "L-45",
+      "page_label_normalized": "L-45",
       "company_name": null,
       "section": "Office Information",
       "text_blocks": [
