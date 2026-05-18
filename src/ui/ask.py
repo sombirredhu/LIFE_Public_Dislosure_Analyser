@@ -129,14 +129,50 @@ def _render_last_answer():
         if is_free: st.success("🟢 Free Model")
         else: st.info("🔵 Paid Model")
     st.caption(f"Model: `{model_used}` · {entry.get('timestamp', '')}")
+    
+    # Render the answer normally (markdown tables will be rendered as proper HTML tables)
     st.markdown(result['answer'])
-    answer_json = json.dumps(result['answer'])
-    copy_html = f"""<div style="margin:10px 0;"><button onclick="copyAns()" style="background:var(--secondary-background-color,#f0f2f6);border:1px solid var(--border-color,#d0d0d0);border-radius:4px; padding:8px 16px; cursor:pointer;font-size:14px; font-weight:500; color:var(--text-color,#262730);display:inline-flex; align-items:center; gap:6px;">📋 Copy Answer</button><span id="ans-fb" style="margin-left:10px;color:#28a745;font-weight:500;display:none;">✓ Copied!</span></div><script>function copyAns(){{navigator.clipboard.writeText({answer_json}).then(function(){{var f=document.getElementById('ans-fb');f.style.display='inline';setTimeout(function(){{f.style.display='none';}},3000);}});}}</script>"""
-    st.html(copy_html)
+    
+    # Single copy button at the bottom (ChatGPT style)
+    answer_text = result['answer']
+    answer_json = json.dumps(answer_text)
+    copy_all_html = f"""
+    <div style="position:relative;margin:20px 0 10px 0;padding:15px 0;border-top:1px solid #e0e0e0;">
+        <div style="display:flex;justify-content:flex-end;align-items:center;gap:10px;">
+            <button onclick="copyFullAnswer()" style="background:#fff;border:1px solid #d0d0d0;border-radius:6px;padding:8px 14px;cursor:pointer;font-size:13px;color:#555;display:flex;align-items:center;gap:6px;transition:all 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <span id="copy-all-text">Copy answer</span>
+            </button>
+        </div>
+    </div>
+    <style>
+        button:hover {{
+            background: #f5f5f5 !important;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15) !important;
+        }}
+    </style>
+    <script>
+        function copyFullAnswer() {{
+            const answerText = {answer_json};
+            navigator.clipboard.writeText(answerText).then(() => {{
+                const textSpan = document.getElementById('copy-all-text');
+                textSpan.textContent = 'Copied!';
+                setTimeout(() => {{
+                    textSpan.textContent = 'Copy answer';
+                }}, 2000);
+            }}).catch((err) => {{
+                console.error('Failed to copy:', err);
+                alert('Failed to copy to clipboard');
+            }});
+        }}
+    </script>
+    """
+    st.html(copy_all_html)
+    
     with st.expander("📄 View as Plain Text"): st.code(result['answer'], language=None)
-    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-    sources_md = "\n".join([f"- {s}" for s in result.get('sources', [])])
-    st.download_button(label="📥 Download as Markdown", data=f"# Question: {question}\n\n## Answer\n{result['answer']}\n\n## Sources\n{sources_md}", file_name=f"RAG_Answer_{ts}.md", mime="text/markdown")
     if result.get('sources'):
         st.markdown("---")
         st.markdown("**📚 Sources:**")
