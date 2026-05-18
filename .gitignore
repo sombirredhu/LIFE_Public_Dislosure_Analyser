@@ -71,6 +71,9 @@ temp/
 # docs/ - Now tracked for GitHub documentation
 Project_Files/
 
+# LLM response cache (auto-generated, per-machine)
+data/cache/
+
 # Testing artifacts (keep .py test files for CI)
 tests/__pycache__/
 tests/*.txt

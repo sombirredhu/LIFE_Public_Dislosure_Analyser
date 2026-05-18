@@ -41,7 +41,23 @@ def _update_master_page_definitions():
         except Exception: continue
     with open(pdir / "master_page_definitions.json", "w", encoding="utf-8") as f:
         json.dump({lp: sorted(ts) for lp, ts in master_map.items()}, f, indent=2, ensure_ascii=False)
-    t_to_p = {t.lower(): lp for lp, ts in master_map.items() for t in ts}
+    def _is_clean_term(t: str) -> bool:
+        if "\n" in t or len(t) > 60 or len(t.strip()) < 3:
+            return False
+        import re as _re
+        return len(_re.findall(r"[a-zA-Z]{2,}", t)) >= 2
+
+    raw_t_to_p = {t.lower(): lp for lp, ts in master_map.items() for t in ts}
+    t_to_p = {k: v for k, v in raw_t_to_p.items() if _is_clean_term(k)}
+    # Merge user-curated abbreviations so they survive every rebuild.
+    user_path = pdir / "user_term_to_page.json"
+    if user_path.exists():
+        try:
+            with open(user_path, "r", encoding="utf-8") as f:
+                user_data = json.load(f)
+            t_to_p.update({k: v for k, v in user_data.items() if not k.startswith("_")})
+        except Exception:
+            pass
     with open(pdir / "master_term_to_page.json", "w", encoding="utf-8") as f:
         json.dump(t_to_p, f, indent=2, ensure_ascii=False)
 

@@ -1,0 +1,20 @@
+{
+  "_comment": "Manually curated abbreviation and synonym mappings. This file is NEVER overwritten by auto-rebuild. Add entries here to supplement the generated master_term_to_page.json.",
+  "pat": "L-2",
+  "profit after tax": "L-2",
+  "gwp": "L-4",
+  "gross written premium": "L-4",
+  "nwp": "L-4",
+  "net written premium": "L-4",
+  "nbp": "L-1",
+  "new business premium": "L-1",
+  "ulip": "L-4",
+  "par": "L-4",
+  "non par": "L-4",
+  "solvency": "L-27",
+  "solvency ratio": "L-27",
+  "persistency": "L-38",
+  "expense ratio": "L-5",
+  "commission ratio": "L-5",
+  "conservation ratio": "L-38"
+}

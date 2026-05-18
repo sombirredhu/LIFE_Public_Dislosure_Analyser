@@ -214,20 +214,23 @@ def top_up_missing_companies(query: str, chunks: List[Dict[str, Any]], expected:
     for co in needs_repair:
         try:
             scoped_filters = {**(filters or {}), "company_code": co}
-            company_chunks = retrieve(query, scoped_filters, 16) or []
+            company_chunks = retrieve(query, scoped_filters, 40) or []
             if not company_chunks:
                 continue
 
             targeted: List[Dict[str, Any]] = []
-            # Strong repair path: fetch intended L-pages directly (normalized).
+            # Repair path: company-scoped search + Python _base_lpage post-filter.
+            # Avoids page_label_normalized ChromaDB filter which can be stale
+            # (e.g. stored as "L-2-A-PL" instead of "L-2" for some companies).
             for lp in sorted(target_lpages):
                 base_lp = _base_lpage(lp)
                 if not base_lp.startswith("L-"):
                     continue
-                lp_filters = {**scoped_filters, "page_label_normalized": base_lp}
-                hits = retrieve(query, lp_filters, 2) or []
-                for h in hits:
-                    targeted.append(h)
+                hits = [
+                    h for h in company_chunks
+                    if _base_lpage(str(h.get("metadata", {}).get("page_label", ""))) == base_lp
+                ][:2]
+                targeted.extend(hits)
 
             # Rank by intent match first, then semantic score.
             ranked = sorted(

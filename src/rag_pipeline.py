@@ -4,6 +4,7 @@ import time
 from collections import defaultdict
 from typing import Any, Dict, List, Optional, Set
 import json
+from pathlib import Path
 from src.config import (
     LLM_MAX_INPUT_CHARS, LLM_MODEL_FREE, LLM_MODEL_PAID,
     TOP_K_COMPLEX, TOP_K_SIMPLE, ENABLE_MULTI_QUERY, PROCESSED_OUTPUT_DIR,
@@ -18,6 +19,45 @@ logger = logging.getLogger(__name__)
 _response_cache: Dict[str, Dict[str, Any]] = {}
 _MAX_CACHE_SIZE = 100
 _RESPONSE_CACHE_VERSION = "v3"
+_DISK_CACHE_PATH = Path(PROCESSED_OUTPUT_DIR).parent / "cache" / "response_cache.json"
+_disk_cache: Dict[str, Dict[str, Any]] = {}
+
+
+def _get_disk_cache_key(q: str, f: Optional[Dict[str, Any]], k: Optional[int], fm: Optional[str], pm: Optional[str]) -> str:
+    """Stable cache key for disk persistence — no runtime salt so it survives restarts."""
+    return f"{_RESPONSE_CACHE_VERSION}::{q}::{json.dumps(f, sort_keys=True) if f else 'N'}::{k}::{fm}::{pm}"
+
+
+def _load_disk_cache() -> None:
+    """Load persisted cache from disk into _disk_cache on startup."""
+    global _disk_cache
+    try:
+        if _DISK_CACHE_PATH.exists():
+            with open(_DISK_CACHE_PATH, "r", encoding="utf-8") as fh:
+                data = json.load(fh)
+            _disk_cache = data if isinstance(data, dict) else {}
+            logger.info(f"[RAG] Loaded {len(_disk_cache)} cached responses from disk")
+    except Exception:
+        logger.warning("[RAG] Failed to load disk response cache — starting fresh")
+        _disk_cache = {}
+
+
+def _save_to_disk_cache(disk_key: str, result: Dict[str, Any]) -> None:
+    """Persist a new cache entry to disk."""
+    try:
+        _DISK_CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
+        _disk_cache[disk_key] = result
+        # Trim to max size (evict oldest)
+        if len(_disk_cache) > _MAX_CACHE_SIZE:
+            oldest = next(iter(_disk_cache))
+            del _disk_cache[oldest]
+        with open(_DISK_CACHE_PATH, "w", encoding="utf-8") as fh:
+            json.dump(_disk_cache, fh, ensure_ascii=False)
+    except Exception:
+        logger.warning("[RAG] Failed to persist response cache to disk")
+
+
+_load_disk_cache()
 
 # Optimizer-level cache: avoids repeated LLM calls for similar complex queries
 _optimizer_cache: Dict[str, Dict[str, Any]] = {}
@@ -52,6 +92,40 @@ _SEARCH_NOISE_WORDS = re.compile(
 )
 _LPAGE_TOKEN_RE = re.compile(r'\bL-\d+[A-Z]?(?:-[A-Z]-[A-Z]{2})?\b', re.I)
 _TERM_LPAGE_CACHE: Dict[str, List[str]] = {}
+_DEFINITIONS_METRIC_KEYWORDS: Optional[Set[str]] = None
+
+
+def _build_definitions_metric_keywords() -> Set[str]:
+    """Derive financial metric keywords from definitions files (not hardcoded)."""
+    keywords: Set[str] = set()
+    for term in _load_term_to_page_map():
+        t = str(term).strip().lower()
+        if "\n" not in t and len(t) <= 60:
+            for w in re.findall(r"\b[a-z]{3,}\b", t):
+                if w not in _RETRIEVAL_STOPWORDS and w not in _GENERIC_METRIC_WORDS:
+                    keywords.add(w)
+    for terms in _load_page_definitions_map().values():
+        for term in terms:
+            for w in re.findall(r"\b[a-z]{3,}\b", str(term).lower()):
+                if w not in _RETRIEVAL_STOPWORDS and w not in _GENERIC_METRIC_WORDS:
+                    keywords.add(w)
+    return keywords
+
+
+def _invalidate_definitions_cache() -> None:
+    """Call this whenever master definitions are rebuilt."""
+    global _DEFINITIONS_METRIC_KEYWORDS, _TERM_LPAGE_CACHE
+    _DEFINITIONS_METRIC_KEYWORDS = None
+    _TERM_LPAGE_CACHE.clear()
+    # Clear disk response cache — new data means old answers are stale.
+    global _disk_cache
+    _disk_cache.clear()
+    try:
+        if _DISK_CACHE_PATH.exists():
+            _DISK_CACHE_PATH.unlink()
+            logger.info("[RAG] Disk response cache cleared after definitions rebuild")
+    except Exception:
+        logger.warning("[RAG] Failed to clear disk response cache")
 _RETRIEVAL_STOPWORDS = {
     "query", "this", "that", "from", "into", "with", "without", "using",
     "about", "what", "which", "where", "when", "who", "whom",
@@ -87,13 +161,22 @@ def _estimate_text_tokens(text: str) -> int:
 def _load_term_to_page_map() -> Dict[str, str]:
     try:
         from pathlib import Path
+        result: Dict[str, str] = {}
         term_path = Path(PROCESSED_OUTPUT_DIR) / "master_term_to_page.json"
         if term_path.exists():
             with open(term_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
-                return data if isinstance(data, dict) else {}
+                if isinstance(data, dict):
+                    result.update(data)
+        # Merge user-curated abbreviations (never overwritten by auto-rebuild).
+        user_path = Path(PROCESSED_OUTPUT_DIR) / "user_term_to_page.json"
+        if user_path.exists():
+            with open(user_path, "r", encoding="utf-8") as f:
+                user_data = json.load(f)
+                result.update({k: v for k, v in user_data.items() if not k.startswith("_")})
+        return result
     except Exception:
-        logger.exception("[RAG] Failed to load master_term_to_page.json")
+        logger.exception("[RAG] Failed to load term_to_page map")
     return {}
 
 def _load_page_definitions_map() -> Dict[str, List[str]]:
@@ -322,19 +405,17 @@ def _ensure_intent_coverage(
             base_lp = _base_lpage(lp)
             if not base_lp.startswith("L-"):
                 continue
-            scoped = {**scoped_base, "page_label_normalized": base_lp}
             try:
-                hits = retrieve(search_q, filters=scoped, top_k=6) or []
-                # Fallback when page_label_normalized metadata is absent/inconsistent in vector DB:
-                # retrieve company-scoped candidates and locally filter by page label match.
+                # Company-scoped search + Python _base_lpage post-filter.
+                # Avoids page_label_normalized ChromaDB filter which can be stale
+                # (e.g. stored as "L-2-A-PL" instead of "L-2" for some companies).
+                company_hits = retrieve(search_q, filters=scoped_base, top_k=40) or []
+                hits = [
+                    h for h in company_hits
+                    if (_base_lpage(str(h.get("metadata", {}).get("page_label", ""))) == base_lp)
+                ][:6]
                 if not hits:
-                    company_hits = retrieve(search_q, filters=scoped_base, top_k=20) or []
-                    hits = [
-                        h for h in company_hits
-                        if (_base_lpage(str(h.get("metadata", {}).get("page_label", ""))) == base_lp)
-                    ][:6]
-                if not hits:
-                    lp_hits = retrieve(base_lp, filters=scoped_base, top_k=20) or []
+                    lp_hits = retrieve(base_lp, filters=scoped_base, top_k=40) or []
                     hits = [
                         h for h in lp_hits
                         if (_base_lpage(str(h.get("metadata", {}).get("page_label", ""))) == base_lp)
@@ -674,9 +755,9 @@ def _refine_user_request(question: str, free_model: Optional[str] = None, comple
     if opt_cache_key in _optimizer_cache:
         logger.info("[RAG] Optimizer cache hit, reusing previous LLM rewrite")
         cached = _optimizer_cache[opt_cache_key]
-        # Build search query fresh from current question to avoid stale cache contamination.
-        # Keep cached analysis instruction/alt_queries (LLM effort), but retrieval query must be deterministic.
-        cached = {**cached, "search_query": _compact_vector_query(question)}
+        # Rebuild search query combining cached LLM tokens with current question.
+        # Preserves LLM-resolved L-page signals (e.g. "L-2") while staying deterministic.
+        cached = {**cached, "search_query": _compact_vector_query(f"{cached.get('search_query', '')} {question}")}
         # Re-apply current format instruction on cache hit
         if format_inst and format_inst not in cached.get("format_instruction", ""):
             cached = {**cached, "format_instruction": f"{cached['format_instruction']} {format_inst}"}
@@ -806,25 +887,74 @@ Return ONLY valid JSON:
     return _rule_based_refinement(question, format_inst)
 
 
+_MULTI_CO_RE = re.compile(
+    r'\b(all\s+companies|company[-\s]*wise|insurer[-\s]*wise|each\s+company|compare|across|between|rank|ranking)\b',
+    re.I,
+)
+_SINGLE_CO_RE = re.compile(r'\b(for|of)\s+[A-Z][a-zA-Z]+', re.I)
+_RANK_RE = re.compile(r'\b(rank|ranking|highest|lowest|top|bottom|best|worst)\b', re.I)
+_COMPARE_RE = re.compile(r'\b(compare|vs\.?|versus|difference|against)\b', re.I)
+_LIST_RE = re.compile(r'\b(list|show|give|display|what\s+is|what\s+are|tell)\b', re.I)
+
+
+def _build_format_instruction(question: str, format_inst: str) -> str:
+    """Infer a useful format instruction from query patterns when LLM optimizer is unavailable."""
+    if format_inst:
+        return f"{question} {format_inst}"
+    q = question.strip()
+    ql = q.lower()
+
+    is_multi = bool(_MULTI_CO_RE.search(ql))
+    is_rank = bool(_RANK_RE.search(ql))
+    is_compare = bool(_COMPARE_RE.search(ql))
+
+    if is_rank and is_multi:
+        return (
+            f"{q} "
+            "Present results in a markdown table with columns: Rank | Company | Value. "
+            "Sort by value descending. Cite the L-page source for each value."
+        )
+    if is_compare and is_multi:
+        return (
+            f"{q} "
+            "Present a side-by-side markdown table with one row per company. "
+            "Include a ranking column. Cite L-page sources."
+        )
+    if is_multi or _LIST_RE.search(ql):
+        return (
+            f"{q} "
+            "Present results in a markdown table with columns: Company | Value. "
+            "Include all available companies. Cite the L-page source."
+        )
+    # Single-company or general query
+    return (
+        f"{q} "
+        "Extract the specific value requested and state it clearly. "
+        "Cite the L-page source."
+    )
+
+
 def _rule_based_refinement(question: str, format_inst: str = "") -> Dict[str, Any]:
     """Fast rule-based query refinement. Used directly for simple queries and as fallback for complex ones."""
     stripped = _FORMAT_WORDS.sub(' ', question).strip()
     stripped = re.sub(r'\s{2,}', ' ', stripped).strip(' .,?!')
     search_q = _compact_vector_query(stripped or question)
-    
-    # Create analysis instruction from original question
-    analysis_inst = question
-    if format_inst:
-        analysis_inst = f"{question} {format_inst}"
-    
+    analysis_inst = _build_format_instruction(question, format_inst)
+
     if search_q != (stripped or question):
         logger.info(f"[RAG] Rule-based compact query: '{stripped or question}' → '{search_q}'")
-    
+
     return {
         "search_query": search_q,
         "format_instruction": analysis_inst,
         "alt_queries": []
     }
+
+_TREND_RE = re.compile(
+    r'\b(trend|growth|over\s+time|historical|all\s+quarters?|across\s+quarters?|yoy|year.on.year|qoq|quarter.on.quarter)\b',
+    re.I,
+)
+
 
 def _extract_auto_filters(q: str) -> Dict[str, Any]:
     f = {}
@@ -841,6 +971,18 @@ def _extract_auto_filters(q: str) -> Dict[str, Any]:
         if re.search(r'\b' + re.escape(q_.lower()) + r'\b', ql): f["quarter"] = q_; break
     for f_ in get_available_fys():
         if re.search(r'\b' + re.escape(f_.lower()) + r'\b', ql): f["fy"] = f_; break
+    # Auto-inject period filter when user didn't specify one and no trend/historical intent.
+    # Prevents wrong-quarter chunks from being retrieved once multiple periods are indexed.
+    # Guard: only inject when exactly one value exists — avoids constraining cross-period queries.
+    if "quarter" not in f and "fy" not in f and not _TREND_RE.search(ql):
+        quarters = get_available_quarters()
+        fys = get_available_fys()
+        if len(quarters) == 1:
+            f["quarter"] = quarters[0]
+            logger.debug(f"[RAG] Auto-injected period filter: quarter={quarters[0]}")
+        if len(fys) == 1:
+            f["fy"] = fys[0]
+            logger.debug(f"[RAG] Auto-injected period filter: fy={fys[0]}")
     return f
 
 
@@ -878,6 +1020,15 @@ def classify_complexity(q: str) -> str:
         mentioned = 1
     if mentioned > 1: return "complex"
     if _SUPERLATIVE_KEYWORDS.search(q) and mentioned == 0: return "complex"
+    # Definitions-driven upgrade: query contains a known financial metric term
+    # with no specific company named → needs LLM optimizer to resolve L-page.
+    if mentioned == 0:
+        global _DEFINITIONS_METRIC_KEYWORDS
+        if _DEFINITIONS_METRIC_KEYWORDS is None:
+            _DEFINITIONS_METRIC_KEYWORDS = _build_definitions_metric_keywords()
+        q_words = set(re.findall(r"\b[a-z]{3,}\b", q_lower))
+        if q_words & _DEFINITIONS_METRIC_KEYWORDS:
+            return "complex"
     return "simple"
 
 def _sanitize_alt_queries(search_q: str, alt_queries: List[str]) -> List[str]:
@@ -928,7 +1079,10 @@ def _build_query_plan(
 
     merged_filters = {**(_extract_auto_filters(question)), **(filters or {})}
     use_paid = complexity == "complex"
-    model_name = (paid_model or LLM_MODEL_PAID) if use_paid else (free_model or LLM_MODEL_FREE)
+    # Always use user's explicitly selected model regardless of complexity.
+    # use_paid is kept for top_k, optimizer, and repair decisions only.
+    # Fallback is openrouter/free — never a hardcoded paid model.
+    model_name = paid_model or free_model or LLM_MODEL_FREE
     effective_top_k = top_k or (TOP_K_COMPLEX if use_paid else TOP_K_SIMPLE)
 
     if use_paid and ENABLE_MULTI_QUERY:
@@ -959,9 +1113,14 @@ def answer_question(question: str, filters: Optional[Dict[str, Any]] = None, top
     
     question = re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]', '', question.strip())[:2000]
     cache_key = _get_cache_key(question, filters, top_k, free_model, paid_model)
-    if cache_key in _response_cache: 
-        logger.info("[RAG] Cache hit, returning cached response")
+    if cache_key in _response_cache:
+        logger.info("[RAG] Cache hit (in-memory), returning cached response")
         return _response_cache[cache_key]
+    disk_key = _get_disk_cache_key(question, filters, top_k, free_model, paid_model)
+    if disk_key in _disk_cache:
+        logger.info("[RAG] Cache hit (disk), returning cached response")
+        _response_cache[cache_key] = _disk_cache[disk_key]
+        return _disk_cache[disk_key]
 
     logger.info(f"[RAG] Processing question: '{question[:100]}...'")
 
@@ -1118,9 +1277,9 @@ def answer_question(question: str, filters: Optional[Dict[str, Any]] = None, top
     answer = ask_llm(
         SYSTEM_PROMPT,
         f"{summary_query}\n\nExcerpts:\n{ctx}",
-        use_paid=plan.use_paid,
-        free_model=plan.free_model,
-        paid_model=plan.paid_model,
+        use_paid=True,
+        free_model=None,
+        paid_model=plan.model_name,
     )
     llm_time = time.time() - llm_start
     logger.info(f"[RAG] LLM response took {llm_time:.2f}s")
@@ -1150,6 +1309,7 @@ def answer_question(question: str, filters: Optional[Dict[str, Any]] = None, top
     }
     _response_cache[cache_key] = res
     if len(_response_cache) > _MAX_CACHE_SIZE: _response_cache.pop(next(iter(_response_cache)))
+    _save_to_disk_cache(disk_key, res)
     
     overall_time = time.time() - overall_start
     logger.info(f"[RAG] Total time: {overall_time:.2f}s (query_gen: {query_gen_time:.2f}s, retrieval: {retrieval_time:.2f}s, llm: {llm_time:.2f}s)")
