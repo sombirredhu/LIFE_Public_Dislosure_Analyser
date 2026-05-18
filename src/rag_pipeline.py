@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 _response_cache: Dict[str, Dict[str, Any]] = {}
 _MAX_CACHE_SIZE = 100
-_RESPONSE_CACHE_VERSION = "v3"
+_RESPONSE_CACHE_VERSION = "v4"
 _DISK_CACHE_PATH = Path(PROCESSED_OUTPUT_DIR).parent / "cache" / "response_cache.json"
 _disk_cache: Dict[str, Dict[str, Any]] = {}
 
