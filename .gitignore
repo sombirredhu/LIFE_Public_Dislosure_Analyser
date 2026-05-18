@@ -74,6 +74,9 @@ Project_Files/
 # LLM response cache (auto-generated, per-machine)
 data/cache/
 
+# Vector database (auto-generated from PDFs, too large to track)
+vectordb/
+
 # Testing artifacts (keep .py test files for CI)
 tests/__pycache__/
 tests/*.txt
