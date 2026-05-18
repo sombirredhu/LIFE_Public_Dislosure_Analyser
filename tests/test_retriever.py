@@ -76,6 +76,70 @@ def test_top_up_no_op_when_all_present(temp_chroma):
     result = top_up_missing_companies("premium", chunks, list(present))
     assert len(result) == len(chunks)
 
+def test_top_up_prefers_intent_matching_lpage():
+    """Top-up should prefer intended L-page chunks (e.g., L-4 premium) over generic pages."""
+    initial = [{
+        "text": "existing",
+        "metadata": {"company_code": "A", "chunk_id": "A1", "page_label": "L-4", "section": "Premium Schedule"},
+        "score": 0.9,
+    }]
+    expected = ["A", "B"]
+
+    def _fake_retrieve(query, filters=None, top_k=None):
+        if filters and filters.get("company_code") == "B":
+            return [
+                {"text": "Revenue account chunk", "metadata": {"company_code": "B", "chunk_id": "B-L1", "page_label": "L-1-A-RA", "section": "Revenue Account"}, "score": 0.95},
+                {"text": "Borrowings chunk", "metadata": {"company_code": "B", "chunk_id": "B-L11", "page_label": "L-11", "section": "Borrowings Schedule"}, "score": 0.94},
+                {"text": "Premium chunk", "metadata": {"company_code": "B", "chunk_id": "B-L4", "page_label": "L-4", "section": "Premium Schedule"}, "score": 0.60},
+            ]
+        return []
+
+    with patch("src.retriever.retrieve", side_effect=_fake_retrieve):
+        out = top_up_missing_companies(
+            "Q3 FY26 L-4 premium schedule premium",
+            initial,
+            expected,
+            filters={"quarter": "Q3", "fy": "FY26"},
+        )
+
+    b_chunks = [c for c in out if c["metadata"]["company_code"] == "B"]
+    assert b_chunks, "Expected top-up to add missing company B"
+    assert any(c["metadata"].get("page_label", "").startswith("L-4") for c in b_chunks), (
+        f"Expected L-4 premium chunk for company B, got {[c['metadata'].get('page_label') for c in b_chunks]}"
+    )
+
+def test_top_up_repairs_company_with_wrong_existing_chunk():
+    """If a company is already present but only with non-intent chunks, top-up should repair it."""
+    initial = [
+        {
+            "text": "wrong shriram chunk with premium mentioned in narrative",
+            "metadata": {"company_code": "ShriramInsurance", "chunk_id": "S-L1", "page_label": "L-1-A-RA", "section": "Revenue Account"},
+            "score": 0.92,
+        }
+    ]
+    expected = ["ShriramInsurance"]
+
+    def _fake_retrieve(query, filters=None, top_k=None):
+        if filters and filters.get("company_code") == "ShriramInsurance":
+            return [
+                {"text": "Revenue account chunk", "metadata": {"company_code": "ShriramInsurance", "chunk_id": "S-L1-2", "page_label": "L-1-A-RA", "section": "Revenue Account"}, "score": 0.94},
+                {"text": "Premium chunk", "metadata": {"company_code": "ShriramInsurance", "chunk_id": "S-L4", "page_label": "L-4-PREMIUM", "section": "Premium Schedule"}, "score": 0.70},
+            ]
+        return []
+
+    with patch("src.retriever.retrieve", side_effect=_fake_retrieve):
+        out = top_up_missing_companies(
+            "Q3 FY26 L-4 premium schedule premium",
+            initial,
+            expected,
+            filters={"quarter": "Q3", "fy": "FY26"},
+        )
+
+    shriram_chunks = [c for c in out if c["metadata"]["company_code"] == "ShriramInsurance"]
+    assert any(c["metadata"].get("page_label", "").startswith("L-4") for c in shriram_chunks), (
+        f"Expected repaired L-4 chunk for ShriramInsurance, got {[c['metadata'].get('page_label') for c in shriram_chunks]}"
+    )
+
 
 # ── get_confidence_level() ───────────────────────────────────────────────────
 

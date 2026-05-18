@@ -61,7 +61,11 @@ def ask_llm(system_prompt: str, user_message: str, use_paid: bool = False, max_r
             )
             
             duration = time.time() - start_time
-            logger.info(f"[LLM] Success: {model} responded in {duration:.2f}s")
+            try:
+                duration_str = f"{float(duration):.2f}s"
+            except Exception:
+                duration_str = str(duration)
+            logger.info(f"[LLM] Success: {model} responded in {duration_str}")
             try:
                 fr = res.choices[0].finish_reason
                 if fr == "length":

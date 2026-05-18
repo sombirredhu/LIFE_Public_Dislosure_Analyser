@@ -12,6 +12,7 @@ Requirements: 7.3, 7.4
 """
 
 import pytest
+pytest.importorskip("psutil")
 import time
 import psutil
 import os

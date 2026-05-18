@@ -1,9 +1,16 @@
 import logging
 from typing import Any, Dict, List
 from src.config import CHUNK_SIZE, CHUNK_OVERLAP, MIN_CHUNK_SIZE, PAGE_WISE_CHUNKING
-from src.chunking.utils import _detect_content_type, _split_text, _make_chunk
+from src.chunking.utils import (
+    _detect_content_type,
+    _split_text,
+    _make_chunk,
+    _estimate_tokens,
+    _combine_page_content,
+)
 from src.chunking.table_handler import _chunk_table
 from src.chunking.page_splitter import _chunk_page_wise
+from src.chunking.sub_chunker import _split_page_into_subchunks
 
 logger = logging.getLogger(__name__)
 

@@ -17,22 +17,24 @@ logger = logging.getLogger(__name__)
 
 _response_cache: Dict[str, Dict[str, Any]] = {}
 _MAX_CACHE_SIZE = 100
+_RESPONSE_CACHE_VERSION = "v3"
 
 # Optimizer-level cache: avoids repeated LLM calls for similar complex queries
 _optimizer_cache: Dict[str, Dict[str, Any]] = {}
 _MAX_OPTIMIZER_CACHE = 64
+_OPTIMIZER_CACHE_VERSION = "v3"
 
 def _get_optimizer_cache_key(question: str) -> str:
     """Normalize question for optimizer cache: lowercase, strip format words, collapse whitespace."""
     normalized = _FORMAT_WORDS.sub(' ', question.lower()).strip()
     normalized = re.sub(r'\s{2,}', ' ', normalized).strip(' .,?!')
-    return normalized
+    return f"{_OPTIMIZER_CACHE_VERSION}::{normalized}"
 
 def _get_cache_key(q: str, f: Optional[Dict[str, Any]], k: Optional[int], fm: Optional[str], pm: Optional[str]) -> str:
     # Include callable identities so tests/monkeypatching don't leak stale cached responses
     # across different patched pipelines, while preserving normal runtime cache behavior.
     runtime_salt = f"{id(retrieve)}:{id(ask_llm)}"
-    return f"{q}::{json.dumps(f, sort_keys=True) if f else 'N'}::{k}::{fm}::{pm}::{runtime_salt}"
+    return f"{_RESPONSE_CACHE_VERSION}::{q}::{json.dumps(f, sort_keys=True) if f else 'N'}::{k}::{fm}::{pm}::{runtime_salt}"
 
 SYSTEM_PROMPT = """You are a financial analyst specializing in Indian life insurance.
 Answer based ONLY on excerpts. Rules: 1. Mention company, quarter, FY. 2. Use markdown tables for comparisons. 3. monetary values in ₹ Cr. 4. Cite sources with company + L-page when available.
@@ -249,7 +251,13 @@ def _score_chunk_relevance(chunk: Dict[str, Any], terms: List[str], target_lpage
     lpage = str(meta.get("page_label", "")).upper()
     score = 0
 
-    if lpage and any(lpage == t or lpage.startswith(f"{t}-") or t.startswith(f"{lpage}-") for t in target_lpages):
+    if lpage and any(
+        lpage == t
+        or lpage.startswith(f"{t}-")
+        or t.startswith(f"{lpage}-")
+        or _base_lpage(lpage) == _base_lpage(t)
+        for t in target_lpages
+    ):
         score += 3
 
     hits = 0
@@ -267,6 +275,79 @@ def _score_chunk_relevance(chunk: Dict[str, Any], terms: List[str], target_lpage
     if sim >= 0.75:
         score += 1
     return score
+
+def _base_lpage(token: str) -> str:
+    m = re.match(r"^(L-\d+[A-Z]?)", (token or "").upper())
+    return m.group(1) if m else (token or "").upper()
+
+def _ensure_intent_coverage(
+    question: str,
+    search_q: str,
+    chunks: List[Dict[str, Any]],
+    filters: Optional[Dict[str, Any]] = None,
+) -> List[Dict[str, Any]]:
+    """
+    Ensure every company has intent-matching chunks for each resolved L-page intent.
+    This avoids losing critical intent pages (e.g. PAT + expense + persistency) due to
+    similarity ranking noise.
+    """
+    if not chunks:
+        return chunks
+    terms = _extract_query_terms_for_relevance(f"{question} {search_q}")
+    target_lpages = _candidate_lpages_from_terms(terms, f"{question} {search_q}")
+    if not target_lpages:
+        return chunks
+
+    indexed = get_indexed_companies() or []
+    if filters and "company_code" in filters:
+        if isinstance(filters["company_code"], dict) and "$in" in filters["company_code"]:
+            companies = list(filters["company_code"]["$in"])
+        else:
+            companies = [str(filters["company_code"])]
+    else:
+        companies = indexed or sorted({c.get("metadata", {}).get("company_code") for c in chunks if c.get("metadata", {}).get("company_code")})
+
+    def _uid(c: Dict[str, Any]) -> str:
+        m = c.get("metadata", {})
+        return str(m.get("chunk_id") or f"{m.get('company_code','')}::{m.get('page_label','')}::{c.get('text','')[:80]}")
+
+    existing_uids = {_uid(c) for c in chunks}
+    out = list(chunks)
+
+    for co in companies:
+        if not co:
+            continue
+        scoped_base = {**(filters or {}), "company_code": co}
+        for lp in sorted(target_lpages):
+            base_lp = _base_lpage(lp)
+            if not base_lp.startswith("L-"):
+                continue
+            scoped = {**scoped_base, "page_label_normalized": base_lp}
+            try:
+                hits = retrieve(search_q, filters=scoped, top_k=6) or []
+                # Fallback when page_label_normalized metadata is absent/inconsistent in vector DB:
+                # retrieve company-scoped candidates and locally filter by page label match.
+                if not hits:
+                    company_hits = retrieve(search_q, filters=scoped_base, top_k=20) or []
+                    hits = [
+                        h for h in company_hits
+                        if (_base_lpage(str(h.get("metadata", {}).get("page_label", ""))) == base_lp)
+                    ][:6]
+                if not hits:
+                    lp_hits = retrieve(base_lp, filters=scoped_base, top_k=20) or []
+                    hits = [
+                        h for h in lp_hits
+                        if (_base_lpage(str(h.get("metadata", {}).get("page_label", ""))) == base_lp)
+                    ][:6]
+            except Exception:
+                hits = []
+            for h in hits:
+                uid = _uid(h)
+                if uid in existing_uids:
+                    continue
+                existing_uids.add(uid)
+                out.append(h)
+    return out
 
 def _prune_and_balance_chunks(
     question: str,
@@ -315,6 +396,10 @@ def _prune_and_balance_chunks(
     else:
         per_company_cap = 2
 
+    # Intent-aware baseline: allow richer evidence when many intent pages exist.
+    if target_lpages:
+        per_company_cap = min(6, max(per_company_cap, len(target_lpages) + 1))
+
     # If user selected specific company/company set, skip aggressive balancing.
     if filters and "company_code" in filters:
         per_company_cap = min(max(per_company_cap, 3), top_k)
@@ -332,26 +417,75 @@ def _prune_and_balance_chunks(
     def _lpage_match(page_label: str, target: str) -> bool:
         p = (page_label or "").upper()
         t = (target or "").upper()
-        return p == t or p.startswith(f"{t}-") or t.startswith(f"{p}-")
+        if p == t or p.startswith(f"{t}-") or t.startswith(f"{p}-"):
+            return True
+        return _base_lpage(p) == _base_lpage(t)
 
-    # First pass per company: one best chunk per detected L-page intent.
-    for company_chunks in by_company.values():
-        company_selected: List[Dict[str, Any]] = []
-        if target_lpages:
+    # Keep all intent-matching chunks first (protected set).
+    protected: List[Dict[str, Any]] = []
+    protected_ids: Set[str] = set()
+    if target_lpages:
+        for company_chunks in by_company.values():
+            # 1) Mandatory core coverage: best chunk per intended L-page.
             for tlp in sorted(target_lpages):
                 match = next(
                     (
                         c for c in company_chunks
                         if _lpage_match(str(c.get("metadata", {}).get("page_label", "")), tlp)
-                        and _chunk_uid(c) not in selected_ids
                     ),
                     None,
                 )
                 if match:
                     uid = _chunk_uid(match)
+                    if uid not in protected_ids:
+                        protected_ids.add(uid)
+                        selected_ids.add(uid)
+                        protected.append(match)
+
+            # 2) Additional intent chunks (same pages, extra evidence).
+            for c in company_chunks:
+                page_label = str(c.get("metadata", {}).get("page_label", ""))
+                if any(_lpage_match(page_label, tlp) for tlp in target_lpages):
+                    uid = _chunk_uid(c)
+                    if uid in protected_ids:
+                        continue
+                    protected_ids.add(uid)
+                    selected_ids.add(uid)
+                    protected.append(c)
+
+    cap_by_company: Dict[str, int] = {}
+
+    # First pass per company: take intent-matching chunks dynamically.
+    for company_chunks in by_company.values():
+        company_selected: List[Dict[str, Any]] = []
+        company_code = company_chunks[0].get("metadata", {}).get("company_code", "__unknown__") if company_chunks else "__unknown__"
+        lpage_matches_for_company = [
+            c for c in company_chunks
+            if any(_lpage_match(str(c.get("metadata", {}).get("page_label", "")), tlp) for tlp in target_lpages)
+        ]
+        company_cap = min(
+            top_k,
+            max(
+                per_company_cap,
+                min(6, len(lpage_matches_for_company)) if target_lpages else per_company_cap
+            ),
+        )
+        cap_by_company[company_code] = company_cap
+        if target_lpages:
+            per_lpage_take = max(1, min(3, company_cap // max(1, len(target_lpages))))
+            for tlp in sorted(target_lpages):
+                matches = [
+                    c for c in company_chunks
+                    if _lpage_match(str(c.get("metadata", {}).get("page_label", "")), tlp)
+                    and _chunk_uid(c) not in selected_ids
+                ]
+                for match in matches[:per_lpage_take]:
+                    uid = _chunk_uid(match)
                     selected_ids.add(uid)
                     company_selected.append(match)
-                if len(company_selected) >= per_company_cap:
+                    if len(company_selected) >= company_cap:
+                        break
+                if len(company_selected) >= company_cap:
                     break
 
         # Always ensure at least one chunk/company.
@@ -363,22 +497,35 @@ def _prune_and_balance_chunks(
                 company_selected.append(best)
 
         # Second pass for this company: fill remaining top-ranked chunks to cap.
-        if len(company_selected) < per_company_cap:
+        if len(company_selected) < company_cap:
             for c in company_chunks:
                 uid = _chunk_uid(c)
                 if uid in selected_ids:
                     continue
                 selected_ids.add(uid)
                 company_selected.append(c)
-                if len(company_selected) >= per_company_cap:
+                if len(company_selected) >= company_cap:
                     break
 
         selected.extend(company_selected)
 
-    # Global hard cap tuned to "intent-coverage per company" for broad compare.
-    if by_company:
-        dynamic_cap = min(top_k, max(len(by_company) * per_company_cap, len(by_company)))
-        selected = selected[:dynamic_cap]
+    # Merge protected first so intent chunks are never dropped by cap.
+    merged: List[Dict[str, Any]] = []
+    merged_ids: Set[str] = set()
+    merged_company_counts: Dict[str, int] = {}
+    for c in protected + selected:
+        uid = _chunk_uid(c)
+        if uid in merged_ids:
+            continue
+        co = c.get("metadata", {}).get("company_code", "__unknown__")
+        company_cap = cap_by_company.get(co, per_company_cap)
+        if merged_company_counts.get(co, 0) >= company_cap:
+            continue
+        merged_ids.add(uid)
+        merged_company_counts[co] = merged_company_counts.get(co, 0) + 1
+        merged.append(c)
+
+    selected = merged[:top_k]
 
     # Cleanup helper field
     for s in selected:
@@ -431,6 +578,7 @@ def _compact_vector_query(text: str) -> str:
         best_term = ""
         best_score = 0
         best_overlap_words: Set[str] = set()
+        best_phrase_hit = False
         for term in terms:
             term_l = str(term).lower().strip()
             if not term_l:
@@ -446,11 +594,15 @@ def _compact_vector_query(text: str) -> str:
                 best_score = score
                 best_term = term_l
                 best_overlap_words = overlap_words
+                best_phrase_hit = phrase_hit
 
-        if best_score >= 2:
+        # Allow single strong overlap word (e.g., "premium" -> L-4 Premium Schedule).
+        # This prevents missing primary intent pages for single-metric compare queries.
+        if best_score >= 1:
             lp = str(lpage).upper()
             page_scores[lp] = max(page_scores.get(lp, 0), best_score)
-            if best_term:
+            # Keep long anchor phrases only when user phrase is explicitly present.
+            if best_term and best_phrase_hit:
                 anchor_terms.add(best_term)
             matched_words_from_defs.update(best_overlap_words)
 
@@ -522,6 +674,9 @@ def _refine_user_request(question: str, free_model: Optional[str] = None, comple
     if opt_cache_key in _optimizer_cache:
         logger.info("[RAG] Optimizer cache hit, reusing previous LLM rewrite")
         cached = _optimizer_cache[opt_cache_key]
+        # Build search query fresh from current question to avoid stale cache contamination.
+        # Keep cached analysis instruction/alt_queries (LLM effort), but retrieval query must be deterministic.
+        cached = {**cached, "search_query": _compact_vector_query(question)}
         # Re-apply current format instruction on cache hit
         if format_inst and format_inst not in cached.get("format_instruction", ""):
             cached = {**cached, "format_instruction": f"{cached['format_instruction']} {format_inst}"}
@@ -689,9 +844,13 @@ def _extract_auto_filters(q: str) -> Dict[str, Any]:
     return f
 
 
-_COMPLEX_KEYWORDS = re.compile(r'\b(compare|vs\.?|versus|all\s+companies|company[-\s]*wise|each\s+company|rank|ranking|which\s+company|across|between)\b', re.I)
+_COMPLEX_KEYWORDS = re.compile(
+    r'\b(compare|vs\.?|versus|all\s+companies|all\s+insurers?|company[-\s]*wise|insurer[-\s]*wise|each\s+company|rank|ranking|which\s+company|across|between|industry\s+total|channel[-\s]*wise)\b',
+    re.I
+)
 _SUPERLATIVE_KEYWORDS = re.compile(r'\b(highest|lowest|top|bottom|best|worst|most|least|trend|growth)\b', re.I)
 _ANALYTICAL_COMPLEX_KEYWORDS = re.compile(r'\bclaim\s+settlement\s+ratio\b', re.I)
+_GENERIC_COMPANY_MENTION_RE = re.compile(r"\b(?:[A-Z]{2,}|[A-Z][a-z]+(?:\s+[A-Z][a-z]+){0,3})\s+(?:Life|Insurance)\b|\bLIC\b", re.I)
 
 def _format_source_ref(chunk: Dict[str, Any]) -> str:
     meta = chunk["metadata"]
@@ -706,10 +865,51 @@ def classify_complexity(q: str) -> str:
     if _ANALYTICAL_COMPLEX_KEYWORDS.search(q): return "complex"
     if _COMPLEX_KEYWORDS.search(q): return "complex"
     cos = get_indexed_companies()
-    mentioned = sum(1 for c in cos if c.lower() in q.lower())
+    q_lower = q.lower()
+    mentioned = 0
+    for c in cos:
+        variants = {
+            c.lower(),
+            c.lower().replace("_", " "),
+        }
+        if any(v and v in q_lower for v in variants):
+            mentioned += 1
+    if mentioned == 0 and _GENERIC_COMPANY_MENTION_RE.search(q):
+        mentioned = 1
     if mentioned > 1: return "complex"
     if _SUPERLATIVE_KEYWORDS.search(q) and mentioned == 0: return "complex"
     return "simple"
+
+def _sanitize_alt_queries(search_q: str, alt_queries: List[str]) -> List[str]:
+    """Keep only alternative queries that align to the same L-page intent."""
+    if not alt_queries:
+        return []
+    search_lpages = {lp.upper() for lp in _LPAGE_TOKEN_RE.findall(search_q or "")}
+    out: List[str] = []
+    seen: Set[str] = set()
+    for aq in alt_queries:
+        if not isinstance(aq, str):
+            continue
+        compact = _compact_vector_query(aq.strip())
+        if not compact:
+            continue
+        key = compact.lower()
+        if key in seen:
+            continue
+        if search_lpages:
+            alt_lpages = {lp.upper() for lp in _LPAGE_TOKEN_RE.findall(compact)}
+            if not alt_lpages:
+                continue
+            if not any(
+                (a == s or a.startswith(f"{s}-") or s.startswith(f"{a}-"))
+                for a in alt_lpages for s in search_lpages
+            ):
+                continue
+        seen.add(key)
+        out.append(compact)
+        if len(out) >= 2:
+            break
+    return out
 
 def _build_query_plan(
     question: str,
@@ -732,7 +932,7 @@ def _build_query_plan(
     effective_top_k = top_k or (TOP_K_COMPLEX if use_paid else TOP_K_SIMPLE)
 
     if use_paid and ENABLE_MULTI_QUERY:
-        queries = [search_q] + refined.get("alt_queries", [])
+        queries = [search_q] + _sanitize_alt_queries(search_q, refined.get("alt_queries", []))
     else:
         queries = [search_q]
         if use_paid and not ENABLE_MULTI_QUERY:
@@ -797,6 +997,18 @@ def answer_question(question: str, filters: Optional[Dict[str, Any]] = None, top
         topup_time = time.time() - topup_start
         logger.info(f"[RAG] Company top-up took {topup_time:.2f}s, total chunks: {len(chunks)}")
 
+    # Hard guarantee (complex queries): include intent-page chunks per company before prune.
+    if plan.use_paid:
+        coverage_start = time.time()
+        chunks = _ensure_intent_coverage(
+            question=question,
+            search_q=plan.search_query,
+            chunks=chunks,
+            filters=plan.merged_filters,
+        )
+        coverage_time = time.time() - coverage_start
+        logger.info(f"[RAG] Intent coverage enforcement took {coverage_time:.2f}s, total chunks: {len(chunks)}")
+
     pre_prune_count = len(chunks)
     chunks = _prune_and_balance_chunks(
         question=question,
@@ -810,10 +1022,6 @@ def answer_question(question: str, filters: Optional[Dict[str, Any]] = None, top
 
     debug_terms = _extract_query_terms_for_relevance(f"{question} {plan.search_query}")
     debug_lpages = sorted(_candidate_lpages_from_terms(debug_terms, f"{question} {plan.search_query}"))
-    chunks_per_company: Dict[str, int] = {}
-    for c in chunks:
-        co = c.get("metadata", {}).get("company_code", "unknown")
-        chunks_per_company[co] = chunks_per_company.get(co, 0) + 1
 
     if not chunks:
         logger.warning("[RAG] No chunks found")
@@ -827,24 +1035,73 @@ def answer_question(question: str, filters: Optional[Dict[str, Any]] = None, top
     token_budget = max(1024, LLM_MAX_INPUT_CHARS // 4)
     if total_chars > char_budget or total_tokens > token_budget:
         original_count = len(chunks)
-        kept = []
+        kept: List[Dict[str, Any]] = []
+        kept_ids: Set[str] = set()
         running_chars = 0
         running_tokens = 0
-        for c in chunks:
+
+        def _uid(c: Dict[str, Any]) -> str:
+            m = c.get("metadata", {})
+            return str(m.get("chunk_id") or f"{m.get('company_code','')}::{m.get('page_label','')}::{c.get('text','')[:80]}")
+
+        def _fits(c: Dict[str, Any]) -> bool:
             c_chars = len(c["text"])
             c_tokens = _estimate_text_tokens(c["text"])
-            if running_chars + c_chars > char_budget:
-                break
-            if running_tokens + c_tokens > token_budget:
-                break
+            return (running_chars + c_chars <= char_budget) and (running_tokens + c_tokens <= token_budget)
+
+        def _take(c: Dict[str, Any]) -> bool:
+            nonlocal running_chars, running_tokens
+            uid = _uid(c)
+            if uid in kept_ids:
+                return False
+            if not _fits(c):
+                return False
+            kept_ids.add(uid)
             kept.append(c)
-            running_chars += c_chars
-            running_tokens += c_tokens
+            running_chars += len(c["text"])
+            running_tokens += _estimate_text_tokens(c["text"])
+            return True
+
+        # Phase 1: Guarantee coverage for each company × target intent page (best-score chunk).
+        if debug_lpages:
+            best_by_pair: Dict[tuple, Dict[str, Any]] = {}
+            for c in chunks:
+                meta = c.get("metadata", {})
+                co = meta.get("company_code", "unknown")
+                pl = str(meta.get("page_label", "")).upper()
+                for lp in debug_lpages:
+                    t = lp.upper()
+                    if pl == t or pl.startswith(f"{t}-") or t.startswith(f"{pl}-") or _base_lpage(pl) == _base_lpage(t):
+                        k = (co, t)
+                        prev = best_by_pair.get(k)
+                        if prev is None or float(c.get("score", 0.0)) > float(prev.get("score", 0.0)):
+                            best_by_pair[k] = c
+
+            # deterministic order for stability
+            mandatory_chunks = list(best_by_pair.values())
+            mandatory_chunks.sort(
+                key=lambda c: (
+                    _estimate_text_tokens(c.get("text", "")),
+                    -float(c.get("score", 0.0)),
+                )
+            )
+            for c in mandatory_chunks:
+                _take(c)
+
+        # Phase 2: Fill remaining budget with original ranking order.
+        for c in chunks:
+            _take(c)
+
         chunks = kept
         logger.warning(
             "[RAG] Input budget guard truncated chunks %s -> %s (chars %s/%s, tokens %s/%s)",
             original_count, len(chunks), running_chars, char_budget, running_tokens, token_budget
         )
+
+    chunks_per_company: Dict[str, int] = {}
+    for c in chunks:
+        co = c.get("metadata", {}).get("company_code", "unknown")
+        chunks_per_company[co] = chunks_per_company.get(co, 0) + 1
 
     ctx = "\n\n---\n\n".join(
         [

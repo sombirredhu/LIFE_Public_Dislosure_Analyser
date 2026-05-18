@@ -27,6 +27,7 @@ from typing import Dict, List
 from unittest.mock import MagicMock, patch
 
 import pytest
+pytest.importorskip("hypothesis")
 from hypothesis import given, strategies as st, settings, HealthCheck
 
 from src.pdf_parser import (

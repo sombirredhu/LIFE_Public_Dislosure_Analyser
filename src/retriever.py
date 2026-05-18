@@ -1,6 +1,6 @@
 import logging
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import Any, Dict, List, Optional
+import re
+from typing import Any, Dict, List, Optional, Set, Tuple
 from src.config import TOP_K_SIMPLE, SIMILARITY_THRESHOLD
 from src.embedder import get_or_create_collection, embed_query, embed_queries
 
@@ -8,6 +8,49 @@ logger = logging.getLogger(__name__)
 _DOMAIN_PREFIX = "IRDAI life insurance financial report: "
 _FALLBACK_THRESHOLD = 0.10
 _LAST_RESORT_THRESHOLD = -1.0
+_LPAGE_TOKEN_RE = re.compile(r"\bL-\d+[A-Z]?(?:-[A-Z]-[A-Z]{2})?\b", re.I)
+_TOPUP_NOISE_WORDS = {
+    "compare", "comparison", "show", "list", "rank", "ranking", "across", "between",
+    "for", "all", "companies", "company", "wise", "each", "metric", "metrics",
+    "cite", "source", "sources", "with", "and", "the", "of", "to", "page", "pages",
+    "quarter", "quarters", "fy", "value", "values", "highest", "lowest",
+}
+
+def _extract_topup_intent(query: str) -> Tuple[Set[str], Set[str]]:
+    q = (query or "").strip()
+    lpages = {m.upper() for m in _LPAGE_TOKEN_RE.findall(q)}
+    terms = {
+        w.lower()
+        for w in re.findall(r"\b[a-z]{4,}\b", q.lower())
+        if w.lower() not in _TOPUP_NOISE_WORDS
+    }
+    return lpages, terms
+
+def _lpage_match(page_label: str, target: str) -> bool:
+    p = (page_label or "").upper()
+    t = (target or "").upper()
+    return p == t or p.startswith(f"{t}-") or t.startswith(f"{p}-")
+
+def _base_lpage(token: str) -> str:
+    m = re.match(r"^(L-\d+[A-Z]?)", (token or "").upper())
+    return m.group(1) if m else (token or "").upper()
+
+def _intent_score(chunk: Dict[str, Any], lpages: Set[str], terms: Set[str]) -> int:
+    meta = chunk.get("metadata", {})
+    score = 0
+    page_label = str(meta.get("page_label", ""))
+    section = str(meta.get("section", "")).lower()
+    text = str(chunk.get("text", "")).lower()
+
+    if lpages and any(_lpage_match(page_label, lp) for lp in lpages):
+        score += 4
+
+    for t in terms:
+        if t in section:
+            score += 2
+        elif t in text:
+            score += 1
+    return score
 
 def _metadata_overlap_penalty(candidate: Dict[str, Any], selected: List[Dict[str, Any]]) -> float:
     """Apply small penalties for near-duplicate metadata patterns to increase diversity."""
@@ -127,15 +170,110 @@ def retrieve_multi(queries: List[str], filters: Optional[Dict[str, Any]] = None,
 
 def top_up_missing_companies(query: str, chunks: List[Dict[str, Any]], expected: List[str], filters: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
     if filters and "company_code" in filters: return chunks
-    present = {c["metadata"]["company_code"] for c in chunks}
+    target_lpages, target_terms = _extract_topup_intent(query)
+    by_company: Dict[str, List[Dict[str, Any]]] = {}
+    for c in chunks:
+        co = c.get("metadata", {}).get("company_code")
+        if not co:
+            continue
+        by_company.setdefault(co, []).append(c)
+
+    present = set(by_company.keys())
     missing = [co for co in expected if co not in present]
-    if not missing: return chunks
+
+    # Companies present in retrieval but without any intent-matching chunk
+    # should also be repaired.
+    weak_intent = []
+    if target_lpages or target_terms:
+        for co in expected:
+            cchunks = by_company.get(co, [])
+            if not cchunks:
+                continue
+            if target_lpages:
+                has_lpage_match = any(
+                    any(_lpage_match(str(c.get("metadata", {}).get("page_label", "")), lp) for lp in target_lpages)
+                    for c in cchunks
+                )
+                if not has_lpage_match:
+                    weak_intent.append(co)
+            elif not any(_intent_score(c, target_lpages, target_terms) > 0 for c in cchunks):
+                weak_intent.append(co)
+
+    needs_repair = list(dict.fromkeys(missing + weak_intent))
+    if not needs_repair:
+        return chunks
+
     top_up = []
-    with ThreadPoolExecutor(max_workers=min(len(missing), 6)) as pool:
-        futs = {pool.submit(retrieve, query, {**(filters or {}), "company_code": co}, 2): co for co in missing}
-        for f in as_completed(futs):
-            try: top_up.extend(f.result())
-            except Exception: pass
+
+    def _uid(c: Dict[str, Any]) -> str:
+        m = c.get("metadata", {})
+        return str(m.get("chunk_id") or f"{m.get('company_code','')}::{m.get('page_label','')}::{c.get('text','')[:80]}")
+
+    existing_uids = {_uid(c) for c in chunks}
+
+    for co in needs_repair:
+        try:
+            scoped_filters = {**(filters or {}), "company_code": co}
+            company_chunks = retrieve(query, scoped_filters, 16) or []
+            if not company_chunks:
+                continue
+
+            targeted: List[Dict[str, Any]] = []
+            # Strong repair path: fetch intended L-pages directly (normalized).
+            for lp in sorted(target_lpages):
+                base_lp = _base_lpage(lp)
+                if not base_lp.startswith("L-"):
+                    continue
+                lp_filters = {**scoped_filters, "page_label_normalized": base_lp}
+                hits = retrieve(query, lp_filters, 2) or []
+                for h in hits:
+                    targeted.append(h)
+
+            # Rank by intent match first, then semantic score.
+            ranked = sorted(
+                company_chunks,
+                key=lambda c: (_intent_score(c, target_lpages, target_terms), float(c.get("score", 0.0))),
+                reverse=True,
+            )
+
+            selected: List[Dict[str, Any]] = []
+            strong_intent = [c for c in ranked if _intent_score(c, target_lpages, target_terms) >= 4]
+            target_take = min(
+                6,
+                max(
+                    2,
+                    len(target_lpages) * 2 if target_lpages else 2,
+                    min(6, len(strong_intent))
+                ),
+            )
+            # Use targeted L-page hits first.
+            for c in targeted:
+                if _intent_score(c, target_lpages, target_terms) <= 0:
+                    continue
+                selected.append(c)
+                if len(selected) >= target_take:
+                    break
+
+            # Then intent-ranked semantic hits.
+            if len(selected) < target_take:
+                for c in ranked:
+                    if _intent_score(c, target_lpages, target_terms) <= 0:
+                        continue
+                    selected.append(c)
+                    if len(selected) >= target_take:
+                        break
+
+            if not selected:
+                selected = ranked[:1]
+
+            for c in selected:
+                uid = _uid(c)
+                if uid in existing_uids:
+                    continue
+                existing_uids.add(uid)
+                top_up.append(c)
+        except Exception:
+            pass
     return chunks + top_up
 
 def get_confidence_level(chunks: List[Dict[str, Any]]) -> str:

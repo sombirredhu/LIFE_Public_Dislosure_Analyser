@@ -41,7 +41,7 @@ EXPECTED_COMPANIES = [
     "TataAIA"
 ]
 
-def test_retrieval(query, top_k=10):
+def run_retrieval(query, top_k=10):
     """Test retrieval for a query and return company coverage."""
     print(f"{'='*80}")
     print(f"Query: '{query}'")
@@ -110,7 +110,7 @@ def main():
     results = {}
     
     for query in TEST_QUERIES:
-        companies_found = test_retrieval(query, top_k=20)
+        companies_found = run_retrieval(query, top_k=20)
         results[query] = {
             "companies_found": len(companies_found),
             "companies": list(companies_found),
