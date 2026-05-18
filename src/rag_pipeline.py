@@ -1013,10 +1013,8 @@ _GENERIC_COMPANY_MENTION_RE = re.compile(r"\b(?:[A-Z]{2,}|[A-Z][a-z]+(?:\s+[A-Z]
 
 def _format_source_ref(chunk: Dict[str, Any]) -> str:
     meta = chunk["metadata"]
-    company = (meta.get("company_full_name") or meta.get("company", "?")).replace("_", " ")
-    period = f"{meta.get('quarter', '')} {meta.get('fy', '')}".strip()
+    company = meta.get("company", "?").replace("_", " ")
     raw_lp = meta.get("page_label", "")
-    # Normalize: strip space variants and suffix tokens (e.g. "L- 12" -> "L-12", "L-4-PREMIUM" -> "L-4")
     if raw_lp:
         _t = re.sub(r"\s+", "", raw_lp.strip().upper())
         _t = re.sub(r"^L(?=\d)", "L-", _t)
@@ -1024,20 +1022,7 @@ def _format_source_ref(chunk: Dict[str, Any]) -> str:
         lpage = _m.group(1) if _m else raw_lp
     else:
         lpage = ""
-    section = meta.get("section", "")
-    if section.lower() in ("unknown", "", "none"):
-        section = ""
-    if lpage and section:
-        ref = f"{company} · {lpage} – {section}"
-    elif lpage:
-        ref = f"{company} · {lpage}"
-    elif section:
-        ref = f"{company} · {section}"
-    else:
-        ref = company
-    if period:
-        ref += f" ({period})"
-    return ref
+    return f"{company} · {lpage}" if lpage else company
 
 def classify_complexity(q: str) -> str:
     if _ANALYTICAL_COMPLEX_KEYWORDS.search(q): return "complex"
