@@ -177,6 +177,17 @@ def _chunk_page_wise(
         if not page_text or not page_text.strip():
             logger.warning(f"Skipping empty page {page_number}")
             continue
+
+        # Skip very short pages (version/upload date markers, single-line stubs)
+        if len(page_text.strip()) < 80:
+            logger.debug(f"Skipping too-short page {page_number} ({len(page_text.strip())} chars)")
+            continue
+
+        # Skip TOC/index pages — high L-page density, no page_label, no real data.
+        # They are already used for building the index_map during PDF parsing.
+        if page.get("is_index_page") and not page_label:
+            logger.debug(f"Skipping index/TOC page {page_number}")
+            continue
         
         # Check if page exceeds token limit
         page_tokens = _estimate_tokens(page_text)

@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 # Also handles: L-4-PREMIUM -> extracts L-4, description="PREMIUM Schedule"
 # Pattern: L-{number}[optional single letter][optional -X-XX suffix]
 _LPAGE_LABEL_RE = re.compile(r'^\s*(?:\d+\s+)?(L-?\d+[A-Z]?(?:-[A-Z]+(?:-[A-Z]+)?)?)\s*(?:[:\-]\s*)?(.*)$', re.IGNORECASE)
-_PAGE_LPAGE_RE = re.compile(r'(?:FORM|Form)?\s*(L-\d+[A-Z]?(?:-[A-Z]+(?:-[A-Z]+)?)?)', re.IGNORECASE)
+_PAGE_LPAGE_RE = re.compile(r'(?:FORM|Form)?\s*(L-\s*\d+[A-Z]?(?:-[A-Z]+(?:-[A-Z]+)?)?)', re.IGNORECASE)
 _COMPANY_NAME_RE = re.compile(r'\b([A-Z][A-Za-z\s&]{10,}(?:Limited|Ltd\.?|Insurance Company Limited|Insurance Company|Company Limited))', re.MULTILINE)
 _LPAGE_TOKEN_RE = re.compile(r'\bL-?\d+[A-Z]?(?:-[A-Z]+(?:-[A-Z]+)?)?\b', re.IGNORECASE)
 _INDEX_HINT_WORDS = ("list of", "index", "contents", "form no", "sl. no", "description", "particulars", "page no")
@@ -267,7 +267,9 @@ def _extract_company_name_from_text(text: str) -> Optional[str]:
 def _extract_lpage_from_text(text: str) -> Optional[str]:
     if not text: return None
     m = _PAGE_LPAGE_RE.search(text[:200])
-    return m.group(1).upper() if m else None
+    if not m: return None
+    # Normalize internal spaces: "L- 12" -> "L-12"
+    return re.sub(r'\s+', '', m.group(1).upper())
 
 def extract_table_text(table: List[List[Any]]) -> Optional[Dict[str, Any]]:
     if not table or len(table) < 2: return None
@@ -339,18 +341,22 @@ def _process_page(page_num: int, page, page_defs: Dict[str, str], index_map: Dic
     lbl = _extract_lpage_from_text(txt) or _detect_page_label(fl) or ""
     normalized_lbl = _normalize_lpage(lbl) if lbl else ""
     
+    raw_tables = page.extract_tables() or []
+    is_index = _is_index_like_page(txt, raw_tables)
+
     pdata = {
-        "page_number": page_num, 
-        "page_label": lbl, 
+        "page_number": page_num,
+        "page_label": lbl,
         "page_label_normalized": normalized_lbl,
-        "company_name": _extract_company_name_from_text(txt), 
-        "section": "unknown", 
-        "text_blocks": [], 
+        "company_name": _extract_company_name_from_text(txt),
+        "section": "unknown",
+        "is_index_page": is_index,
+        "text_blocks": [],
         "tables": []
     }
-    
+
     if txt.count("|") > 5 or txt.count("\t") > 3:
-        for t in page.extract_tables() or []:
+        for t in raw_tables:
             td = extract_table_text(t)
             if td: pdata["tables"].append(td)
     if txt: pdata["text_blocks"] = [p.strip() for p in txt.split("\n\n") if p.strip()]

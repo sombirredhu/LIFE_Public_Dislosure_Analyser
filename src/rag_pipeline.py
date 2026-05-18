@@ -444,6 +444,23 @@ def _prune_and_balance_chunks(
     if not chunks:
         return chunks
 
+    # Drop obviously garbage chunks: too short or pure TOC/version pages.
+    # This is a safety net for chunks that entered the DB before ingest-time filtering.
+    _TOC_HINT = re.compile(r'\b(sl\.?\s*no|form\s*no|page\s*no|list\s*of|description)\b', re.I)
+    def _is_garbage_chunk(c: Dict[str, Any]) -> bool:
+        text = c.get("text", "")
+        if len(text.strip()) < 80:
+            return True
+        meta = c.get("metadata", {})
+        if not meta.get("page_label", "").strip() and _TOC_HINT.search(text[:400]):
+            return True
+        return False
+
+    pre_garbage = len(chunks)
+    chunks = [c for c in chunks if not _is_garbage_chunk(c)]
+    if len(chunks) < pre_garbage:
+        logger.debug(f"[RAG] Dropped {pre_garbage - len(chunks)} garbage chunks")
+
     terms = _extract_query_terms_for_relevance(f"{question} {search_q}")
     target_lpages = _candidate_lpages_from_terms(terms, f"{question} {search_q}")
 
