@@ -127,6 +127,9 @@ def _clean_index_section(text: str) -> str:
     sec = re.sub(r"\s{2,}", " ", sec).strip()
     if sec in {"&", "AND", "/"}:
         return ""
+    # Reject financial/numeric garbage: must contain at least one real word (3+ letters)
+    if not re.search(r"[a-zA-Z]{3,}", sec):
+        return ""
     return sec
 
 def _section_from_token_suffix(token: str) -> str:

@@ -110,7 +110,7 @@
       "page_label": "L-4-PREMIUM",
       "page_label_normalized": "L-4",
       "company_name": null,
-      "section": "20,003\n(35)\n-\n1,180\n2,639\n(1,381)\n1,888\n192\n16\n-\n-\n-\n- 2,215\n-\n-\n66\n153\n(80)\n110\n11\n0\n-\n-\n-\n- 97,400\n(109)\n-\n19,479\n10,335\n(1,674)\n-\n1,857\n86\n885\n149\n-\n- 1,81,566\n(8,729)\n-\n37,590\n948\n(1)\n(763)\n5,257\n303\n1,122\n168\n-\n- 1,970\n-\n-\n1,513\n45\n-\n-\n26\n74\n-\n-\n-\n- 5\n-\n-\n1\n0\n(0)\n-\n0\n0\n-\n-\n-\n- 13,535\n-\n-\n1,216\n2\n-\n-\n101\n0\n-\n-\n-\n- 3,16,694\n(8,873)\n-\n61,045\n14,121\n(3,137)\n1,235\n7,443\n479\n2,007\n317\n-\n-",
+      "section": "Premium Schedule",
       "is_index_page": false,
       "text_blocks": [
         "FORM L-4-PREMIUM SCHEDULE\n(Rs. in Lakhs)\nFor the quarter Upto the quarter For the quarter Upto the quarter\nParticulars\nDecember 31, 2025 December 31, 2025 December 31, 2024 December 31, 2024\nFirst year premiums 41,213 1,02,833 49,454 1,07,735\nRenewal Premiums 60,524 1,62,925 49,361 1,20,884\nSingle Premiums 19,548 50,936 16,292 49,564\nTOTAL PREMIUM 1,21,285 3,16,694 1,15,107 2,78,183\nPremium Income from Business written :\nIn India 1,21,285 3,16,694 1,15,107 2,78,183\nOutside India - - - -\n*Premium income excluding GST\nVersion:1 Date of upload: February 13,2025 7"
@@ -122,7 +122,7 @@
       "page_label": "L-5",
       "page_label_normalized": "L-5",
       "company_name": null,
-      "section": "900\n1,233\n-\n-\n(105)\n-\n-\n290 91\n39\n-\n-\n-\n-\n-\n10 16,060\n24,609\n-\n-\n(303)\n-\n-\n- 21,959\n42,282\n-\n-\n1,054\n-\n-\n- -\n22\n-\n-\n10\n-\n-\n- -\n1\n-\n-\n1\n-\n-\n- 40\n52\n-\n-\n(41)\n-\n-\n- 39,052\n68,240\n-\n-\n615\n-\n-",
+      "section": "Commission Schedule",
       "is_index_page": false,
       "text_blocks": [
         "FORM L-5 - COMMISSION SCHEDULE\n(Rs. in Lakhs)\nFor the quarter Upto the quarter For the quarter Upto the quarter\nTotal\nDecember 31, 2025 December 31, 2025 December 31, 2024 December 31, 2024\nCommission paid\nDirect - First year premiums 10,980 34,837 12,929 32,803\n- Renewal Premiums 1,609 4,401 1,221 3,173\n- Single Premiums 865 2,191 966 3,074\nGross Commission 13,454 41,429 15,116 39,050\nAdd: Commission on Re-insurance Accepted - - - -\nLess: Commission on Re-insurance Ceded - - - -\nNet Commission 13,454 41,429 15,116 39,050\nRewards - - - -\nChannel wise break-up of Commission and Rewards\n(Excluding Reinsurance commission):\nIndividual Agents 393 884 346 936\nCorporate Agents -Bank 180 561 42 96\nCorporate Agents -Others 10,352 33,645 12,678 30,960\nBrokers 2,282 5,573 1,783 5,943\nMicro Agents - - - -\nDirect Business - Online1 - - - -\nDirect Business - Others - - - -\nCommon Service Centre (CSC) 53 147 23 46\nWeb Aggregators (1) (1) 1 51\nInsurance Marketing Firm 195 619 243 1,019\nOthers- POS 1 2 - -\nTotal 13,454 41,429 15,116 39,050\nCommission and Rewards on (Excluding Reinsurance)\nBusiness written :\nIn India 13,454 41,429 15,116 39,050\nOutside India - - - -\n1 Commission on Business procured through company website\nVersion:1 Date of upload: February 13,2025 8"
@@ -134,7 +134,7 @@
       "page_label": "L-6-OPERATING",
       "page_label_normalized": "L-6",
       "company_name": null,
-      "section": "900\n1,233\n-\n-\n(105)\n-\n-\n290 91\n39\n-\n-\n-\n-\n-\n10 16,060\n24,609\n-\n-\n(303)\n-\n-\n- 21,959\n42,282\n-\n-\n1,054\n-\n-\n- -\n22\n-\n-\n10\n-\n-\n- -\n1\n-\n-\n1\n-\n-\n- 40\n52\n-\n-\n(41)\n-\n-\n- 39,052\n68,240\n-\n-\n615\n-\n-",
+      "section": "Operating Expenses Schedule",
       "is_index_page": false,
       "text_blocks": [
         "FORM L-6-OPERATING EXPENSES SCHEDULE\n(Rs. in Lakhs)\nFor the quarter Upto the quarter For the quarter Upto the quarter\nS.No. Particulars\nDecember 31, 2025 December 31, 2025 December 31, 2024 December 31, 2024\n1 Employees’ remuneration & welfare benefits 21,424 59,463 17,351 47,040\n2 Travel, conveyance and vehicle running expenses 1,371 3,732 951 2,646\n3 Training expenses 1,182 4,088 821 2,266\n4 Rents, rates & taxes 1,041 2,915 747 2,128\n5 Repairs (4) 52 7 78\n6 Printing & stationery 80 326 242 504\n7 Communication expenses 187 564 217 515\n8 Legal & professional charges 620 1,983 604 1,470\n9 Medical fees 72 206 67 171\n10 Auditors' fees, expenses etc\na) as auditor 5 14 5 15\nb) as adviser or in any other capacity, in respect of\n(i) Taxation matters - - - -\n(ii) Insurance matters - - - -\n(iii) Management services; and - - - -\nc) in any other capacity 1 2 - 3\n11 Advertisement and publicity 469 786 151 1,419\n12 Interest & Bank Charges 106 338 112 385\n13 Depreciation 453 1,273 325 968\n14 Brand/Trade Mark usage fee/charges 25 55 207 580\n15 Business Development and Sales Promotion Expenses 77 1,002 550 1,464\n16 Stamp duty on policies 423 1,109 676 1,529\n17 Information Technology Expenses 499 2,107 756 2,269\n18 Goods and Services Tax (GST) 2,903 4,567 183 447\n19 Others expenses 831 2,401 739 2,343\nTOTAL 31,766 86,984 24,713 68,240\nIn India 31,766 86,984 24,713 68,240\nOutside India - - - -\nVersion:1 Date of upload: February 13,2025 9"
@@ -146,7 +146,7 @@
       "page_label": "L-7-BENEFITS",
       "page_label_normalized": "L-7",
       "company_name": null,
-      "section": "6,243\n-\n120\n-\n-\n14,410\n1,712 286\n-\n1\n-\n-\n1,783\n260 37,307\n42\n48,604\n-\n-\n-\n- 88,267\n-\n58,270\n-\n-\n-\n- 260\n-\n3,229\n-\n-\n-\n- -\n-\n(6)\n-\n-\n-\n- 1,198\n-\n14,795\n-\n-\n-\n- 1,33,561\n42\n1,25,014\n-\n-\n16,193\n1,973",
+      "section": "Benefits Paid Schedule",
       "is_index_page": false,
       "text_blocks": [
         "FORM L-7-BENEFITS PAID SCHEDULE\nBENEFITS PAID [NET] (Rs. in Lakhs)\nS. For the quarter Upto the quarter For the quarter Upto the quarter\nParticulars\nNo. December 31, 2025 December 31, 2025 December 31, 2024 December 31, 2024\n1. Insurance Claims\n(a) Claims by Death 22,128 61,369 14,634 41,793\n(b) Claims by Maturity 17,885 41,689 9,611 19,695\n(c) Annuities/Pension payment 443 1,128 230 645\n(d) Periodical Benefit 6,172 14,337 3,453 7,817\n(e) Health - - - -\n(f) Surrenders 6,995 20,004 6,117 18,533\n(g) Other benefits\n(i) Others 193 928 136 518\n(ii) Partial withdrawal 26 41 49 56\n(iii) Riders 310 754 102 523\nBenefits Paid (Gross)\nIn India 54,151 1,40,251 34,331 89,582\nOutside India - - - -\n2. (Amount ceded in reinsurance): -\n(a) Claims by Death (2,825) (6,690) (984) (2,506)\n(b) Claims by Maturity - - - -\n(c) Annuities/Pension payment - - - -\n(d) Periodical Benefit - - - -\n(e) Health - - - -\n3. Amount accepted in reinsurance: -\n(a) Claims by Death - - - -\n(b) Claims by Maturity - - - -\n(c) Annuities/Pension payment - - - -\n(d) Periodical Benefit - - - -\n(e) Health - - - -\nTOTAL 51,326 1,33,561 33,347 87,075\nBenefits Paid (Net)\nIn India 51,326 1,33,561 33,347 87,075\nOutside India - - - -\nNotes:\na) Claims incurred shall comprises of claims paid, specific claims settlement costs wherever applicable and change in the outstanding provision for claims at the year-end.\nb) Fees and expenses connected with claims shall be included in claims.\nc) Legal and other fees and expenses shall also form part of the claims cost, wherever applicable.\nVersion:1 Date of upload: February 13,2025 10"
@@ -206,7 +206,7 @@
       "page_label": "L-10-RESERVES",
       "page_label_normalized": "L-10",
       "company_name": null,
-      "section": "18,174\n-\n68,339\n1,122 18,038\n-\n64,994\n1,679",
+      "section": "Reserves and Surplus Schedule",
       "is_index_page": false,
       "text_blocks": [
         "FORM L-10-RESERVES AND SURPLUS SCHEDULE\n(Rs. in Lakhs)\nAs at As at\nS.No. Particulars\nDecember 31, 2025 December 31, 2024\n1 Capital Reserve 2 2\n2 Capital Redemption Reserve - -\n3 Share Premium\nOpening Balance 754 584\nAdd:Additions during the period 190 170\nLess: Deletion during the period^ (22) -\n922 754\n4 Revaluation Reserve\nOpening balance 4,493 -\nAdd: Addition during the year - -\nGross Total 4,493 -\nLess: Depreciation charged on revaluation reserve in (22) -\ncurrent year\nClosing Balance 4,471 -\n5 General Reserves - -\nLess: Amount utilized for Buy-back of shares - -\nLess: Amount utilized for issue of Bonus shares - -\n6 Catastrophe Reserve - -\n7 Other Reserves\nEmployees stock option outstanding\nOpening Balance - -\nAdd: Addition during the period 9 -\nGross Total 9 -\nLess: Reduction during the period - -\nClosing Balance 9 -\n8 Balance of profit in Profit and Loss Account 62,934 64,238\nTOTAL 68,339 64,994\n^ The Company has adjusted the debenture raising expenses of ₹ 22 Lakhs (December 31, 2024: ₹ Nil/NA) against the Share Premium\naccount as per Section 52 of the Companies Act, 2013.\nVersion:1 Date of upload: February 13,2025 15"
@@ -218,7 +218,7 @@
       "page_label": "L-11-BORROWINGS",
       "page_label_normalized": "L-11",
       "company_name": null,
-      "section": "9,000\n3,840\n13,40,968\n5,992\n-\n-\n74,059 -\n16,971\n11,45,289\n3,929\n-\n-\n55,235",
+      "section": "Borrowings Schedule",
       "is_index_page": false,
       "text_blocks": [
         "FORM L-11-BORROWINGS SCHEDULE\n(Rs. in Lakhs)\nAs at As at\nS.No. Particulars\nDecember 31, 2025 December 31, 2024\n1 In the form of Debentures/ Bonds 9,000 -\n2 From Banks - -\n3 From Financial Institutions - -\n4 Others - -\nTOTAL 9,000 -\nNote:\n1.During the period ended December 31,2025, the company had issued, Unsecured, subordinated, listed, rated,\nredeemable, taxable, non-convertible debentures (NCDs) in the nature of ‘Subordinated Debt’ as per the IRDAI\n(Registration, Capital Structure, Transfer of Shares and Amalgamation of Insurers) Regulations, 2024 aggregating to ₹\n9,000 Lakhs at a coupon rate of 9.55% p.a. payable annually. The said NCDs were allotted on December 30, 2025 and are\nredeemable at the end of 10 years from the date of allotment with a call option to the Company to redeem the NCDs post\nthe completion of 5 years from the deemed date of allotment and annually thereafter.\n2. Amount due within 12 months of the balance sheet date: Nil\nDISCLOSURE FOR SECURED BORROWINGS\n(Rs. in Lakhs)\nAmount\nSl.No. Source / Instrument Amount of Security Nature of Security\nBorrowed\n1 Nil Nil Nil Nil\nNote:\na) The extent to which the borrowings are secured shall be separately disclosed stating the nature of the security under\neach sub-head, as given above.\nb) Amounts due within 12 months from the date of Balance Sheet should be shown separately.\nc) Debentures include NCDs issued as per IRDAI (Other Forms of Capital) Regulations, 2022\nVersion:1 Date of upload: February 13,2025 16"
@@ -230,7 +230,7 @@
       "page_label": "L-12-INVESTMENTS",
       "page_label_normalized": "L-12",
       "company_name": null,
-      "section": "96,984\n12,97,878\n80,051\n32,623\n12,440\n-\n21,765\n61,554 80,294\n11,39,614\n59,164\n26,018\n5,926\n-\n19,509\n54,019",
+      "section": "Investments - Shareholders' Schedule",
       "is_index_page": false,
       "text_blocks": [
         "FORM L-12-INVESTMENTS - SHAREHOLDERS' SCHEDULE\n(Rs. in Lakhs)\nAs at As at\nS.No. Particulars\nDecember 31, 2025 December 31, 2024\nLONG TERM INVESTMENTS\n1 Government securities and Government guaranteed bonds including 20,455 15,053\nTreasury Bills\n2 Other Approved Securities 15,507 19,012\n3 Other Investments\n(a) Shares\n(aa) Equity 6,052 5,791\n(ab) Preference - -\n(b) Mutual Funds - -\n(c) Derivative Instruments - -\n(d) Debentures/ Bonds 13,725 10,833\n(e) Other Securities - -\n(f) Subsidiaries - -\n(g)Investment Properties-Real Estate - -\n4 Investments in Infrastructure and Social Sector 25,888 19,521\n5 Other than Approved Investments\n(a) Equity 6,180 5,737\n(b) Debentures/Bond - -\n(c ) others 703 424\nSHORT TERM INVESTMENTS\n1 Government securities and Government guaranteed bonds including - -\nTreasury Bills\n2 Other Approved Securities 274 3,314\n3 Other Investments\n(a)Shares\n(aa) Equity - -\n(bb) Preference - -\n(b)Mutual Funds - -\n(c)Derivative Instruments - -\n(d)Debentures/ Bonds 1,799 -\n(e)Other Securities 6,399 449\n(f)Subsidiaries - -\n(g)Investment Properties-Real Estate - -\n4 Investments in Infrastructure and Social Sector - 160\n5 Other than Approved Investments - -\n(a) Debentures/Bond - -\n(b) Mutual Funds - -\nTOTAL 96,984 80,294\nINVESTMENTS -\nIn India 96,984 80,294\nOutside India - -\nTOTAL 96,984 80,294\nNote: Investmentsmaturingwithintwelvemonthsfrombalancesheetdateandinvestmentsmadewiththespecificintentiontodisposeofwithin\ntwelve months from balance sheet date have been classified as short-term investments.\nInvestments in Subsidiary, Holding Company, Joint Venture &\n1 Nil Nil\nAssociates at cost\n2 Investments made out of Catastrophe reserve Nil Nil\nVersion:1 Date of upload: February 13,2025 17"
@@ -242,7 +242,7 @@
       "page_label": "L-13-INVESTMENTS",
       "page_label_normalized": "L-13",
       "company_name": null,
-      "section": "96,984\n12,97,878\n80,051\n32,623\n12,440\n-\n21,765\n61,554 80,294\n11,39,614\n59,164\n26,018\n5,926\n-\n19,509\n54,019",
+      "section": "Investments - Policyholders' Schedule",
       "is_index_page": false,
       "text_blocks": [
         "FORM L-13-INVESTMENTS POLICYHOLDERS SCHEDULE\n(Rs. in Lakhs)\nAs at As at\nS.No. Particulars\nDecember 31, 2025 December 31, 2024\nLONG TERM INVESTMENTS\n1 Government securities and Government guaranteed bonds including 4,59,561 3,73,329\nTreasury Bills\n2 Other Approved Securities 3,21,393 2,83,341\n3 Other Investments\n(a) Shares\n(aa) Equity 70,344 57,046\n(bb) Preference - -\n(b) Mutual Funds - -\n(c) Derivative Instruments - -\n(d) Debentures/ Bonds 1,65,568 1,68,043\n(e) Other Securities - Fixed Deposits - -\n(f) Subsidiaries - -\n(g) Investment Properties-Real Estate 2,052 -\n4 Investments in Infrastructure and Social Sector 2,54,009 2,38,385\n5 Other than Approved Investments\n(a) Equity - -\n(b) Debentures/Bond - 2,129\n(b) Others 75 -\nSHORT TERM INVESTMENTS\n1 Government securities and Government guaranteed bonds including 366 1,498\nTreasury Bills\n2 Other Approved Securities 2,303 1,656\n3 Other Investments\n(a) Shares\n(aa) Equity - -\n(bb) Preference - -\n(b) Mutual Funds 3,302 -\n(c) Derivative Instruments - -\n(d) Debentures/ Bonds 7,921 3,547\n(e) Other Securities 7,477 7,349\n(f) Subsidiaries - -\n(g) Investment Properties-Real Estate - -\n4 Investments in Infrastructure and Social Sector 3,508 3,291\n5 Other than Approved Investments\n(a) Debenture / Bonds - -\n(b) Mutual Funds - -\nTOTAL 12,97,878 11,39,614\nINVESTMENTS\nIn India 12,97,878 11,39,614\nOutside India - -\nTOTAL 12,97,878 11,39,614\nNote: 1. Investments maturingwithintwelvemonths frombalancesheet dateandinvestments madewiththespecific intentiontodisposeof\nwithin twelve months from balance sheet date have been classified as short-term investments.\n2.Investment Properties - Real Estate\" represents investment in units of Real Estate Investment Trusts (REIT)\nInvestments in Subsidiary, Holding Company, Joint Venture &\n1 Nil Nil\nAssociates at cost\n2 Investments made out of Catastrophe reserve Nil Nil\nVersion:1 Date of upload: February 13,2025 18"
@@ -254,7 +254,7 @@
       "page_label": "L-14-ASSETS",
       "page_label_normalized": "L-14",
       "company_name": null,
-      "section": "96,984\n12,97,878\n80,051\n32,623\n12,440\n-\n21,765\n61,554 80,294\n11,39,614\n59,164\n26,018\n5,926\n-\n19,509\n54,019",
+      "section": "Investments - Assets Held to Cover Linked Liabilities Schedule",
       "is_index_page": false,
       "text_blocks": [
         "FORM L-14-ASSETS HELD TO COVER LINKED LIABILITIES SCHEDULE\n(Rs. in Lakhs)\nAs at As at\nS.No. Particulars\nDecember 31, 2025 December 31, 2024\nLONG TERM INVESTMENTS\n1 Government securities and Government guaranteed bonds including 5,189 4,348\nTreasury Bills\n2 Other Approved Securities 1,767 1,832\n3 Other Investments\n(a)Shares\n(aa) Equity 58,639 39,173\n(bb) Preference - -\n(b)Mutual Funds - -\n(c)Derivative Instruments - -\n(d)Debentures/ Bonds 617 705\n(e)Other Securities - -\n(f) Subsidiaries - -\n(g)Investment Properties-Real Estate - -\n4 Investments in Infrastructure and Social Sector\n(a)Equity 1,213 1,218\n(b)Bond 3,508 3,593\n5 Other than Approved Investments\n(a)Equity 1,576 2,753\n(b)Debenture / Bond - -\nSHORT TERM INVESTMENTS\n1 Government securities and Government guaranteed bonds including 6,119 3,854\nTreasury Bills\n2 Other Approved Securities 224 84\n3 Other Investments - -\n(a)Shares -\n(aa)Equity - -\n(bb)Preference - -\n(b)Mutual Funds - 231\n(c)Derivative Instruments - -\n(d)Debentures/ Bonds 91 446\n(e)Other Securities - -\n(f) Subsidiaries - -\n(g)Investment Properties-Real Estate - -\n4 Investments in Infrastructure and Social Sector\n(a)Equity - -\n(b)Bond 38 10\n5 Other than Approved Investments - -\n(a)Debenture / Bonds - -\n(b)Mutual Funds - -\nNet Current Assets 1,069 917\nTOTAL 80,051 59,164\nINVESTMENTS\nIn India 80,051 59,164\nOutside India\nTOTAL 80,051 59,164\nNote: Investmentsmaturingwithintwelvemonthsfrombalancesheetdateandinvestmentsmadewiththespecificintentiontodisposeofwithin\ntwelve months from balance sheet date have been classified as short-term investments\n1 Investments in Subsidiary, Holding Company, Joint Venture &\nNil Nil\nAssociates at cost\n2 Investments made out of Catastrophe reserve Nil Nil\nVersion:1 Date of upload: February 13,2025 19"
@@ -278,7 +278,7 @@
       "page_label": "L-15-LOANS",
       "page_label_normalized": "L-15",
       "company_name": null,
-      "section": "96,984\n12,97,878\n80,051\n32,623\n12,440\n-\n21,765\n61,554 80,294\n11,39,614\n59,164\n26,018\n5,926\n-\n19,509\n54,019",
+      "section": "Loans Schedule",
       "is_index_page": false,
       "text_blocks": [
         "FORM L-15-LOANS SCHEDULE\n(Rs. in Lakhs)\nAs at As at\nS.No. Particulars\nDecember 31, 2025 December 31, 2024\n1 SECURITY-WISE CLASSIFICATION\nSecured\n(a) On mortgage of property\n(aa) In India - -\n(bb) Outside India - -\n(b)On Shares, Bonds, Govt. Securities, etc. - -\n(c) Loans against policies 32,623 26,018\n(d)Others - -\nUnsecured - -\nTOTAL 32,623 26,018\n2 BORROWER-WISE CLASSIFICATION\n(a)Central and State Governments - -\n(b)Banks and Financial Institutions - -\n(c)Subsidiaries - -\n(d)Companies - -\n(e)Loans against policies 32,623 26,018\n(f)Others - -\nTOTAL 32,623 26,018\n3 PERFORMANCE-WISE CLASSIFICATION\n(a) Loans classified as standard\n(aa) In India 32,623 26,018\n(bb) Outside India - -\n(b)Non-standard loans less provisions\n(aa) In India - -\n(bb) Outside India - -\nTOTAL 32,623 26,018\n4 MATURITY-WISE CLASSIFICATION\n(a)Short Term 4,756 2,418\n(b)Long Term 27,867 23,600\nTOTAL 32,623 26,018\nProvisions against Non-performing Loans\nNon-Performing Loans Loan Amount Provision\n1 Sub-standard - -\n2 Doubtful - -\n3 Loss - -\nTOTAL - -\nNote : Short-term loans include those where the principal is repayable within 12 months from Balance Sheet date. Long term loans are the loans\nother than short-term loan.\nVersion:1 Date of upload: February 13,2025 21"
@@ -290,7 +290,7 @@
       "page_label": "L-16-FIXED",
       "page_label_normalized": "L-16",
       "company_name": null,
-      "section": "96,984\n12,97,878\n80,051\n32,623\n12,440\n-\n21,765\n61,554 80,294\n11,39,614\n59,164\n26,018\n5,926\n-\n19,509\n54,019",
+      "section": "Fixed Assets Schedule",
       "is_index_page": false,
       "text_blocks": [
         "FORM L-16-FIXED ASSETS SCHEDULE\n(Rs. in Lakhs)\nCost/Gross Block Depreciation Net Block\nParticulars As at April 1, As at December As at April 1, On Sales/ As at December As at December As at December\nAdditions Deductions For the Period\n2025 31,2025 2025 Adjustments 31,2025 31,2025 31,2024\nGoodwill - - - - - - - - - -\nIntangibles - Computer Software 8,531 955 - 9,486 7,152 496 - 7,648 1,838 559\nLand-Freehold 3,543 - - 3,543 - - - - 3,543 563\nLeasehold Property - - - - - - - - - -\nBuildings 3,230 - - 3,230 637 39 - 676 2,554 1,084\nFurniture & Fittings 3,573 452 181 3,844 1,806 215 142 1,879 1,965 1,594\nInformation Technology Equipment 3,579 560 694 3,445 2,588 398 599 2,386 1,059 953\nVehicles 78 - - 78 42 5 - 47 31 37\nOffice Equipment 759 60 45 773 513 31 45 499 274 238\nElectrical Equipment 1,755 247 107 1,895 867 112 87 892 1,003 854\nTotal 25,047 2,275 1,027 26,295 13,605 1,296 874 14,027 12,268 5,882\nCapital Work In Progress\n(Including advances for capital works/items) 41 1,074 943 172 - - - - 172 44\nGrand Total 25,088 3,349 1,970 26,467 13,605 1,296 874 14,027 12,440 -\nPrevious Year 17,307 2,174 673 18,808 12,220 967 305 12,882 5,926 5,926\nVersion:1 Date of upload: February 13,2025 22"
@@ -302,7 +302,7 @@
       "page_label": "L-17-CASH",
       "page_label_normalized": "L-17",
       "company_name": null,
-      "section": "96,984\n12,97,878\n80,051\n32,623\n12,440\n-\n21,765\n61,554 80,294\n11,39,614\n59,164\n26,018\n5,926\n-\n19,509\n54,019",
+      "section": "Cash and Bank Balance Schedule",
       "is_index_page": false,
       "text_blocks": [
         "FORM L-17-CASH AND BANK BALANCE SCHEDULE\n(Rs. in Lakhs)\nAs at As at\nS.No. Particulars\nDecember 31, 2025 December 31, 2024\n1 Cash (including cheques, drafts and stamps) 2,895 3,604\n2 Bank Balances\n(a)Deposit Accounts\n(aa) Short-term (due within 12 months of the date of Balance Sheet) - -\n(bb) Others - -\n(b)Current Accounts 12,368 11,923\n3 Money at Call and Short Notice\n(a) With Banks - -\n(b)With other Institutions 6,502 3,982\n4 Others - -\nTOTAL 21,765 19,509\nBalances with non-scheduled banks included in 2 and 3 above - -\nCASH & BANK BALANCES\nIn India 21,765 19,509\nOutside India - -\nTOTAL 21,765 19,509\n*Cheques on hand amount to Rs.403 Lakhs.Corresponding amount as on December 31,2024 Rs.364 Lakhs.\nVersion:1 Date of upload: February 13,2025 23"
@@ -314,7 +314,7 @@
       "page_label": "L-18-ADVANCES",
       "page_label_normalized": "L-18",
       "company_name": null,
-      "section": "96,984\n12,97,878\n80,051\n32,623\n12,440\n-\n21,765\n61,554 80,294\n11,39,614\n59,164\n26,018\n5,926\n-\n19,509\n54,019",
+      "section": "Advances & Other Assets Schedule",
       "is_index_page": false,
       "text_blocks": [
         "FORM L-18-ADVANCES AND OTHER ASSETS SCHEDULE\n(Rs. in Lakhs)\nAs at As at\nS.No. Particulars\nDecember 31, 2025 December 31, 2024\nADVANCES\n1 Reserve deposits with ceding companies - -\n2 Application money for investments - -\n3 Prepayments 303 254\n4 Advances to Directors/Officers - -\n5 Advance tax paid and taxes deducted at source (Net of provision for taxation) 1,547 -\n6 GST Unutilised Credit 761 1,689\n7 Others Advances -\n- Advances towards services 1,160 779\n- Others 158 113\n- Rent Deposit 1,074 845\nTOTAL (A) 5,002 3,680\nOTHER ASSETS\n1 Income accrued on investments 28,196 25,917\n2 Outstanding Premiums 14,807 11,580\n3 Agents’ Balances 398 62\n4 Foreign Agencies Balances - -\n5 Due from other entities carrying on insurance business (including reinsures) 3,708 2,213\n6 Due from subsidiaries/ holding company - -\n7 Investments held for Unclaimed Amount of Policyholders 607 555\n8 Interest on investments held for Unclaimed Amount of Policyholders 256 204\n9 Others\na. Security Deposits & Others $ 1,813 2,738\nb. Redemption receivable 527 3,049\nc. Deposit with Court 824 668\nd. Derivative Asset - 3,354\ne. Derivative Margin Money Investment 5,416 -\nTOTAL (B) 56,552 50,339\nTOTAL (A+B) 61,554 54,019\n$ Includes advance GST Paid, Bank balance earmarked for bank guatantees provided\nVersion:1 Date of upload: February 13,2025 24"
@@ -338,7 +338,7 @@
       "page_label": "L-20-PROVISIONS",
       "page_label_normalized": "L-20",
       "company_name": null,
-      "section": "62,898\n2,297 50,680\n6,640",
+      "section": "Provisions Schedule",
       "is_index_page": false,
       "text_blocks": [
         "FORM L-20-PROVISIONS SCHEDULE\n(Rs. in Lakhs)\nAs at As at\nS.No. Particulars\nDecember 31, 2025 December 31, 2024\n1 For taxation (less payments and taxes deducted at source) - 5,266\n2 For Employee Benefits -\nProvision for Gratuity, Leave Encashment 2,297 1,374\n3 For Others - -\nTOTAL 2,297 6,640\nVersion:1 Date of upload: February 13,2025 26"
